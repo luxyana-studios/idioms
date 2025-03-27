@@ -2,4 +2,4 @@
 this is another new line
 
 WIP
-this is a conflicting change
+This is a conflicting change.
