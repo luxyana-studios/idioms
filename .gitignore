@@ -35,10 +35,4 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-/.expo-shared/
-/.cache/
-/.next/
-/.vscode/
-/coverage/
-/android/
-/ios/
+app-example
