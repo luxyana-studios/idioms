@@ -1,0 +1,118 @@
+[
+    {
+        "english_text": "Break the ice",
+        "language": "Spanish",
+        "native_text": "Romper el hielo",
+        "meaning": "Empezar una conversaci\u00f3n en una situaci\u00f3n social para aliviar la tensi\u00f3n o la incomodidad.",
+        "explanation": "Esta expresi\u00f3n se origina de la pr\u00e1ctica de romper el hielo en las aguas congeladas para permitir el paso de barcos. En un sentido social, se refiere a crear un ambiente m\u00e1s acogedor y amistoso para facilitar la interacci\u00f3n entre personas que no se conocen bien.",
+        "examples": [
+            "En la reuni\u00f3n, \u00e9l cont\u00f3 un chiste para romper el hielo.",
+            "Para romper el hielo, comenzamos con algunas preguntas divertidas.",
+            "Ella siempre sabe c\u00f3mo romper el hielo en las fiestas."
+        ]
+    },
+    {
+        "english_text": "Bite the bullet",
+        "language": "Spanish",
+        "native_text": "Aguardar el golpe",
+        "meaning": "Aceptar una situaci\u00f3n dif\u00edcil o dolorosa.",
+        "explanation": "La expresi\u00f3n se origina de la pr\u00e1ctica de hacer que los soldados muerdan una bala durante operaciones quir\u00fargicas sin anestesia, para ayudar a soportar el dolor. Se utiliza en contextos donde alguien debe enfrentar una realidad dura con valent\u00eda.",
+        "examples": [
+            "Tendr\u00e9 que aguardar el golpe y hablar con mi jefe sobre el despido.",
+            "Aunque me asusta, tengo que esperar el golpe y tomar la decisi\u00f3n que mejor me convenga.",
+            "Es hora de que aguarde el golpe y enfrente mis miedos."
+        ]
+    },
+    {
+        "english_text": "Hit the nail on the head",
+        "language": "Spanish",
+        "native_text": "Dar en el clavo",
+        "meaning": "Acertar exactamente en una situaci\u00f3n o en un problema.",
+        "explanation": "La expresi\u00f3n se utiliza cuando alguien ha entendido o expresado algo de manera precisa, e implica que es como si hubieran golpeado un clavo en el lugar correcto con un martillo.",
+        "examples": [
+            "El ingeniero dio en el clavo con su an\u00e1lisis del problema en la m\u00e1quina.",
+            "Cuando ella explic\u00f3 la situaci\u00f3n, realmente dio en el clavo.",
+            "El discurso del presidente dio en el clavo respecto a las preocupaciones de la poblaci\u00f3n."
+        ]
+    },
+    {
+        "english_text": "Let the cat out of the bag",
+        "language": "Spanish",
+        "native_text": "Dejar escapar el gato de la bolsa",
+        "meaning": "Revelar un secreto o informaci\u00f3n que deb\u00eda ser mantenida oculta",
+        "explanation": "Esta expresi\u00f3n se utiliza para describir la acci\u00f3n de revelar algo que no deb\u00eda ser dicho, particularmente un secreto. El origen exacto es incierto, pero se cree que proviene de la venta de gatos vivos en sacos durante el mercado; si se dejaba escapar el gato, se revelaba lo que realmente estaba dentro del saco.",
+        "examples": [
+            "No quer\u00eda que supieran sobre la sorpresa, pero Juan dej\u00f3 escapar el gato de la bolsa.",
+            "Ella dej\u00f3 escapar el gato de la bolsa cuando mencion\u00f3 el nuevo proyecto antes de tiempo.",
+            "Despu\u00e9s de que Pedro habl\u00f3 sin pensar, todos supieron la verdad; hab\u00eda dejado escapar el gato de la bolsa."
+        ]
+    },
+    {
+        "english_text": "Piece of cake",
+        "language": "Spanish",
+        "native_text": "Pan comido",
+        "meaning": "Algo que es muy f\u00e1cil de hacer.",
+        "explanation": "La expresi\u00f3n 'pan comido' se utiliza para describir una tarea que es sencilla o que se puede realizar con facilidad. Su origen proviene de la idea de que comer pan es una actividad com\u00fan y f\u00e1cil para la mayor\u00eda de las personas.",
+        "examples": [
+            "Hacer este ejercicio es pan comido.",
+            "Aprobar el examen fue pan comido para ella."
+        ]
+    },
+    {
+        "english_text": "Spill the beans",
+        "language": "Spanish",
+        "native_text": "Revelar el secreto",
+        "meaning": "Divulgar informaci\u00f3n confidencial o un secreto.",
+        "explanation": "La expresi\u00f3n 'spill the beans' se refiere al acto de revelar algo que se deber\u00eda mantener en secreto. La imagen aqu\u00ed es de derramar frijoles, simbolizando la p\u00e9rdida de algo que estaba contenido. Se asocia a veces con la idea de que, si se derraman los frijoles, se revela el contenido de una caja o un secreto.",
+        "examples": [
+            "No le cuentes nada a Juan, \u00e9l siempre acaba revelando el secreto.",
+            "Cuando le preguntaron sobre el proyecto, no pudo evitar derramar los frijoles."
+        ]
+    },
+    {
+        "english_text": "Costs an arm and a leg",
+        "language": "Spanish",
+        "native_text": "Cuesta un ojo de la cara",
+        "meaning": "Algo muy caro o costoso",
+        "explanation": "Este idiom significa que algo es extremadamente caro, generalmente m\u00e1s de lo que se esperaba pagar. La expresi\u00f3n sugiere que el costo es tan alto que ser\u00eda como sacrificar una parte importante del cuerpo.",
+        "examples": [
+            "Esa casa cuesta un ojo de la cara.",
+            "El viaje a Europa me cost\u00f3 un ojo de la cara."
+        ]
+    },
+    {
+        "english_text": "Burn the midnight oil",
+        "language": "Spanish",
+        "native_text": "Quemar el aceite de medianoche",
+        "meaning": "Trabajar o estudiar tarde en la noche.",
+        "explanation": "La expresi\u00f3n se refiere a la pr\u00e1ctica de trabajar o estudiar durante las horas nocturnas, a menudo hasta altas horas de la noche, lo que requiere encender una l\u00e1mpara (que quemaba aceite) para tener luz.",
+        "examples": [
+            "Estuve quemando el aceite de medianoche para terminar el proyecto a tiempo.",
+            "Para estudiar para el examen, tuve que quemar el aceite de medianoche.",
+            "Ella ha estado quemando el aceite de medianoche toda la semana trabajando en su tesis."
+        ]
+    },
+    {
+        "english_text": "Under the weather",
+        "language": "Spanish",
+        "native_text": "Bajo el tiempo",
+        "meaning": "Sentirse mal o enfermo.",
+        "explanation": "La expresi\u00f3n \"bajo el tiempo\" se utiliza para describir a alguien que no se siente bien, ya sea f\u00edsicamente o emocionalmente. La l\u00f3gica detr\u00e1s de esta expresi\u00f3n proviene de la idea de que el clima puede influir en nuestro estado de \u00e1nimo y salud, especialmente durante \u00e9pocas de mal tiempo.",
+        "examples": [
+            "Hoy no puedo salir, me siento bajo el tiempo.",
+            "No vino a trabajar porque estaba bajo el tiempo."
+        ]
+    },
+    {
+        "english_text": "Once in a blue moon",
+        "language": "Spanish",
+        "native_text": "De vez en cuando",
+        "meaning": "Se refiere a algo que sucede muy rara vez.",
+        "explanation": "La expresi\u00f3n 'de vez en cuando' significa que algo ocurre muy infrecuentemente, similar a la aparici\u00f3n de una luna azul, que es un fen\u00f3meno poco com\u00fan en el ciclo lunar.",
+        "examples": [
+            "Voy al cine de vez en cuando.",
+            "De vez en cuando, me gusta leer un buen libro.",
+            "Ella visita a sus amigos de vez en cuando."
+        ]
+    }
+]
