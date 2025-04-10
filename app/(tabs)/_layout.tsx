@@ -1,8 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { ImageBackground, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import highlightImage from '@/assets/images/highlight.png';
 
 type TabIconProps = {
   focused: boolean;
@@ -13,15 +12,10 @@ type TabIconProps = {
 const TabIcon = ({ focused, title, iconName }: TabIconProps) => {
   if (focused) {
     return (
-      <ImageBackground
-        source={highlightImage}
-        className="flex flex-row w-full flex-1 min-w-28 min-h-16 mt-4 justify-center items-center rounded-full overflow-hidden"
-      >
-        <Ionicons name={iconName} size={20} color="#151312" />
-        <Text className="text-secundary text-base font-semibold ml-2">
-          {title}
-        </Text>
-      </ImageBackground>
+      <View className="flex flex-row w-full flex-1 min-w-28 min-h-16 mt-4 justify-center items-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500">
+        <Ionicons name={iconName} size={20} color="#FFFFFF" />
+        <Text className="text-white text-base font-semibold ml-2">{title}</Text>
+      </View>
     );
   }
   return (
