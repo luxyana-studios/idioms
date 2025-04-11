@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 type TabIconProps = {
   focused: boolean;
   title: string;
-  iconName: keyof typeof Ionicons.glyphMap;
+  iconName: 'home' | 'search' | 'star' | 'person';
 };
 
 const TabIcon = ({ focused, title, iconName }: TabIconProps) => {
@@ -45,7 +45,7 @@ const TabLayout = () => {
           position: 'absolute',
           overflow: 'hidden',
           borderWidth: 0.5,
-          borderColor: '0f0D23',
+          borderColor: '#0f0D23',
         },
       }}
     >
