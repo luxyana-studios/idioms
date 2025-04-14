@@ -12,7 +12,7 @@ type TabIconProps = {
 const TabIcon = ({ focused, title, iconName }: TabIconProps) => {
   if (focused) {
     return (
-      <View className="flex flex-row w-full flex-1 min-w-28 min-h-16 mt-4 justify-center items-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500">
+      <View className="flex flex-row w-full min-w-28 min-h-16 mt-4 justify-center items-center rounded-lg bg-gradient-to-r from-blue-400 to-purple-600">
         <Ionicons name={iconName} size={20} color="#FFFFFF" />
         <Text className="text-white text-base font-semibold ml-2">{title}</Text>
       </View>
