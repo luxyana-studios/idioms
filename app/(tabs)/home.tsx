@@ -61,13 +61,7 @@ const Index = () => {
     <View className="flex-1 bg-gray-100">
       <FlatList
         data={data}
-        renderItem={({ item }) => (
-          <Card
-            id={item.id}
-            title={item.title}
-            description={item.description}
-          />
-        )}
+        renderItem={({ item }) => <Card id={item.id} title={item.title} />}
         keyExtractor={(item) => item.id}
         onEndReached={loadMoreData}
         onEndReachedThreshold={0.1}
