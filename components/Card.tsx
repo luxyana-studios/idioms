@@ -50,7 +50,7 @@ export const Card = ({ id, title }: CardProps) => {
             }}
           >
             <View className="flex-1 justify-center">
-              <Text className="text-3xl font-bold text-white mb-6">
+              <Text className="text-3xl font-bold text-white text-center">
                 {title}
               </Text>
             </View>
