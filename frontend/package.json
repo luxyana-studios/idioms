@@ -11,7 +11,7 @@
     "test": "jest --watchAll",
     "format": "prettier . --write",
     "lint": "eslint . --fix",
-    "prepare": "husky"
+    "prepare": "cd .. && husky frontend/.husky"
   },
   "jest": {
     "preset": "jest-expo"
@@ -72,9 +72,6 @@
     "*.{js,jsx}": [
       "eslint --fix",
       "prettier --write --ignore-unkown"
-    ],
-    "!(*.css|*.js|*.jsx)": [
-      "prettier --write"
     ]
   },
   "private": true
