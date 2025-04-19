@@ -71,7 +71,7 @@
     ],
     "*.{js,jsx}": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write --ignore-unkown"
     ],
     "!(*.css|*.js|*.jsx)": [
       "prettier --write"
