@@ -21,8 +21,8 @@ module.exports = {
       },
     ],
   },
-  // Ensures that Prettier is run automatically with the --fix option
   overrides: [
+    // Ensures that Prettier is run automatically with the --fix option
     {
       files: ['*.js', '*.ts', '*.tsx'],
       rules: {
@@ -30,6 +30,13 @@ module.exports = {
           'error',
           { useTabs: false, semi: true, singleQuote: true },
         ],
+      },
+    },
+    // Allows `require` imports in expo files
+    {
+      files: ['metro.config.js', 'tailwind.config.js'],
+      rules: {
+        '@typescript-eslint/no-require-imports': 'off',
       },
     },
   ],
