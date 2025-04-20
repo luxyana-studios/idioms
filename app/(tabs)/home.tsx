@@ -91,3 +91,5 @@ const Index = () => {
     </View>
   );
 };
+
+export default Index;
