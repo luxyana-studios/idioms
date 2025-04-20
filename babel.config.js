@@ -5,6 +5,7 @@ module.exports = function (api) {
       ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
       'nativewind/babel',
     ],
+<<<<<<< HEAD
     plugins: [
       [
         'module-resolver',
@@ -16,5 +17,7 @@ module.exports = function (api) {
         },
       ],
     ],
+=======
+>>>>>>> 993dc868 (Reset git repository to remove 89MB of data)
   };
 };

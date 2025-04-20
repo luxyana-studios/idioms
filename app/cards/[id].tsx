@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { View, Text, ScrollView } from 'react-native';
 import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
@@ -19,6 +20,16 @@ const CardDetails = () => {
         </View>
       </View>
     </ScrollView>
+=======
+import { View, Text } from 'react-native';
+import React from 'react';
+
+const CardDetails = () => {
+  return (
+    <View className="flex-1 justify-center items-center">
+      <Text className="text-5xl text-blue-500 font-bold">Card Details</Text>
+    </View>
+>>>>>>> 993dc868 (Reset git repository to remove 89MB of data)
   );
 };
 

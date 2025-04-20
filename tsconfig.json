@@ -2,9 +2,14 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+<<<<<<< HEAD
     "baseUrl": ".",
     "paths": {
       "@/*": ["*"]
+=======
+    "paths": {
+      "@/*": ["./*"]
+>>>>>>> 993dc868 (Reset git repository to remove 89MB of data)
     }
   },
   "include": [
