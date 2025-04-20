@@ -71,7 +71,7 @@
     ],
     "*.{js,jsx}": [
       "eslint --fix",
-      "prettier --write --ignore-unkown"
+      "prettier --write --ignore-unknown"
     ]
   },
   "private": true
