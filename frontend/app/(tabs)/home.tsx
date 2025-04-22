@@ -4,7 +4,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { CardData } from '../types/card';
 import { fetchCards, CARDS_PER_PAGE } from '../services/cardService';
 import { Card } from '../components/Card';
@@ -12,42 +12,42 @@ import { Card } from '../components/Card';
 const Index = () => {
   const [cards, setCards] = useState<CardData[]>([]);
   const [page, setPage] = useState(1);
-  const isLoadingRef = useRef(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const SCROLL_PADDING = 20;
 
   const loadInitialCards = async () => {
     try {
-      isLoadingRef.current = true;
+      setIsLoading(true);
       const initialCards = await fetchCards(1, CARDS_PER_PAGE);
       setCards(initialCards);
     } catch (error) {
       console.error('Error loading initial cards:', error);
     } finally {
-      isLoadingRef.current = false;
+      setIsLoading(false);
     }
   };
 
   const loadMoreCards = useCallback(async () => {
-    if (isLoadingRef.current) return;
+    if (isLoading) return;
     try {
-      isLoadingRef.current = true;
+      setIsLoading(true);
       const newCards = await fetchCards(page + 1, CARDS_PER_PAGE);
       setCards((prev) => [...prev, ...newCards]);
       setPage((prev) => prev + 1);
     } catch (error) {
       console.error('Error loading more cards:', error);
     } finally {
-      isLoadingRef.current = false;
+      setIsLoading(false);
     }
-  }, [page]);
+  }, [page, isLoading]);
 
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const { layoutMeasurement, contentOffset, contentSize } =
         event.nativeEvent;
-      const paddingToBottom = 20;
       if (
         layoutMeasurement.height + contentOffset.y >=
-        contentSize.height - paddingToBottom
+        contentSize.height - SCROLL_PADDING
       ) {
         loadMoreCards();
       }
