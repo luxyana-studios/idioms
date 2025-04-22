@@ -2,7 +2,7 @@ import { CardData } from '../types/card';
 
 // Constants
 const API_DELAY = 500; // Simulated API delay in milliseconds
-const CARDS_PER_PAGE = 10;
+export const CARDS_PER_PAGE = 20;
 
 // Helper function to generate mock card data
 const generateMockCard = (id: number): CardData => ({
@@ -35,17 +35,4 @@ export const fetchCards = async (
   }
 
   return cards;
-};
-
-export const fetchCardDetails = async (id: number): Promise<CardData> => {
-  // Simulating API call with mock data
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id,
-        title: `Card ${id}`,
-        content: `This is the detailed content for card ${id}. Here you can add more detailed information about the card, including additional fields that might not be shown in the card list view.`,
-      });
-    }, 300); // Simulating network delay
-  });
 };
