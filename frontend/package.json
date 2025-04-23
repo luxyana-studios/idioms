@@ -69,7 +69,7 @@
       "stylelint --fix",
       "prettier --write"
     ],
-    "*.{js,jsx}": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write --ignore-unknown"
     ]
