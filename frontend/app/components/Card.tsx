@@ -1,4 +1,5 @@
 import { Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import Animated, {
   useSharedValue,
@@ -14,9 +15,10 @@ const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.85;
 
 interface CardProps {
   item: CardData;
+  onToggleFavorite: (id: number) => void;
 }
 
-export const Card = ({ item }: CardProps) => {
+export const Card = ({ item, onToggleFavorite }: CardProps) => {
   const rotation = useSharedValue(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -25,6 +27,14 @@ export const Card = ({ item }: CardProps) => {
     return {
       transform: [{ rotateY: `${rotateY}deg` }],
       backfaceVisibility: 'hidden',
+    };
+  });
+
+  const starAnimatedStyle = useAnimatedStyle(() => {
+    const rotateY = interpolate(rotation.value, [0, 1], [0, 180]);
+    return {
+      transform: [{ rotateY: `${rotateY}deg` }],
+      opacity: interpolate(rotation.value, [0, 0.5, 1], [1, 0, 0]),
     };
   });
 
@@ -46,8 +56,38 @@ export const Card = ({ item }: CardProps) => {
 
   return (
     <View className="m-4">
-      <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
-        <View>
+      <View style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}>
+        {/* Favorite button - outside of flip area */}
+        <Animated.View
+          style={[
+            starAnimatedStyle,
+            {
+              position: 'absolute',
+              bottom: 20,
+              right: 20,
+              padding: 10,
+              zIndex: 2,
+            },
+          ]}
+        >
+          <TouchableOpacity onPress={() => onToggleFavorite(item.id)}>
+            <FontAwesome
+              name={item.isFavorite ? 'star' : 'star-o'}
+              size={24}
+              color="#FFD700"
+            />
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* Card with flip animation */}
+        <TouchableOpacity
+          onPress={handleFlip}
+          activeOpacity={1}
+          style={{
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
+          }}
+        >
           <Animated.View
             style={[
               {
@@ -81,8 +121,8 @@ export const Card = ({ item }: CardProps) => {
           >
             <Text className="text-lg text-white">{item.content}</Text>
           </Animated.View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
