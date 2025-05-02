@@ -1,9 +1,15 @@
-import uuid
-import sqlmodel
+from datetime import datetime
+from uuid import UUID
+
+from pydantic import BaseModel
 
 
-class Idiom(sqlmodel.SQLModel, table=True):
-    id: uuid.UUID | None = sqlmodel.Field(default=None, primary_key=True)
-    text: str = sqlmodel.Field(index=True)
-    meaning: int | None = sqlmodel.Field(default=None, index=True)
-    secret_name: str
+class IdiomSchema(BaseModel):
+    id: UUID
+    text: str
+    meaning: str
+    explanation: str
+    examples: str
+
+    created_at: datetime
+    updated_at: datetime
