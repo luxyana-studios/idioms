@@ -8,11 +8,15 @@ Start local database:
 docker-compose up
 ```
 
+You can stop or delete your local database by running `docker-compose down` or `docker-compose down -v`.
+
 Start local server:
 
 ```bash
 uv run fastapi dev main.py
 ```
+
+You can try out the API by visiting [localhost:8000/docs](localhost:8000/docs).
 
 ## Database management
 
@@ -29,8 +33,8 @@ gunzip -c <backup_file> | docker exec -i postgres_db psql -U <db_user> -d <db_na
 ```
 
 Make sure to adapt the variables in the angle brackets `<...>` and possibly the container name of your database.
-If you are restoring to an empty database, the target database needs to be created first.
-You can do this by starting the local server as above or creating it manually.
+You might face issues when restoring to existing databases or tables, for now the easiest is to stop your local server and delete your database.
+This will make sure that you are only loading the contents of your backup file.
 
 ## TODOs
 
