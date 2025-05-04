@@ -1,13 +1,11 @@
 from typing import Annotated
 
-from fastapi import Depends
-from fastapi import FastAPI
-from fastapi import Query
+from fastapi import Depends, FastAPI, Query
 from sqlalchemy.orm import Session
 
 from app import database
 from app.models.idioms import IdiomModel
-from app.schemas.idioms import IdiomSchema
+from app.schemas.idioms import IdiomCreate, IdiomSchema
 
 SessionDep = Annotated[Session, Depends(database.get_session)]
 
@@ -21,11 +19,18 @@ def on_startup():
 
 @app.get("/idioms/", response_model=list[IdiomSchema])
 def get_idioms(
-    session: SessionDep,
+    db: SessionDep,
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
 ) -> list[IdiomSchema]:
     return [
         IdiomSchema.model_validate(idiom)
-        for idiom in session.query(IdiomModel).limit(limit).offset(offset).all()
+        for idiom in db.query(IdiomModel).limit(limit).offset(offset).all()
     ]
+
+
+@app.post("/idioms/")
+def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
+    idioms = [IdiomModel(**idiom.model_dump()) for idiom in payload]
+    db.add_all(idioms)
+    db.commit()
