@@ -127,6 +127,23 @@ const Index = () => {
     );
   };
 
+  const renderLoadingIndicator = () => (
+    <View className="py-4">
+      <ActivityIndicator size="large" color="#0000ff" />
+    </View>
+  );
+
+  const renderNoResults = () => (
+    <View className="py-10 px-4 items-center">
+      <Text className="text-gray-500 text-lg">No results found</Text>
+      {searchText !== '' && (
+        <Text className="text-gray-400 mt-2">
+          Try with different search terms
+        </Text>
+      )}
+    </View>
+  );
+
   return (
     <View className="flex-1 bg-primary">
       <View className="px-6 pt-6 pb-3">
@@ -169,26 +186,17 @@ const Index = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {filteredCards.length === 0 && !isLoading ? (
-          <View className="py-10 px-4 items-center">
-            <Text className="text-gray-500 text-lg">No results found</Text>
-            {searchText !== '' && (
-              <Text className="text-gray-400 mt-2">
-                Try with different search terms
-              </Text>
-            )}
-          </View>
-        ) : (
-          filteredCards.map((card) => (
-            <Card key={card.id} item={card} onFavoritePress={toggleFavorite} />
-          ))
-        )}
+        {filteredCards.length === 0 && !isLoading
+          ? renderNoResults()
+          : filteredCards.map((card) => (
+              <Card
+                key={card.id}
+                item={card}
+                onFavoritePress={toggleFavorite}
+              />
+            ))}
 
-        {isLoading && (
-          <View className="py-4">
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
-        )}
+        {isLoading && renderLoadingIndicator()}
       </ScrollView>
     </View>
   );
