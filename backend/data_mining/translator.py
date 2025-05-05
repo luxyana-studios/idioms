@@ -1,3 +1,5 @@
+import json
+
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
@@ -49,8 +51,6 @@ for english_idiom in english_idioms:
 
 
 print(translated_idioms)
-
-import json
 
 with open(f"languages/{language.lower()}.json", "w") as f:
     json.dump(
