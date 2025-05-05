@@ -17,12 +17,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 const SCREEN_DIMENSIONS = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_DIMENSIONS.width * 0.8;
-const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.85;
+const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.75;
 
-// Definición única de la interfaz
 interface CardProps {
   item: CardData;
-  onFavoritePress?: (id: number) => void; // Asegúrate que coincida con CardData.id
+  onFavoritePress?: (id: number) => void;
 }
 
 export const Card = ({ item, onFavoritePress }: CardProps) => {
@@ -62,7 +61,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
     <View className="m-4">
       <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
         <View>
-          {/* Cara frontal */}
           <Animated.View
             style={[
               {
@@ -79,8 +77,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
             ]}
           >
             <Text className="text-2xl font-bold text-white">{item.title}</Text>
-
-            {/* Ícono de favorito (frontal) */}
             <TouchableOpacity
               onPress={handleFavoritePress}
               style={{
@@ -97,8 +93,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
               />
             </TouchableOpacity>
           </Animated.View>
-
-          {/* Cara posterior */}
           <Animated.View
             style={[
               {
@@ -114,8 +108,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
             ]}
           >
             <Text className="text-lg text-white">{item.content}</Text>
-
-            {/* Ícono de favorito (posterior) */}
             <TouchableOpacity
               onPress={handleFavoritePress}
               style={{

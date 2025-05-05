@@ -180,11 +180,7 @@ const Index = () => {
           </View>
         ) : (
           filteredCards.map((card) => (
-            <Card
-              key={card.id}
-              item={card}
-              onFavoritePress={toggleFavorite} // 👈 Pasa el prop aquí
-            />
+            <Card key={card.id} item={card} onFavoritePress={toggleFavorite} />
           ))
         )}
 
