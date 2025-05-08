@@ -38,14 +38,16 @@ const TabLayout = () => {
         },
         tabBarStyle: {
           backgroundColor: '#0f0D23',
-          borderRadius: 50,
-          marginHorizontal: 20,
-          marginBottom: 36,
-          height: 52,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          height: 60,
           position: 'absolute',
-          overflow: 'hidden',
-          borderWidth: 0.5,
-          borderColor: '#0f0D23',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
         },
       }}
     >
