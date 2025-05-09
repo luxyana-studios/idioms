@@ -29,24 +29,14 @@ const Index = () => {
   const SCROLL_PADDING = 20;
 
   const searchAnimation = useRef(new Animated.Value(0)).current;
+  const searchTimeout = useRef<NodeJS.Timeout>();
 
-  const filteredCards = useMemo(() => {
-    if (searchText.trim() === '') {
-      return cards;
-    } else {
-      return cards.filter(
-        (card) =>
-          card.title.toLowerCase().includes(searchText.toLowerCase()) ||
-          (card.content &&
-            card.content.toLowerCase().includes(searchText.toLowerCase())),
-      );
-    }
-  }, [cards, searchText]);
+  const filteredCards = useMemo(() => cards, [cards]);
 
-  const loadInitialCards = async () => {
+  const loadInitialCards = async (search?: string) => {
     try {
       setIsLoading(true);
-      const initialCards = await fetchCards(1, CARDS_PER_PAGE);
+      const initialCards = await fetchCards(1, CARDS_PER_PAGE, search);
       setCards(initialCards);
       setPage(1);
     } catch (error) {
@@ -57,7 +47,7 @@ const Index = () => {
   };
 
   const loadMoreCards = useCallback(async () => {
-    if (isLoading) return;
+    if (isLoading || searchText.trim() !== '') return;
 
     try {
       setIsLoading(true);
@@ -72,14 +62,42 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, isLoading]);
+  }, [page, isLoading, searchText]);
 
-  const handleSearch = (searchText: string) => {
-    setSearchText(searchText);
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+
+    searchTimeout.current = setTimeout(() => {
+      if (text.trim().length >= 2) {
+        loadInitialCards(text);
+      } else if (text.trim() === '') {
+        loadInitialCards();
+      }
+    }, 500);
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+
+    if (searchText.trim().length >= 2) {
+      loadInitialCards(searchText);
+    } else if (searchText.trim() === '') {
+      loadInitialCards();
+    }
   };
 
   const clearSearch = () => {
     setSearchText('');
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+    loadInitialCards();
     Animated.timing(searchAnimation, {
       toValue: 0,
       duration: 200,
@@ -163,6 +181,7 @@ const Index = () => {
             value={searchText}
             onChangeText={handleSearch}
             onFocus={handleFocus}
+            onSubmitEditing={handleSearchSubmit}
             placeholderTextColor="#9CA3AF"
           />
 

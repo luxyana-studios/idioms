@@ -1,5 +1,3 @@
-// src/components/CardFront.tsx
-
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
@@ -11,12 +9,6 @@ interface CardFrontProps {
   item: CardData;
   frontAnimatedStyle: AnimatedStyle<ViewStyle>;
   handleFavoritePress: (e: GestureResponderEvent) => void;
-  animatedStyle: {
-    transform: {
-      rotateY: string;
-    }[];
-    backfaceVisibility: 'hidden';
-  };
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
 }
@@ -34,17 +26,28 @@ const CardFront: React.FC<CardFrontProps> = ({
         {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
-          backgroundColor: '#221f3d',
+          backgroundColor: '#2c284d',
           borderRadius: 20,
-          padding: 20,
+          padding: 24,
           justifyContent: 'center',
           alignItems: 'center',
           position: 'absolute',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.2,
+          shadowRadius: 6,
+          elevation: 5,
         },
         frontAnimatedStyle,
       ]}
     >
-      <Text className="text-2xl font-bold text-white">{item.title}</Text>
+      <Text className="text-3xl font-extrabold text-white text-center mb-3">
+        {item.title}
+      </Text>
+      <Text className="text-base text-gray-200 text-center leading-relaxed">
+        {item.text}
+      </Text>
+
       <TouchableOpacity
         onPress={handleFavoritePress}
         style={{
@@ -52,6 +55,8 @@ const CardFront: React.FC<CardFrontProps> = ({
           bottom: CARD_HEIGHT * 0.05,
           right: CARD_WIDTH * 0.05,
           padding: 10,
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          borderRadius: 999,
         }}
       >
         <Ionicons

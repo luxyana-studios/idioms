@@ -67,7 +67,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
           <CardFront
             item={item}
             handleFavoritePress={handleFavoritePress}
-            animatedStyle={frontAnimatedStyle}
             CARD_WIDTH={CARD_WIDTH}
             CARD_HEIGHT={CARD_HEIGHT}
             frontAnimatedStyle={frontAnimatedStyle}
@@ -75,7 +74,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
           <CardBack
             item={item}
             handleFavoritePress={handleFavoritePress}
-            animatedStyle={backAnimatedStyle}
             CARD_WIDTH={CARD_WIDTH}
             CARD_HEIGHT={CARD_HEIGHT}
             backAnimatedStyle={backAnimatedStyle}
@@ -85,3 +83,5 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
     </View>
   );
 };
+
+export default Card;

@@ -1,10 +1,13 @@
-// src/components/CardBack.tsx
-
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+  ScrollView,
+} from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 
@@ -12,12 +15,6 @@ interface CardBackProps {
   item: CardData;
   backAnimatedStyle: AnimatedStyle<ViewStyle>;
   handleFavoritePress: (e: GestureResponderEvent) => void;
-  animatedStyle: {
-    transform: {
-      rotateY: string;
-    }[];
-    backfaceVisibility: 'hidden';
-  };
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
 }
@@ -36,48 +33,130 @@ export const CardBack = ({
         {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
-          backgroundColor: '#151312',
+          backgroundColor: '#1c1a2d',
         },
         backAnimatedStyle,
       ]}
     >
-      <Text style={styles.content}>{item.content}</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.title}>{item.content}</Text>
+
+        <Animated.View style={styles.divider} />
+        <Section title="Meaning" content={item.meaning} />
+        <Section title="Explanation" content={item.explanation} />
+        <Section title="Examples" content={item.examples} />
+      </ScrollView>
       <TouchableOpacity
         onPress={handleFavoritePress}
-        style={[
-          styles.iconButton,
-          {
-            bottom: CARD_HEIGHT * 0.05,
-            right: CARD_WIDTH * 0.05,
-          },
-        ]}
+        style={styles.favoriteButton}
+        activeOpacity={0.7}
       >
         <Ionicons
           name={item.isFavorite ? 'star' : 'star-outline'}
-          size={28}
-          color={item.isFavorite ? '#FFD700' : '#FFFFFF'}
+          size={26}
+          color={item.isFavorite ? '#FFD700' : 'rgba(255, 255, 255, 0.8)'}
         />
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
+const Section = ({
+  title,
+  content,
+}: {
+  title: string;
+  content: string | string[];
+}) => {
+  const renderContent = () => {
+    if (title === 'Examples') {
+      let examplesList: string[] = [];
+
+      if (typeof content === 'string') {
+        examplesList = content.split('\n').filter(Boolean);
+      } else if (Array.isArray(content)) {
+        examplesList = content.filter(Boolean);
+      }
+
+      return examplesList.map((example, index) => (
+        <Text key={index} style={styles.sectionContent}>
+          {'\u2022 '} {example}
+        </Text>
+      ));
+    }
+
+    return <Text style={styles.sectionContent}>{String(content)}</Text>;
+  };
+
+  return (
+    <>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {renderContent()}
+    </>
+  );
+};
+
 const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 20,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 24,
+    justifyContent: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+    overflow: 'hidden',
   },
-  content: {
+  scrollContent: {
+    paddingBottom: 60,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 16,
+    letterSpacing: 0.5,
+  },
+  divider: {
+    height: 2,
+    width: '40%',
+    backgroundColor: 'rgba(255, 215, 0, 0.3)',
+    marginBottom: 20,
+    borderRadius: 2,
+  },
+  sectionTitle: {
     fontSize: 18,
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: '700',
+    color: '#FFD700',
+    marginTop: 12,
+    marginBottom: 8,
+    letterSpacing: 0.3,
   },
-  iconButton: {
+  sectionContent: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: 'rgba(220, 220, 220, 0.9)',
+    marginBottom: 20,
+    paddingLeft: 4,
+  },
+  favoriteButton: {
     position: 'absolute',
-    padding: 10,
+    bottom: 24,
+    right: 24,
+    backgroundColor: 'rgba(28, 26, 45, 0.7)',
+    borderRadius: 30,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });
-
-export default CardBack;
