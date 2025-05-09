@@ -1,5 +1,3 @@
-// src/components/Card.tsx
-
 import React, { useState } from 'react';
 import {
   View,
@@ -24,7 +22,7 @@ const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.75;
 
 interface CardProps {
   item: CardData;
-  onFavoritePress: (id: number) => void;
+  onFavoritePress: (id: string) => void;
 }
 
 export const Card = ({ item, onFavoritePress }: CardProps) => {
@@ -67,7 +65,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
           <CardFront
             item={item}
             handleFavoritePress={handleFavoritePress}
-            animatedStyle={frontAnimatedStyle}
             CARD_WIDTH={CARD_WIDTH}
             CARD_HEIGHT={CARD_HEIGHT}
             frontAnimatedStyle={frontAnimatedStyle}
@@ -75,7 +72,6 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
           <CardBack
             item={item}
             handleFavoritePress={handleFavoritePress}
-            animatedStyle={backAnimatedStyle}
             CARD_WIDTH={CARD_WIDTH}
             CARD_HEIGHT={CARD_HEIGHT}
             backAnimatedStyle={backAnimatedStyle}
@@ -85,3 +81,5 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
     </View>
   );
 };
+
+export default Card;

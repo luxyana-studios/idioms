@@ -9,13 +9,7 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native';
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  useMemo,
-} from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { CardData } from '../types/card';
 import { fetchCards, CARDS_PER_PAGE } from '../services/cardService';
 import { Card } from '../components/Card';
@@ -30,23 +24,10 @@ const Index = () => {
 
   const searchAnimation = useRef(new Animated.Value(0)).current;
 
-  const filteredCards = useMemo(() => {
-    if (searchText.trim() === '') {
-      return cards;
-    } else {
-      return cards.filter(
-        (card) =>
-          card.title.toLowerCase().includes(searchText.toLowerCase()) ||
-          (card.content &&
-            card.content.toLowerCase().includes(searchText.toLowerCase())),
-      );
-    }
-  }, [cards, searchText]);
-
-  const loadInitialCards = async () => {
+  const loadInitialCards = async (search?: string) => {
     try {
       setIsLoading(true);
-      const initialCards = await fetchCards(1, CARDS_PER_PAGE);
+      const initialCards = await fetchCards(1, CARDS_PER_PAGE, search);
       setCards(initialCards);
       setPage(1);
     } catch (error) {
@@ -57,7 +38,7 @@ const Index = () => {
   };
 
   const loadMoreCards = useCallback(async () => {
-    if (isLoading) return;
+    if (isLoading || searchText.trim() !== '') return;
 
     try {
       setIsLoading(true);
@@ -72,14 +53,38 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, isLoading]);
+  }, [page, isLoading, searchText]);
 
-  const handleSearch = (searchText: string) => {
-    setSearchText(searchText);
+  let debounceTimeout: NodeJS.Timeout;
+
+  const handleSearch = (text: string) => {
+    const trimmedText = text.trim();
+    setSearchText(text);
+
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    debounceTimeout = setTimeout(() => {
+      executeSearch(trimmedText);
+    }, 300);
+  };
+
+  const handleSearchSubmit = () => {
+    executeSearch(searchText.trim());
+  };
+
+  const executeSearch = (trimmedText: string) => {
+    if (trimmedText.length >= 2) {
+      fetchCards(1, CARDS_PER_PAGE, trimmedText);
+    } else if (trimmedText === '') {
+      fetchCards(1, CARDS_PER_PAGE);
+    }
   };
 
   const clearSearch = () => {
     setSearchText('');
+    loadInitialCards();
     Animated.timing(searchAnimation, {
       toValue: 0,
       duration: 200,
@@ -119,7 +124,7 @@ const Index = () => {
     outputRange: [1, 1.02],
   });
 
-  const toggleFavorite = (cardId: number) => {
+  const toggleFavorite = (cardId: string) => {
     setCards((prevCards) =>
       prevCards.map((card) =>
         card.id === cardId ? { ...card, isFavorite: !card.isFavorite } : card,
@@ -163,6 +168,7 @@ const Index = () => {
             value={searchText}
             onChangeText={handleSearch}
             onFocus={handleFocus}
+            onSubmitEditing={handleSearchSubmit}
             placeholderTextColor="#9CA3AF"
           />
 
@@ -186,9 +192,9 @@ const Index = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {filteredCards.length === 0 && !isLoading
+        {cards.length === 0 && !isLoading
           ? renderNoResults()
-          : filteredCards.map((card) => (
+          : cards.map((card) => (
               <Card
                 key={card.id}
                 item={card}
