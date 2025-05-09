@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app import database
@@ -11,11 +12,17 @@ SessionDep = Annotated[Session, Depends(database.get_session)]
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 def on_startup():
     database.create_db_and_tables()
-
 
 @app.get("/idioms/", response_model=list[IdiomSchema])
 def get_idioms(
@@ -27,7 +34,6 @@ def get_idioms(
         IdiomSchema.model_validate(idiom)
         for idiom in db.query(IdiomModel).limit(limit).offset(offset).all()
     ]
-
 
 @app.post("/idioms/")
 def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
