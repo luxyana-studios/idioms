@@ -9,13 +9,7 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native';
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  useMemo,
-} from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { CardData } from '../types/card';
 import { fetchCards, CARDS_PER_PAGE } from '../services/cardService';
 import { Card } from '../components/Card';
@@ -29,9 +23,6 @@ const Index = () => {
   const SCROLL_PADDING = 20;
 
   const searchAnimation = useRef(new Animated.Value(0)).current;
-  const searchTimeout = useRef<NodeJS.Timeout>();
-
-  const filteredCards = useMemo(() => cards, [cards]);
 
   const loadInitialCards = async (search?: string) => {
     try {
@@ -64,27 +55,25 @@ const Index = () => {
     }
   }, [page, isLoading, searchText]);
 
+  let debounceTimeout: NodeJS.Timeout;
+
   const handleSearch = (text: string) => {
     setSearchText(text);
 
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
     }
 
-    searchTimeout.current = setTimeout(() => {
+    debounceTimeout = setTimeout(() => {
       if (text.trim().length >= 2) {
         loadInitialCards(text);
       } else if (text.trim() === '') {
         loadInitialCards();
       }
-    }, 500);
+    }, 300);
   };
 
   const handleSearchSubmit = () => {
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
-    }
-
     if (searchText.trim().length >= 2) {
       loadInitialCards(searchText);
     } else if (searchText.trim() === '') {
@@ -94,9 +83,6 @@ const Index = () => {
 
   const clearSearch = () => {
     setSearchText('');
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
-    }
     loadInitialCards();
     Animated.timing(searchAnimation, {
       toValue: 0,
@@ -137,7 +123,7 @@ const Index = () => {
     outputRange: [1, 1.02],
   });
 
-  const toggleFavorite = (cardId: number) => {
+  const toggleFavorite = (cardId: string) => {
     setCards((prevCards) =>
       prevCards.map((card) =>
         card.id === cardId ? { ...card, isFavorite: !card.isFavorite } : card,
@@ -205,9 +191,9 @@ const Index = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {filteredCards.length === 0 && !isLoading
+        {cards.length === 0 && !isLoading
           ? renderNoResults()
-          : filteredCards.map((card) => (
+          : cards.map((card) => (
               <Card
                 key={card.id}
                 item={card}

@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../../env';
 import { CardData } from '../types/card';
 
 // Constants
 export const CARDS_PER_PAGE = 20;
-const BASE_URL = 'http://localhost:8000/idioms/';
+const BASE_URL = API_BASE_URL;
 
 /**
  * Fetches a paginated list of cards from the backend
@@ -21,6 +22,9 @@ export const fetchCards = async (
     url.searchParams.append('page', page.toString());
     url.searchParams.append('limit', limit.toString());
     if (search) {
+      console.log(
+        'Search functionality is not currently supported by the backend.',
+      );
       url.searchParams.append('search', search.trim());
     }
 

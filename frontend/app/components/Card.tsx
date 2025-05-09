@@ -1,5 +1,3 @@
-// src/components/Card.tsx
-
 import React, { useState } from 'react';
 import {
   View,
@@ -24,7 +22,7 @@ const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.75;
 
 interface CardProps {
   item: CardData;
-  onFavoritePress: (id: number) => void;
+  onFavoritePress: (id: string) => void;
 }
 
 export const Card = ({ item, onFavoritePress }: CardProps) => {

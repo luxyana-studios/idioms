@@ -42,9 +42,6 @@ const CardFront: React.FC<CardFrontProps> = ({
       ]}
     >
       <Text className="text-3xl font-extrabold text-white text-center mb-3">
-        {item.title}
-      </Text>
-      <Text className="text-base text-gray-200 text-center leading-relaxed">
         {item.text}
       </Text>
 

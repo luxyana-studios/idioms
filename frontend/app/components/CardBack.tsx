@@ -43,12 +43,10 @@ export const CardBack = ({
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.title}>{item.content}</Text>
-
         <Animated.View style={styles.divider} />
         <Section title="Meaning" content={item.meaning} />
         <Section title="Explanation" content={item.explanation} />
-        <Section title="Examples" content={item.examples} />
+        <ExamplesSection examples={item.examples} />
       </ScrollView>
       <TouchableOpacity
         onPress={handleFavoritePress}
@@ -65,37 +63,43 @@ export const CardBack = ({
   );
 };
 
-const Section = ({
-  title,
-  content,
+const SectionTitle = ({ title }: { title: string }) => (
+  <Text style={styles.sectionTitle}>{title}</Text>
+);
+
+const Section = ({ title, content }: { title: string; content: string }) => (
+  <>
+    <SectionTitle title={title} />
+    <Text style={styles.sectionContent}>{content}</Text>
+  </>
+);
+
+const ExamplesSection = ({
+  examples,
 }: {
-  title: string;
-  content: string | string[];
+  examples: string | string[] | undefined;
 }) => {
-  const renderContent = () => {
-    if (title === 'Examples') {
-      let examplesList: string[] = [];
+  if (!examples) return null;
 
-      if (typeof content === 'string') {
-        examplesList = content.split('\n').filter(Boolean);
-      } else if (Array.isArray(content)) {
-        examplesList = content.filter(Boolean);
-      }
+  let examplesArray: string[] = [];
 
-      return examplesList.map((example, index) => (
-        <Text key={index} style={styles.sectionContent}>
-          {'\u2022 '} {example}
-        </Text>
-      ));
-    }
+  if (typeof examples === 'string') {
+    examplesArray = examples.split('\n').filter((e) => e.trim() !== '');
+  } else if (Array.isArray(examples)) {
+    examplesArray = examples.filter((e) => e.trim() !== '');
+  }
 
-    return <Text style={styles.sectionContent}>{String(content)}</Text>;
-  };
+  if (examplesArray.length === 0) return null;
 
   return (
     <>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {renderContent()}
+      <SectionTitle title="Examples" />
+      {examplesArray.map((example, index) => (
+        <Text key={index} style={styles.exampleItem}>
+          <Text style={styles.bulletPoint}>• </Text>
+          {example.trim()}
+        </Text>
+      ))}
     </>
   );
 };
@@ -114,13 +118,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 60,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 16,
-    letterSpacing: 0.5,
   },
   divider: {
     height: 2,
@@ -158,5 +155,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
+  },
+  exampleItem: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: 'rgba(220, 220, 220, 0.9)',
+    marginBottom: 8,
+    paddingLeft: 4,
+  },
+  bulletPoint: {
+    color: '#FFD700',
+    fontWeight: 'bold',
   },
 });
