@@ -58,6 +58,7 @@ const Index = () => {
   let debounceTimeout: NodeJS.Timeout;
 
   const handleSearch = (text: string) => {
+    const trimmedText = text.trim();
     setSearchText(text);
 
     if (debounceTimeout) {
@@ -65,19 +66,19 @@ const Index = () => {
     }
 
     debounceTimeout = setTimeout(() => {
-      if (text.trim().length >= 2) {
-        loadInitialCards(text);
-      } else if (text.trim() === '') {
-        loadInitialCards();
-      }
+      executeSearch(trimmedText);
     }, 300);
   };
 
   const handleSearchSubmit = () => {
-    if (searchText.trim().length >= 2) {
-      loadInitialCards(searchText);
-    } else if (searchText.trim() === '') {
-      loadInitialCards();
+    executeSearch(searchText.trim());
+  };
+
+  const executeSearch = (trimmedText: string) => {
+    if (trimmedText.length >= 2) {
+      fetchCards(1, CARDS_PER_PAGE, trimmedText);
+    } else if (trimmedText === '') {
+      fetchCards(1, CARDS_PER_PAGE);
     }
   };
 

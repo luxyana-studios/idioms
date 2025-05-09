@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ViewStyle,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -41,11 +42,10 @@ export const CardBack = ({
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
       >
         <Animated.View style={styles.divider} />
-        <Section title="Meaning" content={item.meaning} />
-        <Section title="Explanation" content={item.explanation} />
+        <MeaningSection meaning={item.meaning} />
+        <ExplanationSection explanation={item.explanation} />
         <ExamplesSection examples={item.examples} />
       </ScrollView>
       <TouchableOpacity
@@ -63,14 +63,17 @@ export const CardBack = ({
   );
 };
 
-const SectionTitle = ({ title }: { title: string }) => (
-  <Text style={styles.sectionTitle}>{title}</Text>
+const MeaningSection = ({ meaning }: { meaning: string }) => (
+  <>
+    <Text style={styles.sectionTitle}>Meaning</Text>
+    <Text style={styles.sectionContent}>{meaning}</Text>
+  </>
 );
 
-const Section = ({ title, content }: { title: string; content: string }) => (
+const ExplanationSection = ({ explanation }: { explanation: string }) => (
   <>
-    <SectionTitle title={title} />
-    <Text style={styles.sectionContent}>{content}</Text>
+    <Text style={styles.sectionTitle}>Explanation</Text>
+    <Text style={styles.sectionContent}>{explanation}</Text>
   </>
 );
 
@@ -93,13 +96,17 @@ const ExamplesSection = ({
 
   return (
     <>
-      <SectionTitle title="Examples" />
-      {examplesArray.map((example, index) => (
-        <Text key={index} style={styles.exampleItem}>
-          <Text style={styles.bulletPoint}>• </Text>
-          {example.trim()}
-        </Text>
-      ))}
+      <Text style={styles.sectionTitle}>Examples</Text>
+      <FlatList
+        data={examplesArray}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <Text style={styles.exampleItem}>
+            <Text style={styles.bulletPoint}>• </Text>
+            {item.trim()}
+          </Text>
+        )}
+      />
     </>
   );
 };
