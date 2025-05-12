@@ -17,27 +17,22 @@ export const fetchCards = async (
   limit: number = CARDS_PER_PAGE,
   search?: string,
 ): Promise<CardData[]> => {
-  try {
-    const url = new URL(IDIOMS_BACKEND_URL);
-    url.searchParams.append('page', page.toString());
-    url.searchParams.append('limit', limit.toString());
-    if (search) {
-      console.log(
-        'Search functionality is not currently supported by the backend.',
-      );
-      url.searchParams.append('search', search.trim());
-    }
-
-    const response = await fetch(url.toString());
-
-    if (!response.ok) {
-      throw new Error(`Error fetching cards: ${response.statusText}`);
-    }
-
-    const data: CardData[] = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Failed to fetch cards:', error);
-    throw error;
+  const url = new URL(IDIOMS_BACKEND_URL);
+  url.searchParams.append('page', page.toString());
+  url.searchParams.append('limit', limit.toString());
+  if (search) {
+    console.log(
+      'Search functionality is not currently supported by the backend.',
+    );
+    url.searchParams.append('search', search.trim());
   }
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error(`Error fetching cards: ${response.statusText}`);
+  }
+
+  const data: CardData[] = await response.json();
+  return data;
 };
