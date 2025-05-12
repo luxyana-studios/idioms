@@ -21,12 +21,24 @@ def on_startup():
 def get_idioms(
     db: SessionDep,
     offset: int = 0,
-    limit: Annotated[int, Query(le=100)] = 100,
+    limit: Annotated[int, Query(le=50)] = 50,
+    search: Annotated[str, Query()] = "",
 ) -> list[IdiomSchema]:
-    return [
-        IdiomSchema.model_validate(idiom)
-        for idiom in db.query(IdiomModel).limit(limit).offset(offset).all()
-    ]
+    search = search.strip()
+    if not search:
+        return [
+            IdiomSchema.model_validate(idiom)
+            for idiom in db.query(IdiomModel).limit(limit).offset(offset).all()
+        ]
+    else:
+        return [
+            IdiomSchema.model_validate(idiom)
+            for idiom in db.query(IdiomModel)
+            .filter(IdiomModel.text.ilike(f"%{search}%"))
+            .limit(limit)
+            .offset(offset)
+            .all()
+        ]
 
 
 @app.post("/idioms/")
