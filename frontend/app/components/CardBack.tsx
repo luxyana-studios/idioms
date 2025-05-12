@@ -78,8 +78,6 @@ const ExplanationSection = ({ explanation }: { explanation: string }) => (
 );
 
 const ExamplesSection = ({ examples }: { examples: string[] }) => {
-  if (examples.length === 0) return null;
-
   return (
     <>
       <Text style={styles.sectionTitle}>Examples</Text>
@@ -152,5 +150,9 @@ const styles = StyleSheet.create({
     color: 'rgba(220, 220, 220, 0.9)',
     marginBottom: 8,
     paddingLeft: 4,
+  },
+  bulletPoint: {
+    color: '#FFD700',
+    fontWeight: 'bold',
   },
 });
