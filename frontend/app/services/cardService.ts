@@ -1,9 +1,9 @@
-import { API_BASE_URL } from '../../env';
 import { CardData } from '../types/card';
 
 // Constants
 export const CARDS_PER_PAGE = 20;
-const BASE_URL = API_BASE_URL;
+const IDIOMS_BACKEND_URL =
+  process.env.IDIOMS_BACKEND_URL || 'http://localhost:8000/idioms/';
 
 /**
  * Fetches a paginated list of cards from the backend
@@ -18,7 +18,7 @@ export const fetchCards = async (
   search?: string,
 ): Promise<CardData[]> => {
   try {
-    const url = new URL(BASE_URL);
+    const url = new URL(IDIOMS_BACKEND_URL);
     url.searchParams.append('page', page.toString());
     url.searchParams.append('limit', limit.toString());
     if (search) {

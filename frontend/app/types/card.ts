@@ -2,7 +2,7 @@ export interface CardData {
   id: string;
   meaning: string;
   explanation: string;
-  examples: string;
+  examples: string[];
   isFavorite?: boolean;
   text: string;
 }

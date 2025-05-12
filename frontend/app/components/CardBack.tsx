@@ -77,34 +77,17 @@ const ExplanationSection = ({ explanation }: { explanation: string }) => (
   </>
 );
 
-const ExamplesSection = ({
-  examples,
-}: {
-  examples: string | string[] | undefined;
-}) => {
-  if (!examples) return null;
-
-  let examplesArray: string[] = [];
-
-  if (typeof examples === 'string') {
-    examplesArray = examples.split('\n').filter((e) => e.trim() !== '');
-  } else if (Array.isArray(examples)) {
-    examplesArray = examples.filter((e) => e.trim() !== '');
-  }
-
-  if (examplesArray.length === 0) return null;
+const ExamplesSection = ({ examples }: { examples: string[] }) => {
+  if (examples.length === 0) return null;
 
   return (
     <>
       <Text style={styles.sectionTitle}>Examples</Text>
       <FlatList
-        data={examplesArray}
+        data={examples}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <Text style={styles.exampleItem}>
-            <Text style={styles.bulletPoint}>• </Text>
-            {item.trim()}
-          </Text>
+          <Text style={styles.exampleItem}>• {item}</Text>
         )}
       />
     </>
@@ -169,9 +152,5 @@ const styles = StyleSheet.create({
     color: 'rgba(220, 220, 220, 0.9)',
     marginBottom: 8,
     paddingLeft: 4,
-  },
-  bulletPoint: {
-    color: '#FFD700',
-    fontWeight: 'bold',
   },
 });
