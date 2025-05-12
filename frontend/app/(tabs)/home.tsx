@@ -52,7 +52,7 @@ const Index = () => {
   const handleSearch = (query: string) => {
     if (query.length >= 2) {
       loadCards(query);
-    } else if (query === '') {
+    } else {
       loadCards();
     }
   };
