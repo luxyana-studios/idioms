@@ -21,8 +21,8 @@ const Index = () => {
   const loadCards = async (search?: string) => {
     try {
       setIsLoading(true);
-      const initialCards = await fetchCards(1, CARDS_PER_PAGE, search);
-      setCards(initialCards);
+      const Cards = await fetchCards(1, CARDS_PER_PAGE, search);
+      setCards(Cards);
       setPage(1);
     } catch (error) {
       console.error('Error loading initial cards:', error);
