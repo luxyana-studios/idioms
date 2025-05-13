@@ -10,10 +10,14 @@ export const getBackendUrl = (): string => {
     throw new Error('Missing IDIOMS_BACKEND_URL in app config');
   }
 
-  return rawUrl.trim().replace(/\/?$/, '/');
+  return rawUrl.trim();
 };
 
 const IDIOMS_BACKEND_URL = getBackendUrl();
+
+const API_ROUTES = {
+  IDIOMS: 'idioms/',
+} as const;
 
 const handleApiError = async (response: Response) => {
   const errorText = await response.text();
@@ -28,27 +32,18 @@ export const fetchCards = async (
   limit: number = CARDS_PER_PAGE,
   search?: string,
 ): Promise<CardData[]> => {
-  const url = new URL('idioms/', IDIOMS_BACKEND_URL);
+  const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
   if (search) url.searchParams.append('search', search.trim());
 
-  try {
-    const response = await fetch(url.toString(), {
-      headers: {
-        Accept: 'application/json',
-        'ngrok-skip-browser-warning': '1',
-      },
-    });
+  const response = await fetch(url.toString(), {
+    headers: {
+      Accept: 'application/json',
+    },
+  });
 
-    if (!response.ok) return handleApiError(response);
+  if (!response.ok) return handleApiError(response);
 
-    const data = await response.json();
-    return Array.isArray(data)
-      ? data
-      : Promise.reject('Expected array of cards');
-  } catch (error) {
-    console.error('Fetch error:', error);
-    throw error instanceof Error ? error : new Error('Network request failed');
-  }
+  return await response.json();
 };

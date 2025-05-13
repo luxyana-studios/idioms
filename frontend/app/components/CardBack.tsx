@@ -45,13 +45,7 @@ export const CardBack = ({
         <Animated.View style={styles.divider} />
         <MeaningSection meaning={item.meaning} />
         <ExplanationSection explanation={item.explanation} />
-
-        <Text style={styles.sectionTitle}>Examples</Text>
-        {item.examples.map((example, index) => (
-          <Text key={index} style={styles.exampleItem}>
-            • {example}
-          </Text>
-        ))}
+        <ExamplesSection examples={item.examples} />
       </ScrollView>
 
       <TouchableOpacity
@@ -80,6 +74,17 @@ const ExplanationSection = ({ explanation }: { explanation: string }) => (
   <>
     <Text style={styles.sectionTitle}>Explanation</Text>
     <Text style={styles.sectionContent}>{explanation}</Text>
+  </>
+);
+
+const ExamplesSection = ({ examples }: { examples: string[] }) => (
+  <>
+    <Text style={styles.sectionTitle}>Examples</Text>
+    {examples.map((example, index) => (
+      <Text key={index} style={styles.exampleItem}>
+        • {example}
+      </Text>
+    ))}
   </>
 );
 
