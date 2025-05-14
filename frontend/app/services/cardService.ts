@@ -3,13 +3,11 @@ import Constants from 'expo-constants';
 
 export const CARDS_PER_PAGE = 20;
 
-export const getBackendUrl = (): string => {
+const getBackendUrl = (): string => {
   const rawUrl = Constants.expoConfig?.extra?.IDIOMS_BACKEND_URL;
-
   if (!rawUrl?.trim()) {
     throw new Error('Missing IDIOMS_BACKEND_URL in app config');
   }
-
   return rawUrl.trim();
 };
 
@@ -27,6 +25,31 @@ const handleApiError = async (response: Response) => {
   );
 };
 
+const fetchData = async <T>(url: URL): Promise<T> => {
+  const response = await fetch(url.toString(), {
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    throw new Error('Invalid response: Expected JSON');
+  }
+
+  try {
+    const text = await response.text();
+    return JSON.parse(text) as T;
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    throw new Error('Invalid JSON received from server');
+  }
+};
+
 export const fetchCards = async (
   page: number,
   limit: number = CARDS_PER_PAGE,
@@ -35,15 +58,26 @@ export const fetchCards = async (
   const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
-  if (search) url.searchParams.append('search', search.trim());
+  if (search) {
+    url.searchParams.append('search', search.trim());
+  }
+  return await fetchData<CardData[]>(url);
+};
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      Accept: 'application/json',
-    },
-  });
-
-  if (!response.ok) return handleApiError(response);
-
-  return await response.json();
+export const searchIdioms = async (
+  query: string,
+  page: number = 1,
+  limit: number = CARDS_PER_PAGE,
+): Promise<CardData[]> => {
+  const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
+  url.searchParams.append('page', page.toString());
+  url.searchParams.append('limit', limit.toString());
+  url.searchParams.append('search', query.trim());
+  const data = await fetchData<CardData[]>(url);
+  if (!Array.isArray(data)) {
+    throw new Error(
+      'Invalid response format: Expected an array of cards (search)',
+    );
+  }
+  return data;
 };

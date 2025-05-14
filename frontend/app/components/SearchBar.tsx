@@ -1,42 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { searchIdioms } from '../services/cardService';
+import { CardData } from '../types/card';
+import { Text } from 'react-native';
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSearch: (results: CardData[]) => void;
   onClear: () => void;
 }
 
 export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const searchAnimation = React.useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedInput(input);
     }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
+    return () => clearTimeout(handler);
   }, [input]);
 
-  useEffect(() => {
+  const performSearch = useCallback(async () => {
     if (debouncedInput) {
-      onSearch(debouncedInput);
+      setIsSearching(true);
+      try {
+        const results = await searchIdioms(debouncedInput);
+        onSearch(results);
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    } else {
+      onClear();
+      setIsSearching(false);
     }
-  }, [debouncedInput]);
+  }, [debouncedInput, onSearch, onClear]);
 
-  const handleFocus = () => {
+  useEffect(() => {
+    performSearch();
+  }, [performSearch]);
+
+  const handleFocus = useCallback(() => {
     Animated.timing(searchAnimation, {
       toValue: 1,
       duration: 200,
       useNativeDriver: true,
     }).start();
-  };
+  }, [searchAnimation]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setInput('');
     onClear();
     Animated.timing(searchAnimation, {
@@ -44,7 +60,7 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
       duration: 200,
       useNativeDriver: true,
     }).start();
-  };
+  }, [onClear, searchAnimation]);
 
   const searchBarScale = searchAnimation.interpolate({
     inputRange: [0, 1],
@@ -54,9 +70,7 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
   return (
     <View className="px-6 pt-6 pb-3">
       <Animated.View
-        style={{
-          transform: [{ scale: searchBarScale }],
-        }}
+        style={{ transform: [{ scale: searchBarScale }] }}
         className="flex-row items-center rounded-2xl overflow-hidden border border-gray-100 bg-white/90 shadow-lg"
       >
         <View className="pl-4">
@@ -78,6 +92,12 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
           </TouchableOpacity>
         )}
       </Animated.View>
+
+      {isSearching && (
+        <View className="mt-2">
+          <Text>Searching...</Text>
+        </View>
+      )}
     </View>
   );
 };
