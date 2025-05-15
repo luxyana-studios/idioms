@@ -15,6 +15,13 @@ const handleApiError = async (response: Response) => {
   );
 };
 
+/**
+ * Fetches cards from the backend with optional search functionality
+ * @param page - The page number to fetch
+ * @param limit - Number of cards per page
+ * @param search - Optional search term to filter cards by title
+ * @returns Promise<CardData[]> - Array of card data
+ */
 export const fetchCards = async (
   page: number,
   limit: number = CARDS_PER_PAGE,
@@ -23,7 +30,10 @@ export const fetchCards = async (
   const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
-  if (search) url.searchParams.append('search', search.trim());
+
+  if (search && search.trim().length > 0) {
+    url.searchParams.append('search', search.trim());
+  }
 
   const response = await fetch(url.toString(), {
     headers: {
