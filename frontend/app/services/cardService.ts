@@ -1,10 +1,9 @@
 import { CardData } from '../types/card';
-import Constants from 'expo-constants';
 
 export const CARDS_PER_PAGE = 20;
 
 export const getBackendUrl = (): string => {
-  const rawUrl = Constants.expoConfig?.extra?.IDIOMS_BACKEND_URL;
+  const rawUrl = process.env.EXPO_PUBLIC_IDIOMS_BACKEND_URL;
 
   if (!rawUrl?.trim()) {
     throw new Error('Missing IDIOMS_BACKEND_URL in app config');
@@ -13,7 +12,7 @@ export const getBackendUrl = (): string => {
   return rawUrl.trim();
 };
 
-const IDIOMS_BACKEND_URL = getBackendUrl();
+const IDIOMS_BACKEND_URL = process.env.EXPO_PUBLIC_IDIOMS_BACKEND_URL;
 
 const API_ROUTES = {
   IDIOMS: 'idioms/',
@@ -40,6 +39,7 @@ export const fetchCards = async (
   const response = await fetch(url.toString(), {
     headers: {
       Accept: 'application/json',
+      'ngrok-skip-browser-warning': 'idioms',
     },
   });
 
