@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ViewStyle,
   ScrollView,
-  FlatList,
 } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -48,6 +47,7 @@ export const CardBack = ({
         <ExplanationSection explanation={item.explanation} />
         <ExamplesSection examples={item.examples} />
       </ScrollView>
+
       <TouchableOpacity
         onPress={handleFavoritePress}
         style={styles.favoriteButton}
@@ -77,20 +77,16 @@ const ExplanationSection = ({ explanation }: { explanation: string }) => (
   </>
 );
 
-const ExamplesSection = ({ examples }: { examples: string[] }) => {
-  return (
-    <>
-      <Text style={styles.sectionTitle}>Examples</Text>
-      <FlatList
-        data={examples}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Text style={styles.exampleItem}>• {item}</Text>
-        )}
-      />
-    </>
-  );
-};
+const ExamplesSection = ({ examples }: { examples: string[] }) => (
+  <>
+    <Text style={styles.sectionTitle}>Examples</Text>
+    {examples.map((example, index) => (
+      <Text key={index} style={styles.exampleItem}>
+        • {example}
+      </Text>
+    ))}
+  </>
+);
 
 const styles = StyleSheet.create({
   cardContainer: {

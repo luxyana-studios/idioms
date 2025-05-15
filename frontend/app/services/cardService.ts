@@ -1,38 +1,38 @@
 import { CardData } from '../types/card';
 
-// Constants
 export const CARDS_PER_PAGE = 20;
-const IDIOMS_BACKEND_URL =
-  process.env.IDIOMS_BACKEND_URL || 'http://localhost:8000/idioms/';
+const IDIOMS_BACKEND_URL = process.env.EXPO_PUBLIC_IDIOMS_BACKEND_URL;
 
-/**
- * Fetches a paginated list of cards from the backend
- * @param page - The page number to fetch (1-based)
- * @param limit - Number of cards per page
- * @param search - Optional search query
- * @returns Promise with array of cards
- */
+const API_ROUTES = {
+  IDIOMS: 'idioms/',
+} as const;
+
+const handleApiError = async (response: Response) => {
+  const errorText = await response.text();
+  console.error(`HTTP Error ${response.status}:`, errorText);
+  throw new Error(
+    `Server error: ${response.status} - ${errorText.slice(0, 100)}`,
+  );
+};
+
 export const fetchCards = async (
   page: number,
   limit: number = CARDS_PER_PAGE,
   search?: string,
 ): Promise<CardData[]> => {
-  const url = new URL(IDIOMS_BACKEND_URL);
+  const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
-  if (search) {
-    console.log(
-      'Search functionality is not currently supported by the backend.',
-    );
-    url.searchParams.append('search', search.trim());
-  }
+  if (search) url.searchParams.append('search', search.trim());
 
-  const response = await fetch(url.toString());
+  const response = await fetch(url.toString(), {
+    headers: {
+      Accept: 'application/json',
+      'ngrok-skip-browser-warning': 'idioms',
+    },
+  });
 
-  if (!response.ok) {
-    throw new Error(`Error fetching cards: ${response.statusText}`);
-  }
+  if (!response.ok) return handleApiError(response);
 
-  const data: CardData[] = await response.json();
-  return data;
+  return await response.json();
 };
