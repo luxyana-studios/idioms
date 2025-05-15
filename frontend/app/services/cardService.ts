@@ -1,17 +1,6 @@
 import { CardData } from '../types/card';
 
 export const CARDS_PER_PAGE = 20;
-
-export const getBackendUrl = (): string => {
-  const rawUrl = process.env.EXPO_PUBLIC_IDIOMS_BACKEND_URL;
-
-  if (!rawUrl?.trim()) {
-    throw new Error('Missing IDIOMS_BACKEND_URL in app config');
-  }
-
-  return rawUrl.trim();
-};
-
 const IDIOMS_BACKEND_URL = process.env.EXPO_PUBLIC_IDIOMS_BACKEND_URL;
 
 const API_ROUTES = {
