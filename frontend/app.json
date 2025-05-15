@@ -30,11 +30,9 @@
         }
       ]
     ],
-    "experiments": {
+ "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "IDIOMS_BACKEND_URL": "https://1438-45-162-74-17.ngrok-free.app/"
     }
   }
 }
+
