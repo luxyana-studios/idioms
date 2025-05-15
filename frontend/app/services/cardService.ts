@@ -35,6 +35,8 @@ export const fetchCards = async (
     url.searchParams.append('search', search.trim());
   }
 
+  console.log('API URL:', url.toString());
+
   const response = await fetch(url.toString(), {
     headers: {
       Accept: 'application/json',
