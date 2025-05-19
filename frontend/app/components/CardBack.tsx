@@ -26,13 +26,15 @@ export const CardBack = ({
   CARD_WIDTH,
   CARD_HEIGHT,
 }: CardBackProps) => {
+  const [showAllExamples, setShowAllExamples] = React.useState(false);
+
   return (
     <Animated.View
       style={[
         styles.cardContainer,
         {
           width: CARD_WIDTH,
-          height: CARD_HEIGHT,
+          minHeight: CARD_HEIGHT,
           backgroundColor: '#1c1a2d',
         },
         backAnimatedStyle,
@@ -43,9 +45,15 @@ export const CardBack = ({
         showsVerticalScrollIndicator={false}
       >
         <Animated.View style={styles.divider} />
-        <MeaningSection meaning={item.meaning} />
-        <ExplanationSection explanation={item.explanation} />
-        <ExamplesSection examples={item.examples} />
+        {!showAllExamples && <MeaningSection meaning={item.meaning} />}
+        {!showAllExamples && (
+          <ExplanationSection explanation={item.explanation} />
+        )}
+        <ExamplesSection
+          examples={item.examples}
+          showAll={showAllExamples}
+          setShowAll={setShowAllExamples}
+        />
       </ScrollView>
 
       <TouchableOpacity
@@ -77,21 +85,53 @@ const ExplanationSection = ({ explanation }: { explanation: string }) => (
   </>
 );
 
-const ExamplesSection = ({ examples }: { examples: string[] }) => (
-  <>
-    <Text style={styles.sectionTitle}>Examples</Text>
-    {examples.map((example, index) => (
-      <Text key={index} style={styles.exampleItem}>
-        • {example}
-      </Text>
-    ))}
-  </>
-);
+interface ExamplesSectionProps {
+  examples: string[];
+  showAll: boolean;
+  setShowAll: (show: boolean) => void;
+}
+
+const ExamplesSection = ({
+  examples,
+  showAll,
+  setShowAll,
+}: ExamplesSectionProps) => {
+  return (
+    <>
+      <Text style={styles.sectionTitle}>Examples</Text>
+      {(showAll ? examples : examples.slice(0, 1)).map((example, index) => (
+        <Text key={index} style={styles.exampleItem}>
+          • {example}
+        </Text>
+      ))}
+
+      {examples.length > 1 && (
+        <TouchableOpacity
+          onPress={() => setShowAll(!showAll)}
+          style={styles.showMoreButton}
+          activeOpacity={0.7}
+        >
+          <Animated.View style={styles.buttonInner}>
+            <Text style={styles.buttonText}>
+              {showAll ? 'Show Less' : `Show All (${examples.length})`}
+            </Text>
+            <Ionicons
+              name={showAll ? 'chevron-up' : 'chevron-down'}
+              size={16}
+              color="#FFD700"
+              style={styles.icon}
+            />
+          </Animated.View>
+        </TouchableOpacity>
+      )}
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 20,
-    padding: 24,
+    padding: 14,
     justifyContent: 'flex-start',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -101,33 +141,33 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   scrollContent: {
-    paddingBottom: 60,
+    paddingBottom: 36,
   },
   divider: {
     height: 2,
     width: '40%',
     backgroundColor: 'rgba(255, 215, 0, 0.3)',
-    marginBottom: 20,
+    marginBottom: 8,
     borderRadius: 2,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: '#FFD700',
-    marginTop: 12,
-    marginBottom: 8,
+    marginTop: 8,
+    marginBottom: 6,
     letterSpacing: 0.3,
   },
   sectionContent: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 22,
     color: 'rgba(220, 220, 220, 0.9)',
-    marginBottom: 20,
+    marginBottom: 16,
     paddingLeft: 4,
   },
   favoriteButton: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 34,
     right: 24,
     backgroundColor: 'rgba(28, 26, 45, 0.7)',
     borderRadius: 30,
@@ -142,13 +182,37 @@ const styles = StyleSheet.create({
   },
   exampleItem: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 22,
     color: 'rgba(220, 220, 220, 0.9)',
-    marginBottom: 8,
-    paddingLeft: 4,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FFD700',
   },
-  bulletPoint: {
+  showMoreButton: {
+    backgroundColor: 'rgba(255, 215, 0, 0.15)',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.3)',
+  },
+  buttonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
     color: '#FFD700',
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '600',
+    marginRight: 6,
+  },
+  icon: {
+    opacity: 0.8,
   },
 });
