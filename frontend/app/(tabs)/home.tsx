@@ -112,8 +112,8 @@ const Index = () => {
           paddingVertical: 20,
           paddingHorizontal: 16,
         }}
-        onMomentumScrollEnd={handleScroll}
-        scrollEventThrottle={400}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

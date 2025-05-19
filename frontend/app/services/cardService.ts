@@ -31,11 +31,9 @@ export const fetchCards = async (
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
 
-  if (search && search.trim().length > 0) {
+  if (search && search.trim().length > 2) {
     url.searchParams.append('search', search.trim());
   }
-
-  console.log('API URL:', url.toString());
 
   const response = await fetch(url.toString(), {
     headers: {
