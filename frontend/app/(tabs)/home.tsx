@@ -52,11 +52,7 @@ const Index = () => {
   }, [page, isLoading, searchQuery]);
 
   const handleSearch = (query: string) => {
-    if (query.length >= 2) {
-      loadCards(query);
-    } else if (query.length === 0) {
-      loadCards();
-    }
+    loadCards(query);
   };
 
   const handleScroll = useCallback(

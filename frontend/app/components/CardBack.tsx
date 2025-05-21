@@ -10,6 +10,7 @@ import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
+import Collapsible from 'react-native-collapsible';
 
 interface CardBackProps {
   item: CardData;
@@ -44,10 +45,12 @@ export const CardBack = ({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Animated.View style={styles.divider} />
-        {!showAllExamples && <MeaningSection meaning={item.meaning} />}
         {!showAllExamples && (
-          <ExplanationSection explanation={item.explanation} />
+          <>
+            <Animated.View style={styles.divider} />
+            <MeaningSection meaning={item.meaning} />
+            <ExplanationSection explanation={item.explanation} />
+          </>
         )}
         <ExamplesSection
           examples={item.examples}
@@ -88,7 +91,7 @@ const ExplanationSection = ({ explanation }: { explanation: string }) => (
 interface ExamplesSectionProps {
   examples: string[];
   showAll: boolean;
-  setShowAll: (show: boolean) => void;
+  setShowAll: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ExamplesSection = ({
@@ -99,29 +102,23 @@ const ExamplesSection = ({
   return (
     <>
       <Text style={styles.sectionTitle}>Examples</Text>
-      {(showAll ? examples : examples.slice(0, 1)).map((example, index) => (
-        <Text key={index} style={styles.exampleItem}>
-          • {example}
-        </Text>
-      ))}
-
+      <Text style={styles.exampleItem}>• {examples[0]}</Text>
+      <Collapsible collapsed={!showAll} duration={300}>
+        {examples.slice(1).map((example, idx) => (
+          <Text key={idx + 1} style={styles.exampleItem}>
+            • {example}
+          </Text>
+        ))}
+      </Collapsible>
       {examples.length > 1 && (
         <TouchableOpacity
           onPress={() => setShowAll(!showAll)}
           style={styles.showMoreButton}
           activeOpacity={0.7}
         >
-          <Animated.View style={styles.buttonInner}>
-            <Text style={styles.buttonText}>
-              {showAll ? 'Show Less' : `Show All (${examples.length})`}
-            </Text>
-            <Ionicons
-              name={showAll ? 'chevron-up' : 'chevron-down'}
-              size={16}
-              color="#FFD700"
-              style={styles.icon}
-            />
-          </Animated.View>
+          <Text style={styles.buttonText}>
+            {showAll ? 'Show Less' : `Show All (${examples.length})`}
+          </Text>
         </TouchableOpacity>
       )}
     </>

@@ -31,7 +31,7 @@ export const fetchCards = async (
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
 
-  if (search && search.trim().length > 2) {
+  if (search) {
     url.searchParams.append('search', search.trim());
   }
 
