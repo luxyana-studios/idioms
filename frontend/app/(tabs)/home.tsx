@@ -16,14 +16,16 @@ const Index = () => {
   const [cards, setCards] = useState<CardData[]>([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const SCROLL_PADDING = 20;
 
   const loadCards = async (search?: string) => {
     try {
       setIsLoading(true);
-      const Cards = await fetchCards(1, CARDS_PER_PAGE, search);
-      setCards(Cards);
+      const newCards = await fetchCards(1, CARDS_PER_PAGE, search);
+      setCards(newCards);
       setPage(1);
+      setSearchQuery(search || '');
     } catch (error) {
       console.error('Error loading initial cards:', error);
     } finally {
@@ -36,7 +38,7 @@ const Index = () => {
 
     try {
       setIsLoading(true);
-      const newCards = await fetchCards(page + 1, CARDS_PER_PAGE);
+      const newCards = await fetchCards(page + 1, CARDS_PER_PAGE, searchQuery);
       if (newCards.length === 0) {
         return;
       }
@@ -47,14 +49,10 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, isLoading]);
+  }, [page, isLoading, searchQuery]);
 
   const handleSearch = (query: string) => {
-    if (query.length >= 2) {
-      loadCards(query);
-    } else {
-      loadCards();
-    }
+    loadCards(query);
   };
 
   const handleScroll = useCallback(
@@ -111,7 +109,7 @@ const Index = () => {
           paddingHorizontal: 16,
         }}
         onScroll={handleScroll}
-        scrollEventThrottle={400}
+        scrollEventThrottle={16}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
