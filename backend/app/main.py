@@ -20,9 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 def on_startup():
     database.create_db_and_tables()
+
 
 @app.get("/idioms/", response_model=list[IdiomSchema])
 def get_idioms(
@@ -48,6 +50,7 @@ def get_idioms(
             .offset(offset)
             .all()
         ]
+
 
 @app.post("/idioms/")
 def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
