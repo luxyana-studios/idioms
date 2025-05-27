@@ -53,39 +53,59 @@ export const CardBack = ({
       case 'meaning':
         return (
           <View style={styles.contentContainer}>
-            <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
-              Meaning
-            </Text>
-            <Text style={[styles.mainText, { color: colors.text }]}>
-              {item.meaning}
-            </Text>
+            <View style={styles.titleSection}>
+              <Ionicons name="bulb-outline" size={22} color="#FFD700" />
+              <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+                Meaning
+              </Text>
+            </View>
+            <View style={styles.meaningCard}>
+              <Text style={[styles.mainText, { color: colors.text }]}>
+                {item.meaning}
+              </Text>
+            </View>
           </View>
         );
       case 'explanation':
         return (
           <View style={styles.contentContainer}>
-            <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
-              Explanation
-            </Text>
-            <Text style={[styles.mainText, { color: colors.text }]}>
-              {item.explanation}
-            </Text>
+            <View style={styles.titleSection}>
+              <Ionicons name="book-outline" size={22} color="#FFD700" />
+              <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+                Explanation
+              </Text>
+            </View>
+            <View style={styles.explanationCard}>
+              <Text style={[styles.explanationText, { color: colors.text }]}>
+                {item.explanation}
+              </Text>
+            </View>
           </View>
         );
       case 'examples':
         return (
           <View style={styles.examplesContainer}>
-            <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
-              Examples
-            </Text>
+            <View style={styles.titleSection}>
+              <Ionicons name="list-outline" size={22} color="#FFD700" />
+              <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+                Examples
+              </Text>
+            </View>
             <View style={styles.examplesContent}>
               {item.examples.map((example, index) => (
-                <Text
-                  key={index}
-                  style={[styles.exampleItem, { color: colors.textSecondary }]}
-                >
-                  • {example}
-                </Text>
+                <View key={index} style={styles.exampleRow}>
+                  <View style={styles.exampleBullet}>
+                    <Text style={styles.bulletText}>{index + 1}</Text>
+                  </View>
+                  <Text
+                    style={[
+                      styles.exampleItem,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    {example}
+                  </Text>
+                </View>
               ))}
             </View>
           </View>
@@ -187,29 +207,59 @@ const styles = StyleSheet.create({
     paddingBottom: 90, // Más espacio para los botones de navegación
     maxHeight: '100%',
   },
+  titleSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+    paddingHorizontal: 8,
+  },
   stepTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#FFD700',
-    textAlign: 'center',
-    marginBottom: 16,
     letterSpacing: 0.5,
     flexShrink: 0,
+    marginLeft: 8,
   },
-  mainText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
+  meaningCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  explanationCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  explanationText: {
+    fontSize: 18,
+    fontWeight: '500',
     textAlign: 'center',
-    lineHeight: 26,
+    lineHeight: 24,
     letterSpacing: 0.3,
-    maxWidth: '100%',
-    flexShrink: 1,
-    flex: 1,
+    fontStyle: 'italic',
   },
   examplesContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Cambiar de 'center' a 'flex-start'
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 60, // Espacio para el botón de favorito
@@ -218,18 +268,43 @@ const styles = StyleSheet.create({
   },
   examplesContent: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Cambiar de 'center' a 'flex-start'
     width: '100%',
     maxHeight: '100%',
+    paddingTop: 8, // Añadir padding superior
+  },
+  exampleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 12, // Reducir de 16 a 12
+    width: '100%',
+    paddingHorizontal: 8,
+  },
+  exampleBullet: {
+    width: 24, // Reducir de 32 a 24
+    height: 24, // Reducir de 32 a 24
+    borderRadius: 12, // Ajustar al nuevo tamaño
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12, // Reducir de 16 a 12
+    marginTop: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.4)',
+  },
+  bulletText: {
+    fontSize: 12, // Reducir de 14 a 12
+    fontWeight: '700',
+    color: '#FFD700',
   },
   exampleItem: {
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 15, // Reducir de 16 a 15
+    lineHeight: 20, // Reducir de 22 a 20
     color: 'rgba(220, 220, 220, 0.95)',
     marginBottom: 8,
-    paddingLeft: 8,
+    paddingLeft: 4, // Reducir de 8 a 4
     textAlign: 'left',
-    flexShrink: 1,
+    flex: 1, // Cambiar flexShrink por flex para ocupar más espacio
   },
   favoriteButton: {
     position: 'absolute',
@@ -303,5 +378,13 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
+  },
+  mainText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 26,
+    letterSpacing: 0.3,
+    maxWidth: '100%',
   },
 });
