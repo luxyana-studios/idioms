@@ -38,29 +38,41 @@ export const CardBack = ({
     }
   };
 
+  const handleBackPress = () => {
+    if (currentStep === 'examples') {
+      setCurrentStep('explanation');
+    } else if (currentStep === 'explanation') {
+      setCurrentStep('meaning');
+    }
+  };
+
   const renderContent = () => {
     switch (currentStep) {
       case 'meaning':
         return (
-          <View style={styles.centeredContent}>
+          <View style={styles.contentContainer}>
+            <Text style={styles.stepTitle}>Meaning</Text>
             <Text style={styles.mainText}>{item.meaning}</Text>
           </View>
         );
       case 'explanation':
         return (
-          <View style={styles.centeredContent}>
+          <View style={styles.contentContainer}>
+            <Text style={styles.stepTitle}>Explanation</Text>
             <Text style={styles.mainText}>{item.explanation}</Text>
           </View>
         );
       case 'examples':
         return (
           <View style={styles.examplesContainer}>
-            <Text style={styles.examplesTitle}>Examples</Text>
-            {item.examples.map((example, index) => (
-              <Text key={index} style={styles.exampleItem}>
-                • {example}
-              </Text>
-            ))}
+            <Text style={styles.stepTitle}>Examples</Text>
+            <View style={styles.examplesContent}>
+              {item.examples.map((example, index) => (
+                <Text key={index} style={styles.exampleItem}>
+                  • {example}
+                </Text>
+              ))}
+            </View>
           </View>
         );
       default:
@@ -94,14 +106,39 @@ export const CardBack = ({
         />
       </TouchableOpacity>
 
+      {/* Indicadores de pasos */}
+      <View style={styles.stepIndicators}>
+        <View
+          style={[styles.dot, currentStep === 'meaning' && styles.activeDot]}
+        />
+        <View
+          style={[
+            styles.dot,
+            currentStep === 'explanation' && styles.activeDot,
+          ]}
+        />
+        <View
+          style={[styles.dot, currentStep === 'examples' && styles.activeDot]}
+        />
+      </View>
+
       {currentStep !== 'examples' && (
         <TouchableOpacity
           onPress={handleNextPress}
           style={styles.nextButton}
           activeOpacity={0.7}
         >
-          <Text style={styles.nextButtonText}>Next</Text>
-          <Ionicons name="chevron-forward" size={20} color="#FFFFFF" />
+          <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      )}
+
+      {currentStep !== 'meaning' && (
+        <TouchableOpacity
+          onPress={handleBackPress}
+          style={styles.backButton}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       )}
     </Animated.View>
@@ -111,7 +148,7 @@ export const CardBack = ({
 const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 20,
-    padding: 24,
+    padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -122,41 +159,58 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
   },
-  centeredContent: {
+  contentContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
+    paddingTop: 60, // Espacio para el botón de favorito
+    paddingBottom: 90, // Más espacio para los botones de navegación
+    maxHeight: '100%',
+  },
+  stepTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFD700',
+    textAlign: 'center',
+    marginBottom: 16,
+    letterSpacing: 0.5,
+    flexShrink: 0,
   },
   mainText: {
-    fontSize: 28,
-    fontWeight: '800',
+    fontSize: 20,
+    fontWeight: '600',
     color: '#FFFFFF',
     textAlign: 'center',
-    lineHeight: 36,
-    letterSpacing: 0.5,
+    lineHeight: 26,
+    letterSpacing: 0.3,
+    maxWidth: '100%',
+    flexShrink: 1,
+    flex: 1,
   },
   examplesContainer: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 80,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 60, // Espacio para el botón de favorito
+    paddingBottom: 90, // Más espacio para los botones de navegación
+    maxHeight: '100%',
   },
-  examplesTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#FFD700',
-    textAlign: 'center',
-    marginBottom: 24,
-    letterSpacing: 0.3,
+  examplesContent: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
+    maxHeight: '100%',
   },
   exampleItem: {
-    fontSize: 18,
-    lineHeight: 28,
+    fontSize: 16,
+    lineHeight: 22,
     color: 'rgba(220, 220, 220, 0.95)',
-    marginBottom: 16,
+    marginBottom: 8,
     paddingLeft: 8,
     textAlign: 'left',
+    flexShrink: 1,
   },
   favoriteButton: {
     position: 'absolute',
@@ -191,10 +245,44 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  nextButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-    marginRight: 6,
+  backButton: {
+    position: 'absolute',
+    bottom: 24,
+    left: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  stepIndicators: {
+    position: 'absolute',
+    bottom: 32,
+    left: '50%',
+    transform: [{ translateX: -10 }], // Más a la derecha y centrado solo para los puntos
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#FFD700',
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
 });
