@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -11,6 +12,7 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
   const searchAnimation = React.useRef(new Animated.Value(0)).current;
+  const { theme, colors, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -26,7 +28,7 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
     if (debouncedInput) {
       onSearch(debouncedInput);
     }
-  }, [debouncedInput]);
+  }, [debouncedInput, onSearch]);
 
   const handleFocus = () => {
     Animated.timing(searchAnimation, {
@@ -53,31 +55,54 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
 
   return (
     <View className="px-6 pt-6 pb-3">
-      <Animated.View
-        style={{
-          transform: [{ scale: searchBarScale }],
-        }}
-        className="flex-row items-center rounded-2xl overflow-hidden border border-gray-100 bg-white/90 shadow-lg"
-      >
-        <View className="pl-4">
-          <Ionicons name="search" size={20} color="#9CA3AF" />
-        </View>
+      <View className="flex-row items-center space-x-4">
+        <Animated.View
+          style={{
+            transform: [{ scale: searchBarScale }],
+            backgroundColor: colors.searchBackground,
+            borderColor: colors.border,
+          }}
+          className="flex-1 flex-row items-center rounded-2xl overflow-hidden border shadow-lg"
+        >
+          <View className="pl-4">
+            <Ionicons name="search" size={20} color={colors.textSecondary} />
+          </View>
 
-        <TextInput
-          className="flex-1 py-4 px-3 text-lg font-medium text-gray-800"
-          placeholder="Search idioms"
-          value={input}
-          onChangeText={setInput}
-          onFocus={handleFocus}
-          placeholderTextColor="#9CA3AF"
-        />
+          <TextInput
+            className="flex-1 py-4 px-3 text-lg font-medium"
+            style={{ color: colors.text }}
+            placeholder="Search idioms"
+            value={input}
+            onChangeText={setInput}
+            onFocus={handleFocus}
+            placeholderTextColor={colors.textSecondary}
+          />
 
-        {input !== '' && (
-          <TouchableOpacity onPress={handleClear} className="pr-5">
-            <Ionicons name="close" size={20} color="#9CA3AF" />
-          </TouchableOpacity>
-        )}
-      </Animated.View>
+          {input !== '' && (
+            <TouchableOpacity onPress={handleClear} className="pr-5">
+              <Ionicons name="close" size={20} color={colors.textSecondary} />
+            </TouchableOpacity>
+          )}
+        </Animated.View>
+
+        {/* Theme Toggle Button */}
+        <TouchableOpacity
+          onPress={toggleTheme}
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            marginLeft: 8,
+          }}
+          className="p-3 rounded-2xl border shadow-lg"
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name={theme === 'light' ? 'moon' : 'sunny'}
+            size={24}
+            color={colors.text}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

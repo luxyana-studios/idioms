@@ -11,12 +11,14 @@ import { CardData } from '../types/card';
 import { fetchCards, CARDS_PER_PAGE } from '../services/cardService';
 import { Card } from '../components/Card';
 import { SearchBar } from '../components/SearchBar';
+import { useTheme } from '../contexts/ThemeContext';
 
 const Index = () => {
   const [cards, setCards] = useState<CardData[]>([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const SCROLL_PADDING = 20;
+  const { colors } = useTheme();
 
   const loadCards = async (search?: string) => {
     try {
@@ -86,21 +88,23 @@ const Index = () => {
 
   const renderLoadingIndicator = () => (
     <View className="py-4">
-      <ActivityIndicator size="large" color="#0000ff" />
+      <ActivityIndicator size="large" color={colors.text} />
     </View>
   );
 
   const renderNoResults = () => (
     <View className="py-10 px-4 items-center">
-      <Text className="text-gray-500 text-lg">No results found</Text>
-      <Text className="text-gray-400 mt-2">
+      <Text style={{ color: colors.textSecondary }} className="text-lg">
+        No results found
+      </Text>
+      <Text style={{ color: colors.textSecondary }} className="mt-2">
         Try with different search terms
       </Text>
     </View>
   );
 
   return (
-    <View className="flex-1 bg-primary">
+    <View style={{ backgroundColor: colors.background }} className="flex-1">
       <SearchBar onSearch={handleSearch} onClear={() => loadCards()} />
 
       <ScrollView

@@ -10,6 +10,7 @@ import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CardBackProps {
   item: CardData;
@@ -29,6 +30,7 @@ export const CardBack = ({
   CARD_HEIGHT,
 }: CardBackProps) => {
   const [currentStep, setCurrentStep] = useState<ContentStep>('meaning');
+  const { colors } = useTheme();
 
   const handleNextPress = () => {
     if (currentStep === 'meaning') {
@@ -51,24 +53,37 @@ export const CardBack = ({
       case 'meaning':
         return (
           <View style={styles.contentContainer}>
-            <Text style={styles.stepTitle}>Meaning</Text>
-            <Text style={styles.mainText}>{item.meaning}</Text>
+            <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+              Meaning
+            </Text>
+            <Text style={[styles.mainText, { color: colors.text }]}>
+              {item.meaning}
+            </Text>
           </View>
         );
       case 'explanation':
         return (
           <View style={styles.contentContainer}>
-            <Text style={styles.stepTitle}>Explanation</Text>
-            <Text style={styles.mainText}>{item.explanation}</Text>
+            <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+              Explanation
+            </Text>
+            <Text style={[styles.mainText, { color: colors.text }]}>
+              {item.explanation}
+            </Text>
           </View>
         );
       case 'examples':
         return (
           <View style={styles.examplesContainer}>
-            <Text style={styles.stepTitle}>Examples</Text>
+            <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+              Examples
+            </Text>
             <View style={styles.examplesContent}>
               {item.examples.map((example, index) => (
-                <Text key={index} style={styles.exampleItem}>
+                <Text
+                  key={index}
+                  style={[styles.exampleItem, { color: colors.textSecondary }]}
+                >
                   • {example}
                 </Text>
               ))}
@@ -87,7 +102,8 @@ export const CardBack = ({
         {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
-          backgroundColor: '#1c1a2d',
+          backgroundColor: colors.cardBackBackground,
+          shadowColor: colors.shadowColor,
         },
         backAnimatedStyle,
       ]}
@@ -96,13 +112,16 @@ export const CardBack = ({
 
       <TouchableOpacity
         onPress={handleFavoritePress}
-        style={styles.favoriteButton}
+        style={[
+          styles.favoriteButton,
+          { backgroundColor: `${colors.cardBackBackground}CC` },
+        ]}
         activeOpacity={0.7}
       >
         <Ionicons
           name={item.isFavorite ? 'star' : 'star-outline'}
           size={26}
-          color={item.isFavorite ? '#FFD700' : 'rgba(255, 255, 255, 0.8)'}
+          color={item.isFavorite ? '#FFD700' : colors.text}
         />
       </TouchableOpacity>
 
@@ -128,7 +147,7 @@ export const CardBack = ({
           style={styles.nextButton}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
+          <Ionicons name="chevron-forward" size={24} color={colors.text} />
         </TouchableOpacity>
       )}
 
@@ -138,7 +157,7 @@ export const CardBack = ({
           style={styles.backButton}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+          <Ionicons name="chevron-back" size={24} color={colors.text} />
         </TouchableOpacity>
       )}
     </Animated.View>
