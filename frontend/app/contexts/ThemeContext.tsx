@@ -17,17 +17,17 @@ interface ThemeColors {
 }
 
 const lightTheme: ThemeColors = {
-  primary: '#f3f4f6',
-  secondary: '#e5e7eb',
-  background: '#ffffff',
-  surface: '#f9fafb',
+  primary: '#e5e7eb',
+  secondary: '#d1d5db',
+  background: '#f8fafc',
+  surface: '#f1f5f9',
   text: '#1f2937',
-  textSecondary: '#6b7280',
-  border: '#d1d5db',
+  textSecondary: '#64748b',
+  border: '#cbd5e1',
   cardBackground: '#ffffff',
-  cardBackBackground: '#f8fafc',
-  searchBackground: 'rgba(255, 255, 255, 0.9)',
-  shadowColor: '#000',
+  cardBackBackground: '#f1f5f9',
+  searchBackground: 'rgba(248, 250, 252, 0.95)',
+  shadowColor: '#64748b',
 };
 
 const darkTheme: ThemeColors = {
