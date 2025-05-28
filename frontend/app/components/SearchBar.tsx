@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
+import { ThemeToggle } from './ThemeToggle';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -12,7 +13,7 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
   const searchAnimation = React.useRef(new Animated.Value(0)).current;
-  const { theme, colors, toggleTheme } = useTheme();
+  const { colors } = useTheme();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -85,23 +86,9 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
           )}
         </Animated.View>
 
-        {/* Theme Toggle Button */}
-        <TouchableOpacity
-          onPress={toggleTheme}
-          style={{
-            backgroundColor: colors.surface,
-            borderColor: colors.border,
-            marginLeft: 8,
-          }}
-          className="p-3 rounded-2xl border shadow-lg"
-          activeOpacity={0.7}
-        >
-          <Ionicons
-            name={theme === 'light' ? 'moon' : 'sunny'}
-            size={24}
-            color={colors.text}
-          />
-        </TouchableOpacity>
+        <View style={{ marginLeft: 8 }}>
+          <ThemeToggle />
+        </View>
       </View>
     </View>
   );
