@@ -27,11 +27,13 @@ def on_startup():
 @app.get("/idioms/", response_model=list[IdiomSchema])
 def get_idioms(
     db: SessionDep,
-    offset: int = 0,
+    page: int = 1,
     limit: Annotated[int, Query(le=50)] = 50,
     search: Annotated[str, Query()] = "",
 ) -> list[IdiomSchema]:
     search = search.strip()
+    offset = (page - 1) * limit
+
     if not search:
         return [
             IdiomSchema.model_validate(idiom)
