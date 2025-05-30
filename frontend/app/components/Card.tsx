@@ -75,6 +75,7 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
             CARD_WIDTH={CARD_WIDTH}
             CARD_HEIGHT={CARD_HEIGHT}
             backAnimatedStyle={backAnimatedStyle}
+            isFlipped={isFlipped}
           />
         </View>
       </TouchableOpacity>
