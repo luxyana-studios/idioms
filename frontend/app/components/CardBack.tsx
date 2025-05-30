@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -6,11 +6,18 @@ import {
   ViewStyle,
   View,
 } from 'react-native';
-import Animated, { AnimatedStyle } from 'react-native-reanimated';
+import Animated, {
+  AnimatedStyle,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withDelay,
+} from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
+import { TypeAnimation } from 'react-native-type-animation';
 
 interface CardBackProps {
   item: CardData;
@@ -18,6 +25,7 @@ interface CardBackProps {
   handleFavoritePress: (e: GestureResponderEvent) => void;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
+  isFlipped: boolean;
 }
 
 type ContentStep = 'meaning' | 'explanation' | 'examples';
@@ -25,41 +33,136 @@ type ContentStep = 'meaning' | 'explanation' | 'examples';
 interface MeaningContentProps {
   meaning: string;
   textColor: string;
+  isFlipped: boolean;
 }
 
-const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => (
-  <View style={styles.contentContainer}>
-    <View style={styles.titleSection}>
-      <Ionicons name="bulb-outline" size={22} color="#FFD700" />
-      <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
+const MeaningContent = ({
+  meaning,
+  textColor,
+  isFlipped,
+}: MeaningContentProps) => {
+  const [showCursor, setShowCursor] = useState(false);
+  const [key, setKey] = useState(0);
+
+  useEffect(() => {
+    if (!isFlipped) {
+      setShowCursor(false);
+      return;
+    }
+
+    setKey((prev) => prev + 1);
+    setShowCursor(true);
+
+    const typingTime = meaning.length * 70 + 500;
+    const blinkTime = 800;
+    const timer = setTimeout(() => {
+      setShowCursor(false);
+    }, typingTime + blinkTime);
+
+    return () => clearTimeout(timer);
+  }, [meaning, isFlipped]);
+
+  return (
+    <View style={styles.contentContainer}>
+      <View style={styles.titleSection}>
+        <Ionicons name="bulb-outline" size={22} color="#FFD700" />
+        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
+      </View>
+      <View style={styles.meaningCard}>
+        <TypeAnimation
+          key={key}
+          sequence={[
+            {
+              text: meaning,
+              typeSpeed: 70,
+              delayBetweenSequence: 100,
+            },
+          ]}
+          style={{
+            ...styles.mainText,
+            color: textColor,
+          }}
+          cursor={showCursor}
+          cursorStyle={{
+            color: textColor,
+            fontSize: 20,
+            fontWeight: 'bold',
+          }}
+          blinkSpeed={400}
+          repeat={1}
+        />
+      </View>
     </View>
-    <View style={styles.meaningCard}>
-      <Text style={[styles.mainText, { color: textColor }]}>{meaning}</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 interface ExplanationContentProps {
   explanation: string;
   textColor: string;
+  isFlipped: boolean;
 }
 
 const ExplanationContent = ({
   explanation,
   textColor,
-}: ExplanationContentProps) => (
-  <View style={styles.contentContainer}>
-    <View style={styles.titleSection}>
-      <Ionicons name="book-outline" size={22} color="#FFD700" />
-      <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Explanation</Text>
+  isFlipped,
+}: ExplanationContentProps) => {
+  const [showCursor, setShowCursor] = useState(false);
+  const [key, setKey] = useState(0);
+
+  useEffect(() => {
+    if (!isFlipped) {
+      setShowCursor(false);
+      return;
+    }
+
+    setKey((prev) => prev + 1);
+    setShowCursor(true);
+
+    const typingTime = explanation.length * 60 + 500;
+    const blinkTime = 800;
+    const timer = setTimeout(() => {
+      setShowCursor(false);
+    }, typingTime + blinkTime);
+
+    return () => clearTimeout(timer);
+  }, [explanation, isFlipped]);
+
+  return (
+    <View style={styles.contentContainer}>
+      <View style={styles.titleSection}>
+        <Ionicons name="book-outline" size={22} color="#FFD700" />
+        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+          Explanation
+        </Text>
+      </View>
+      <View style={styles.explanationCard}>
+        <TypeAnimation
+          key={key}
+          sequence={[
+            {
+              text: explanation,
+              typeSpeed: 60,
+              delayBetweenSequence: 100,
+            },
+          ]}
+          style={{
+            ...styles.explanationText,
+            color: textColor,
+          }}
+          cursor={showCursor}
+          cursorStyle={{
+            color: textColor,
+            fontSize: 20,
+            fontWeight: 'bold',
+          }}
+          blinkSpeed={400}
+          repeat={1}
+        />
+      </View>
     </View>
-    <View style={styles.explanationCard}>
-      <Text style={[styles.explanationText, { color: textColor }]}>
-        {explanation}
-      </Text>
-    </View>
-  </View>
-);
+  );
+};
 
 interface ExamplesContentProps {
   examples: string[];
@@ -69,26 +172,59 @@ interface ExamplesContentProps {
 const ExamplesContent = ({
   examples,
   textSecondaryColor,
-}: ExamplesContentProps) => (
-  <View style={styles.examplesContainer}>
-    <View style={styles.titleSection}>
-      <Ionicons name="list-outline" size={22} color="#FFD700" />
-      <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
+}: ExamplesContentProps) => {
+  const opacity1 = useSharedValue(0);
+  const opacity2 = useSharedValue(0);
+  const opacity3 = useSharedValue(0);
+
+  const animatedStyle1 = useAnimatedStyle(() => ({
+    opacity: opacity1.value,
+    transform: [{ translateY: (1 - opacity1.value) * 20 }],
+  }));
+
+  const animatedStyle2 = useAnimatedStyle(() => ({
+    opacity: opacity2.value,
+    transform: [{ translateY: (1 - opacity2.value) * 20 }],
+  }));
+
+  const animatedStyle3 = useAnimatedStyle(() => ({
+    opacity: opacity3.value,
+    transform: [{ translateY: (1 - opacity3.value) * 20 }],
+  }));
+
+  const animatedStyles = [animatedStyle1, animatedStyle2, animatedStyle3];
+
+  useEffect(() => {
+    [opacity1, opacity2, opacity3].forEach((value, index) => {
+      value.value = 0;
+      value.value = withDelay(index * 400, withTiming(1, { duration: 800 }));
+    });
+  }, [examples, opacity1, opacity2, opacity3]);
+
+  return (
+    <View style={styles.examplesContainer}>
+      <View style={styles.titleSection}>
+        <Ionicons name="list-outline" size={22} color="#FFD700" />
+        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
+      </View>
+      <View style={styles.examplesContent}>
+        {examples.slice(0, 3).map((example, index) => (
+          <Animated.View
+            key={index}
+            style={[styles.exampleRow, animatedStyles[index]]}
+          >
+            <View style={styles.exampleBullet}>
+              <Text style={styles.bulletText}>{index + 1}</Text>
+            </View>
+            <Text style={[styles.exampleItem, { color: textSecondaryColor }]}>
+              {example}
+            </Text>
+          </Animated.View>
+        ))}
+      </View>
     </View>
-    <View style={styles.examplesContent}>
-      {examples.map((example, index) => (
-        <View key={index} style={styles.exampleRow}>
-          <View style={styles.exampleBullet}>
-            <Text style={styles.bulletText}>{index + 1}</Text>
-          </View>
-          <Text style={[styles.exampleItem, { color: textSecondaryColor }]}>
-            {example}
-          </Text>
-        </View>
-      ))}
-    </View>
-  </View>
-);
+  );
+};
 
 interface StepIndicatorsProps {
   currentStep: ContentStep;
@@ -112,6 +248,7 @@ export const CardBack = ({
   backAnimatedStyle,
   CARD_WIDTH,
   CARD_HEIGHT,
+  isFlipped,
 }: CardBackProps) => {
   const [currentStep, setCurrentStep] = useState<ContentStep>('meaning');
   const { colors } = useTheme();
@@ -138,13 +275,18 @@ export const CardBack = ({
     switch (currentStep) {
       case 'meaning':
         return (
-          <MeaningContent meaning={item.meaning} textColor={colors.text} />
+          <MeaningContent
+            meaning={item.meaning}
+            textColor={colors.text}
+            isFlipped={isFlipped}
+          />
         );
       case 'explanation':
         return (
           <ExplanationContent
             explanation={item.explanation}
             textColor={colors.text}
+            isFlipped={isFlipped}
           />
         );
       case 'examples':
@@ -418,4 +560,3 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
 });
-
