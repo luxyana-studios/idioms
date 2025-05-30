@@ -4,6 +4,7 @@ import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { ViewStyle, GestureResponderEvent } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CardFrontProps {
   item: CardData;
@@ -20,19 +21,21 @@ const CardFront: React.FC<CardFrontProps> = ({
   CARD_WIDTH,
   CARD_HEIGHT,
 }) => {
+  const { colors } = useTheme();
+
   return (
     <Animated.View
       style={[
         {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
-          backgroundColor: '#2c284d',
+          backgroundColor: colors.cardBackground,
           borderRadius: 20,
           padding: 24,
           justifyContent: 'center',
           alignItems: 'center',
           position: 'absolute',
-          shadowColor: '#000',
+          shadowColor: colors.shadowColor,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.2,
           shadowRadius: 6,
@@ -41,7 +44,10 @@ const CardFront: React.FC<CardFrontProps> = ({
         frontAnimatedStyle,
       ]}
     >
-      <Text className="text-3xl font-extrabold text-white text-center mb-3">
+      <Text
+        style={{ color: colors.text }}
+        className="text-3xl font-extrabold text-center mb-3"
+      >
         {item.text}
       </Text>
 
@@ -59,7 +65,7 @@ const CardFront: React.FC<CardFrontProps> = ({
         <Ionicons
           name={item.isFavorite ? 'star' : 'star-outline'}
           size={28}
-          color={item.isFavorite ? '#FFD700' : '#FFFFFF'}
+          color={item.isFavorite ? '#FFD700' : colors.text}
         />
       </TouchableOpacity>
     </Animated.View>
