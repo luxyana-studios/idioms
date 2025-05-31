@@ -14,15 +14,17 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 def on_startup():
     database.create_db_and_tables()
+
 
 @app.get("/idioms/", response_model=list[IdiomSchema])
 def get_idioms(
@@ -48,6 +50,7 @@ def get_idioms(
             .offset(offset)
             .all()
         ]
+
 
 @app.post("/idioms/")
 def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:

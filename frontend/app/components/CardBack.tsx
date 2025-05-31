@@ -418,4 +418,3 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
 });
-
