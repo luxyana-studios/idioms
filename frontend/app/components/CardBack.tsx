@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -19,7 +19,6 @@ interface CardBackProps {
   handleFavoritePress: (e: GestureResponderEvent) => void;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
-  isFlipped: boolean;
 }
 
 type ContentStep = 'meaning' | 'explanation' | 'examples';
@@ -27,23 +26,10 @@ type ContentStep = 'meaning' | 'explanation' | 'examples';
 interface MeaningContentProps {
   meaning: string;
   textColor: string;
-  isFlipped: boolean;
 }
 
-const MeaningContent = ({
-  meaning,
-  textColor,
-  isFlipped,
-}: MeaningContentProps) => {
+const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
   const [showCursor, setShowCursor] = useState(false);
-
-  useEffect(() => {
-    if (isFlipped) {
-      setShowCursor(true);
-    } else {
-      setShowCursor(false);
-    }
-  }, [isFlipped]);
 
   return (
     <View style={styles.contentContainer}>
@@ -53,7 +39,6 @@ const MeaningContent = ({
       </View>
       <View style={styles.meaningCard}>
         <TypeAnimation
-          key={isFlipped ? 1 : 0}
           sequence={[
             {
               text: meaning,
@@ -87,23 +72,13 @@ const MeaningContent = ({
 interface ExplanationContentProps {
   explanation: string;
   textColor: string;
-  isFlipped: boolean;
 }
 
 const ExplanationContent = ({
   explanation,
   textColor,
-  isFlipped,
 }: ExplanationContentProps) => {
   const [showCursor, setShowCursor] = useState(false);
-
-  useEffect(() => {
-    if (isFlipped) {
-      setShowCursor(true);
-    } else {
-      setShowCursor(false);
-    }
-  }, [isFlipped]);
 
   return (
     <View style={styles.contentContainer}>
@@ -115,7 +90,6 @@ const ExplanationContent = ({
       </View>
       <View style={styles.explanationCard}>
         <TypeAnimation
-          key={isFlipped ? 1 : 0}
           sequence={[
             {
               text: explanation,
@@ -149,25 +123,14 @@ const ExplanationContent = ({
 interface ExamplesContentProps {
   examples: string[];
   textSecondaryColor: string;
-  isFlipped: boolean;
 }
 
 const ExamplesContent = ({
   examples,
   textSecondaryColor,
-  isFlipped,
 }: ExamplesContentProps) => {
   const [showCursor, setShowCursor] = useState(false);
 
-  useEffect(() => {
-    if (isFlipped) {
-      setShowCursor(true);
-    } else {
-      setShowCursor(false);
-    }
-  }, [isFlipped]);
-
-  // Create the examples text as a single string for TypeAnimation
   const examplesText = examples
     .slice(0, 3)
     .map((example, index) => `${index + 1}. ${example}`)
@@ -181,7 +144,6 @@ const ExamplesContent = ({
       </View>
       <View style={styles.examplesCard}>
         <TypeAnimation
-          key={isFlipped ? 1 : 0}
           sequence={[
             {
               text: examplesText,
@@ -234,7 +196,6 @@ export const CardBack = ({
   backAnimatedStyle,
   CARD_WIDTH,
   CARD_HEIGHT,
-  isFlipped,
 }: CardBackProps) => {
   const [currentStep, setCurrentStep] = useState<ContentStep>('meaning');
   const { colors } = useTheme();
@@ -261,18 +222,13 @@ export const CardBack = ({
     switch (currentStep) {
       case 'meaning':
         return (
-          <MeaningContent
-            meaning={item.meaning}
-            textColor={colors.text}
-            isFlipped={isFlipped}
-          />
+          <MeaningContent meaning={item.meaning} textColor={colors.text} />
         );
       case 'explanation':
         return (
           <ExplanationContent
             explanation={item.explanation}
             textColor={colors.text}
-            isFlipped={isFlipped}
           />
         );
       case 'examples':
@@ -280,7 +236,6 @@ export const CardBack = ({
           <ExamplesContent
             examples={item.examples}
             textSecondaryColor={colors.textSecondary}
-            isFlipped={isFlipped}
           />
         );
       default:
