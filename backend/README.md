@@ -41,10 +41,12 @@ This will make sure that you are only loading the contents of your backup file.
 TODOs:
 
 - [ ] Set up alembic for database migrations.
-- [ ] Enrich data with `frequency` and `picturesque` ratings.
-- [ ] Enrich data with `tags` and `smileys`.
+- [x] Enrich data with `frequency` and `picturesque` ratings.
+- [x] Enrich data with `tags` and `smileys`.
+- [ ] Add patch endpoints to store favorites, upvotes, and downvotes.
+- [ ] Enhance get endpoints to filter by tags, smileys, and frequency.
+- [ ] Set up other languages.
 - [ ] Add user entity to store likes and settings.
-- [ ] Consider setting up other languages.
 
 ```
 
