@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     width: '100%',
-    flex: 1, // Hace que el contenedor use el espacio disponible
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -392,9 +392,9 @@ const styles = StyleSheet.create({
   },
   explanationText: {
     fontSize: 18,
-    fontWeight: '600', // Igual que mainText
+    fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 26, // Igual que mainText
+    lineHeight: 26,
     letterSpacing: 0.3,
     flexWrap: 'wrap',
   },
