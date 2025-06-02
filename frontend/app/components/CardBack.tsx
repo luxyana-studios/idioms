@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
+import { TypeAnimation } from 'react-native-type-animation';
 
 interface CardBackProps {
   item: CardData;
@@ -27,17 +28,54 @@ interface MeaningContentProps {
   textColor: string;
 }
 
-const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => (
-  <View style={styles.contentContainer}>
-    <View style={styles.titleSection}>
-      <Ionicons name="bulb-outline" size={22} color="#FFD700" />
-      <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
+const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
+  const [showCursor, setShowCursor] = useState(true);
+
+  return (
+    <View style={styles.contentContainer}>
+      <View style={styles.titleSection}>
+        <Ionicons name="bulb-outline" size={22} color="#FFD700" />
+        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
+      </View>
+      <View style={styles.meaningCard}>
+        <TypeAnimation
+          sequence={[
+            {
+              text: '',
+              typeSpeed: 60,
+              delayBetweenSequence: 500,
+            },
+            {
+              action: () => setShowCursor(true),
+            },
+            {
+              text: meaning,
+              typeSpeed: 70,
+              delayBetweenSequence: 100,
+            },
+            {
+              action: () => {
+                setTimeout(() => setShowCursor(false), 800);
+              },
+            },
+          ]}
+          style={{
+            ...styles.mainText,
+            color: textColor,
+          }}
+          cursor={showCursor}
+          cursorStyle={{
+            color: textColor,
+            fontSize: 20,
+            fontWeight: 'bold',
+          }}
+          blinkSpeed={400}
+          repeat={1}
+        />
+      </View>
     </View>
-    <View style={styles.meaningCard}>
-      <Text style={[styles.mainText, { color: textColor }]}>{meaning}</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 interface ExplanationContentProps {
   explanation: string;
@@ -47,19 +85,56 @@ interface ExplanationContentProps {
 const ExplanationContent = ({
   explanation,
   textColor,
-}: ExplanationContentProps) => (
-  <View style={styles.contentContainer}>
-    <View style={styles.titleSection}>
-      <Ionicons name="book-outline" size={22} color="#FFD700" />
-      <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Explanation</Text>
+}: ExplanationContentProps) => {
+  const [showCursor, setShowCursor] = useState(true);
+
+  return (
+    <View style={styles.contentContainer}>
+      <View style={styles.titleSection}>
+        <Ionicons name="book-outline" size={22} color="#FFD700" />
+        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+          Explanation
+        </Text>
+      </View>
+      <View style={styles.explanationCard}>
+        <TypeAnimation
+          sequence={[
+            {
+              text: '',
+              typeSpeed: 50,
+              delayBetweenSequence: 300,
+            },
+            {
+              action: () => setShowCursor(true),
+            },
+            {
+              text: explanation,
+              typeSpeed: 60,
+              delayBetweenSequence: 100,
+            },
+            {
+              action: () => {
+                setTimeout(() => setShowCursor(false), 800);
+              },
+            },
+          ]}
+          style={{
+            ...styles.explanationText,
+            color: textColor,
+          }}
+          cursor={showCursor}
+          cursorStyle={{
+            color: textColor,
+            fontSize: 20,
+            fontWeight: 'bold',
+          }}
+          blinkSpeed={400}
+          repeat={1}
+        />
+      </View>
     </View>
-    <View style={styles.explanationCard}>
-      <Text style={[styles.explanationText, { color: textColor }]}>
-        {explanation}
-      </Text>
-    </View>
-  </View>
-);
+  );
+};
 
 interface ExamplesContentProps {
   examples: string[];
@@ -69,26 +144,61 @@ interface ExamplesContentProps {
 const ExamplesContent = ({
   examples,
   textSecondaryColor,
-}: ExamplesContentProps) => (
-  <View style={styles.examplesContainer}>
-    <View style={styles.titleSection}>
-      <Ionicons name="list-outline" size={22} color="#FFD700" />
-      <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
+}: ExamplesContentProps) => {
+  const [showCursor, setShowCursor] = useState(true);
+
+  const examplesText = examples
+    .slice(0, 3)
+    .map((example, index) => `${index + 1}. ${example}`)
+    .join('\n\n');
+
+  return (
+    <View style={styles.examplesContainer}>
+      <View style={styles.titleSection}>
+        <Ionicons name="list-outline" size={22} color="#FFD700" />
+        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
+      </View>
+      <View style={styles.examplesCard}>
+        <TypeAnimation
+          sequence={[
+            {
+              text: '',
+              typeSpeed: 40,
+              delayBetweenSequence: 300,
+            },
+            {
+              action: () => setShowCursor(true),
+            },
+            {
+              text: examplesText,
+              typeSpeed: 50,
+              delayBetweenSequence: 100,
+            },
+            {
+              action: () => {
+                setTimeout(() => setShowCursor(false), 800);
+              },
+            },
+          ]}
+          style={{
+            ...styles.examplesText,
+            color: textSecondaryColor,
+            flexWrap: 'wrap',
+            textAlign: 'left',
+          }}
+          cursor={showCursor}
+          cursorStyle={{
+            color: textSecondaryColor,
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}
+          blinkSpeed={400}
+          repeat={1}
+        />
+      </View>
     </View>
-    <View style={styles.examplesContent}>
-      {examples.map((example, index) => (
-        <View key={index} style={styles.exampleRow}>
-          <View style={styles.exampleBullet}>
-            <Text style={styles.bulletText}>{index + 1}</Text>
-          </View>
-          <Text style={[styles.exampleItem, { color: textSecondaryColor }]}>
-            {example}
-          </Text>
-        </View>
-      ))}
-    </View>
-  </View>
-);
+  );
+};
 
 interface StepIndicatorsProps {
   currentStep: ContentStep;
@@ -217,7 +327,7 @@ export const CardBack = ({
 const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 20,
-    padding: 20,
+    padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -226,7 +336,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 8,
     overflow: 'hidden',
-    position: 'relative',
+    position: 'absolute',
   },
   contentContainer: {
     flex: 1,
@@ -270,6 +380,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     width: '100%',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -281,11 +392,11 @@ const styles = StyleSheet.create({
   },
   explanationText: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 26,
     letterSpacing: 0.3,
-    fontStyle: 'italic',
+    flexWrap: 'wrap',
   },
   examplesContainer: {
     flex: 1,
@@ -296,45 +407,20 @@ const styles = StyleSheet.create({
     paddingBottom: 90,
     maxHeight: '100%',
   },
-  examplesContent: {
+  examplesCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
     flex: 1,
-    justifyContent: 'flex-start',
-    width: '100%',
-    maxHeight: '100%',
-    paddingTop: 8,
-  },
-  exampleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-    width: '100%',
-    paddingHorizontal: 8,
-  },
-  exampleBullet: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 215, 0, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    marginTop: 2,
     borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.4)',
-  },
-  bulletText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFD700',
-  },
-  exampleItem: {
-    fontSize: 15,
-    lineHeight: 20,
-    color: 'rgba(220, 220, 220, 0.95)',
-    marginBottom: 8,
-    paddingLeft: 4,
-    textAlign: 'left',
-    flex: 1,
+    borderColor: 'rgba(255, 215, 0, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    overflow: 'hidden',
+    justifyContent: 'center',
   },
   favoriteButton: {
     position: 'absolute',
@@ -416,5 +502,12 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     letterSpacing: 0.3,
     maxWidth: '100%',
+  },
+  examplesText: {
+    fontSize: 15,
+    lineHeight: 20,
+    textAlign: 'left',
+    fontWeight: '400',
+    flexWrap: 'wrap',
   },
 });
