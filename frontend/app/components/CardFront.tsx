@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { ViewStyle, GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
+import SmileyDisplay from './SmileyDisplay';
 
 interface CardFrontProps {
   item: CardData;
@@ -44,12 +45,16 @@ const CardFront: React.FC<CardFrontProps> = ({
         frontAnimatedStyle,
       ]}
     >
-      <Text
-        style={{ color: colors.text }}
-        className="text-3xl font-extrabold text-center mb-3"
-      >
-        {item.text}
-      </Text>
+      <View className="flex-1 justify-center items-center w-full">
+        <Text
+          style={{ color: colors.text }}
+          className="text-3xl font-extrabold text-center mb-6"
+        >
+          {item.text}
+        </Text>
+
+        <SmileyDisplay smileys={item.depiction || []} />
+      </View>
 
       <TouchableOpacity
         onPress={handleFavoritePress}

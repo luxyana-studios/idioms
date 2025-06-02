@@ -4,6 +4,7 @@ export interface CardData {
   meaning: string;
   explanation: string;
   examples: string[];
+  depiction?: string[];
   isFavorite?: boolean;
 }
 
