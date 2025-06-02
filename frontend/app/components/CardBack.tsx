@@ -29,7 +29,7 @@ interface MeaningContentProps {
 }
 
 const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
-  const [showCursor, setShowCursor] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
 
   return (
     <View style={styles.contentContainer}>
@@ -40,6 +40,14 @@ const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
       <View style={styles.meaningCard}>
         <TypeAnimation
           sequence={[
+            {
+              text: '',
+              typeSpeed: 60,
+              delayBetweenSequence: 500,
+            },
+            {
+              action: () => setShowCursor(true),
+            },
             {
               text: meaning,
               typeSpeed: 70,
@@ -78,7 +86,7 @@ const ExplanationContent = ({
   explanation,
   textColor,
 }: ExplanationContentProps) => {
-  const [showCursor, setShowCursor] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
 
   return (
     <View style={styles.contentContainer}>
@@ -91,6 +99,14 @@ const ExplanationContent = ({
       <View style={styles.explanationCard}>
         <TypeAnimation
           sequence={[
+            {
+              text: '',
+              typeSpeed: 50,
+              delayBetweenSequence: 300,
+            },
+            {
+              action: () => setShowCursor(true),
+            },
             {
               text: explanation,
               typeSpeed: 60,
@@ -129,7 +145,7 @@ const ExamplesContent = ({
   examples,
   textSecondaryColor,
 }: ExamplesContentProps) => {
-  const [showCursor, setShowCursor] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
 
   const examplesText = examples
     .slice(0, 3)
@@ -146,6 +162,14 @@ const ExamplesContent = ({
         <TypeAnimation
           sequence={[
             {
+              text: '',
+              typeSpeed: 40,
+              delayBetweenSequence: 300,
+            },
+            {
+              action: () => setShowCursor(true),
+            },
+            {
               text: examplesText,
               typeSpeed: 50,
               delayBetweenSequence: 100,
@@ -159,6 +183,8 @@ const ExamplesContent = ({
           style={{
             ...styles.examplesText,
             color: textSecondaryColor,
+            flexWrap: 'wrap',
+            textAlign: 'left',
           }}
           cursor={showCursor}
           cursorStyle={{
@@ -301,7 +327,7 @@ export const CardBack = ({
 const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 20,
-    padding: 20,
+    padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -310,7 +336,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 8,
     overflow: 'hidden',
-    position: 'relative',
+    position: 'absolute',
   },
   contentContainer: {
     flex: 1,
@@ -354,6 +380,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     width: '100%',
+    flex: 1, // Hace que el contenedor use el espacio disponible
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -365,11 +392,11 @@ const styles = StyleSheet.create({
   },
   explanationText: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: '600', // Igual que mainText
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 26, // Igual que mainText
     letterSpacing: 0.3,
-    fontStyle: 'italic',
+    flexWrap: 'wrap',
   },
   examplesContainer: {
     flex: 1,
@@ -385,7 +412,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     width: '100%',
-    height: 280,
+    flex: 1,
     borderWidth: 1,
     borderColor: 'rgba(255, 215, 0, 0.2)',
     shadowColor: '#000',
@@ -393,6 +420,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     overflow: 'hidden',
+    justifyContent: 'center',
   },
   favoriteButton: {
     position: 'absolute',
@@ -476,9 +504,10 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   examplesText: {
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 20,
     textAlign: 'left',
     fontWeight: '400',
+    flexWrap: 'wrap',
   },
 });

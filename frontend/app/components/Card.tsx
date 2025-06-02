@@ -61,7 +61,14 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
   return (
     <View className="m-4">
       <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
-        <View>
+        <View
+          style={{
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           {!isFlipped ? (
             <CardFront
               item={item}
