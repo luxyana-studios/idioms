@@ -13,7 +13,7 @@ import { Card } from '../components/Card';
 import { SearchBar } from '../components/SearchBar';
 import { useTheme } from '../contexts/ThemeContext';
 
-const Index = () => {
+const Home = () => {
   const [cards, setCards] = useState<CardData[]>([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -133,4 +133,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Home;

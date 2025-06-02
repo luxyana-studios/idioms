@@ -6,13 +6,7 @@ import {
   ViewStyle,
   View,
 } from 'react-native';
-import Animated, {
-  AnimatedStyle,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withDelay,
-} from 'react-native-reanimated';
+import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
@@ -42,25 +36,14 @@ const MeaningContent = ({
   isFlipped,
 }: MeaningContentProps) => {
   const [showCursor, setShowCursor] = useState(false);
-  const [key, setKey] = useState(0);
 
   useEffect(() => {
-    if (!isFlipped) {
+    if (isFlipped) {
+      setShowCursor(true);
+    } else {
       setShowCursor(false);
-      return;
     }
-
-    setKey((prev) => prev + 1);
-    setShowCursor(true);
-
-    const typingTime = meaning.length * 70 + 500;
-    const blinkTime = 800;
-    const timer = setTimeout(() => {
-      setShowCursor(false);
-    }, typingTime + blinkTime);
-
-    return () => clearTimeout(timer);
-  }, [meaning, isFlipped]);
+  }, [isFlipped]);
 
   return (
     <View style={styles.contentContainer}>
@@ -70,12 +53,17 @@ const MeaningContent = ({
       </View>
       <View style={styles.meaningCard}>
         <TypeAnimation
-          key={key}
+          key={isFlipped ? 1 : 0}
           sequence={[
             {
               text: meaning,
               typeSpeed: 70,
               delayBetweenSequence: 100,
+            },
+            {
+              action: () => {
+                setTimeout(() => setShowCursor(false), 800);
+              },
             },
           ]}
           style={{
@@ -108,25 +96,14 @@ const ExplanationContent = ({
   isFlipped,
 }: ExplanationContentProps) => {
   const [showCursor, setShowCursor] = useState(false);
-  const [key, setKey] = useState(0);
 
   useEffect(() => {
-    if (!isFlipped) {
+    if (isFlipped) {
+      setShowCursor(true);
+    } else {
       setShowCursor(false);
-      return;
     }
-
-    setKey((prev) => prev + 1);
-    setShowCursor(true);
-
-    const typingTime = explanation.length * 60 + 500;
-    const blinkTime = 800;
-    const timer = setTimeout(() => {
-      setShowCursor(false);
-    }, typingTime + blinkTime);
-
-    return () => clearTimeout(timer);
-  }, [explanation, isFlipped]);
+  }, [isFlipped]);
 
   return (
     <View style={styles.contentContainer}>
@@ -138,12 +115,17 @@ const ExplanationContent = ({
       </View>
       <View style={styles.explanationCard}>
         <TypeAnimation
-          key={key}
+          key={isFlipped ? 1 : 0}
           sequence={[
             {
               text: explanation,
               typeSpeed: 60,
               delayBetweenSequence: 100,
+            },
+            {
+              action: () => {
+                setTimeout(() => setShowCursor(false), 800);
+              },
             },
           ]}
           style={{
@@ -167,39 +149,29 @@ const ExplanationContent = ({
 interface ExamplesContentProps {
   examples: string[];
   textSecondaryColor: string;
+  isFlipped: boolean;
 }
 
 const ExamplesContent = ({
   examples,
   textSecondaryColor,
+  isFlipped,
 }: ExamplesContentProps) => {
-  const opacity1 = useSharedValue(0);
-  const opacity2 = useSharedValue(0);
-  const opacity3 = useSharedValue(0);
-
-  const animatedStyle1 = useAnimatedStyle(() => ({
-    opacity: opacity1.value,
-    transform: [{ translateY: (1 - opacity1.value) * 20 }],
-  }));
-
-  const animatedStyle2 = useAnimatedStyle(() => ({
-    opacity: opacity2.value,
-    transform: [{ translateY: (1 - opacity2.value) * 20 }],
-  }));
-
-  const animatedStyle3 = useAnimatedStyle(() => ({
-    opacity: opacity3.value,
-    transform: [{ translateY: (1 - opacity3.value) * 20 }],
-  }));
-
-  const animatedStyles = [animatedStyle1, animatedStyle2, animatedStyle3];
+  const [showCursor, setShowCursor] = useState(false);
 
   useEffect(() => {
-    [opacity1, opacity2, opacity3].forEach((value, index) => {
-      value.value = 0;
-      value.value = withDelay(index * 400, withTiming(1, { duration: 800 }));
-    });
-  }, [examples, opacity1, opacity2, opacity3]);
+    if (isFlipped) {
+      setShowCursor(true);
+    } else {
+      setShowCursor(false);
+    }
+  }, [isFlipped]);
+
+  // Create the examples text as a single string for TypeAnimation
+  const examplesText = examples
+    .slice(0, 3)
+    .map((example, index) => `${index + 1}. ${example}`)
+    .join('\n\n');
 
   return (
     <View style={styles.examplesContainer}>
@@ -207,20 +179,34 @@ const ExamplesContent = ({
         <Ionicons name="list-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
       </View>
-      <View style={styles.examplesContent}>
-        {examples.slice(0, 3).map((example, index) => (
-          <Animated.View
-            key={index}
-            style={[styles.exampleRow, animatedStyles[index]]}
-          >
-            <View style={styles.exampleBullet}>
-              <Text style={styles.bulletText}>{index + 1}</Text>
-            </View>
-            <Text style={[styles.exampleItem, { color: textSecondaryColor }]}>
-              {example}
-            </Text>
-          </Animated.View>
-        ))}
+      <View style={styles.examplesCard}>
+        <TypeAnimation
+          key={isFlipped ? 1 : 0}
+          sequence={[
+            {
+              text: examplesText,
+              typeSpeed: 50,
+              delayBetweenSequence: 100,
+            },
+            {
+              action: () => {
+                setTimeout(() => setShowCursor(false), 800);
+              },
+            },
+          ]}
+          style={{
+            ...styles.examplesText,
+            color: textSecondaryColor,
+          }}
+          cursor={showCursor}
+          cursorStyle={{
+            color: textSecondaryColor,
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}
+          blinkSpeed={400}
+          repeat={1}
+        />
       </View>
     </View>
   );
@@ -294,6 +280,7 @@ export const CardBack = ({
           <ExamplesContent
             examples={item.examples}
             textSecondaryColor={colors.textSecondary}
+            isFlipped={isFlipped}
           />
         );
       default:
@@ -438,45 +425,19 @@ const styles = StyleSheet.create({
     paddingBottom: 90,
     maxHeight: '100%',
   },
-  examplesContent: {
-    flex: 1,
-    justifyContent: 'flex-start',
+  examplesCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 16,
+    padding: 20,
     width: '100%',
-    maxHeight: '100%',
-    paddingTop: 8,
-  },
-  exampleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-    width: '100%',
-    paddingHorizontal: 8,
-  },
-  exampleBullet: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 215, 0, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    marginTop: 2,
+    height: 280,
     borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.4)',
-  },
-  bulletText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFD700',
-  },
-  exampleItem: {
-    fontSize: 15,
-    lineHeight: 20,
-    color: 'rgba(220, 220, 220, 0.95)',
-    marginBottom: 8,
-    paddingLeft: 4,
-    textAlign: 'left',
-    flex: 1,
+    borderColor: 'rgba(255, 215, 0, 0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    overflow: 'hidden',
   },
   favoriteButton: {
     position: 'absolute',
@@ -558,5 +519,11 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     letterSpacing: 0.3,
     maxWidth: '100%',
+  },
+  examplesText: {
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'left',
+    fontWeight: '400',
   },
 });
