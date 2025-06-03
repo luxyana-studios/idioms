@@ -7,6 +7,8 @@ import { ViewStyle, GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import SmileyDisplay from './SmileyDisplay';
 
+type IoniconsName = keyof typeof Ionicons.glyphMap;
+
 interface CardFrontProps {
   item: CardData;
   frontAnimatedStyle: AnimatedStyle<ViewStyle>;
@@ -24,21 +26,86 @@ const CardFront: React.FC<CardFrontProps> = ({
 }) => {
   const { colors } = useTheme();
 
-  const getSentimentColor = (sentiment: string[]) => {
-    if (sentiment.includes('positive')) return '#10B981';
-    if (sentiment.includes('negative')) return '#EF4444';
-    return '#6B7280';
+  const getSentimentIndicator = (sentiment: string[]) => {
+    if (sentiment.includes('positive'))
+      return {
+        color: '#10B981',
+        icon: 'happy-outline',
+        label: '😊',
+      };
+    if (sentiment.includes('negative'))
+      return {
+        color: '#EF4444',
+        icon: 'sad-outline',
+        label: '😔',
+      };
+    return {
+      color: '#6B7280',
+      icon: 'remove-outline',
+      label: '😐',
+    };
   };
 
   const getFrequencyIndicator = (frequency: number) => {
-    if (frequency >= 8) return { icon: 'flame', color: '#F59E0B' };
-    if (frequency >= 6) return { icon: 'star', color: '#8B5CF6' };
-    if (frequency >= 4) return { icon: 'heart', color: '#EC4899' };
-    return { icon: 'leaf', color: '#10B981' };
+    if (frequency >= 8)
+      return {
+        icon: 'flame' as IoniconsName,
+        color: '#F59E0B',
+        bgColor: 'rgba(245, 158, 11, 0.2)',
+        label: 'Hot',
+      };
+    if (frequency >= 6)
+      return {
+        icon: 'trending-up' as IoniconsName,
+        color: '#8B5CF6',
+        bgColor: 'rgba(139, 92, 246, 0.2)',
+        label: 'Popular',
+      };
+    if (frequency >= 4)
+      return {
+        icon: 'heart' as IoniconsName,
+        color: '#EC4899',
+        bgColor: 'rgba(236, 72, 153, 0.2)',
+        label: 'Known',
+      };
+    return {
+      icon: 'leaf-outline' as IoniconsName,
+      color: '#6B7280',
+      bgColor: 'rgba(107, 114, 128, 0.2)',
+      label: 'Rare',
+    };
+  };
+
+  const getDifficultyLevel = (literal: number, translation: number) => {
+    const avgDifficulty = (literal + translation) / 2;
+    if (avgDifficulty <= 3)
+      return {
+        icon: 'checkmark-circle' as IoniconsName,
+        color: '#10B981',
+        bgColor: 'rgba(16, 185, 129, 0.2)',
+        label: 'Easy',
+      };
+    if (avgDifficulty <= 6)
+      return {
+        icon: 'warning' as IoniconsName,
+        color: '#F59E0B',
+        bgColor: 'rgba(245, 158, 11, 0.2)',
+        label: 'Medium',
+      };
+    return {
+      icon: 'close-circle' as IoniconsName,
+      color: '#EF4444',
+      bgColor: 'rgba(239, 68, 68, 0.2)',
+      label: 'Hard',
+    };
   };
 
   const frequencyIndicator = getFrequencyIndicator(item.frequency_of_use);
-  const sentimentColor = getSentimentColor(item.sentiment);
+  const sentimentIndicator = getSentimentIndicator(item.sentiment);
+  const difficultyIndicator = getDifficultyLevel(
+    item.literal_transparency,
+    item.translation_difficulty,
+  );
 
   return (
     <Animated.View
@@ -61,36 +128,56 @@ const CardFront: React.FC<CardFrontProps> = ({
         frontAnimatedStyle,
       ]}
     >
-      <View className="absolute top-4 left-4 flex-row items-center space-x-2">
-        <View className="flex-row items-center bg-black/20 rounded-full px-3 py-1">
+      <View className="absolute top-4 left-4">
+        <View
+          className="flex-row items-center rounded-full px-3 py-2"
+          style={{ backgroundColor: frequencyIndicator.bgColor }}
+        >
           <Ionicons
-            name={frequencyIndicator.icon as any}
+            name={frequencyIndicator.icon}
             size={14}
             color={frequencyIndicator.color}
           />
           <Text
-            className="text-xs font-bold ml-1"
-            style={{ color: colors.text }}
+            className="text-xs font-semibold ml-1"
+            style={{ color: frequencyIndicator.color }}
           >
-            {item.frequency_of_use}
+            {frequencyIndicator.label}
           </Text>
         </View>
-
-        <View
-          className="w-3 h-3 rounded-full"
-          style={{ backgroundColor: sentimentColor }}
-        />
       </View>
 
-      <View className="absolute top-4 right-16 flex-row flex-wrap">
-        {item.category_theme.slice(0, 2).map((category, index) => (
-          <View
-            key={index}
-            className="bg-white/10 rounded-full px-2 py-1 mb-1 mr-1"
+      <View className="absolute top-4 left-1/2 transform -translate-x-1/2">
+        <View className="bg-black/20 rounded-full px-3 py-1">
+          <Text className="text-lg">{sentimentIndicator.label}</Text>
+        </View>
+      </View>
+
+      <View className="absolute top-4 right-4">
+        <View
+          className="flex-row items-center rounded-full px-3 py-2"
+          style={{ backgroundColor: difficultyIndicator.bgColor }}
+        >
+          <Ionicons
+            name={difficultyIndicator.icon}
+            size={14}
+            color={difficultyIndicator.color}
+          />
+          <Text
+            className="text-xs font-semibold ml-1"
+            style={{ color: difficultyIndicator.color }}
           >
+            {difficultyIndicator.label}
+          </Text>
+        </View>
+      </View>
+
+      <View className="absolute top-16 right-4 flex-row flex-wrap max-w-24">
+        {item.category_theme.slice(0, 1).map((category, index) => (
+          <View key={index} className="bg-white/10 rounded-md px-2 py-1 mb-1">
             <Text
               className="text-xs font-medium"
-              style={{ color: colors.text }}
+              style={{ color: colors.textSecondary }}
             >
               {category}
             </Text>
@@ -107,29 +194,6 @@ const CardFront: React.FC<CardFrontProps> = ({
         </Text>
 
         <SmileyDisplay smileys={item.depiction || []} />
-      </View>
-
-      <View className="absolute bottom-4 left-4 right-16 flex-row justify-between items-center">
-        <View className="flex-row space-x-3">
-          <View className="flex-row items-center">
-            <Ionicons name="eye" size={12} color={colors.textSecondary} />
-            <Text
-              className="text-xs ml-1"
-              style={{ color: colors.textSecondary }}
-            >
-              {item.literal_transparency}/10
-            </Text>
-          </View>
-          <View className="flex-row items-center">
-            <Ionicons name="language" size={12} color={colors.textSecondary} />
-            <Text
-              className="text-xs ml-1"
-              style={{ color: colors.textSecondary }}
-            >
-              {item.translation_difficulty}/10
-            </Text>
-          </View>
-        </View>
       </View>
 
       <TouchableOpacity

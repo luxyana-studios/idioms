@@ -63,7 +63,6 @@ const MeaningContent = ({
               action: () => {
                 setTimeout(() => {
                   setShowCursor(false);
-                  // Show alternative emojis after text animation completes
                   setTimeout(() => setShowAlternativeEmojis(true), 300);
                 }, 800);
               },
