@@ -26,10 +26,16 @@ type ContentStep = 'meaning' | 'explanation' | 'examples';
 interface MeaningContentProps {
   meaning: string;
   textColor: string;
+  alternativeDepiction?: string[];
 }
 
-const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
+const MeaningContent = ({
+  meaning,
+  textColor,
+  alternativeDepiction,
+}: MeaningContentProps) => {
   const [showCursor, setShowCursor] = useState(true);
+  const [showAlternativeEmojis, setShowAlternativeEmojis] = useState(false);
 
   return (
     <View style={styles.contentContainer}>
@@ -55,7 +61,11 @@ const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
             },
             {
               action: () => {
-                setTimeout(() => setShowCursor(false), 800);
+                setTimeout(() => {
+                  setShowCursor(false);
+                  // Show alternative emojis after text animation completes
+                  setTimeout(() => setShowAlternativeEmojis(true), 300);
+                }, 800);
               },
             },
           ]}
@@ -73,6 +83,19 @@ const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
           repeat={1}
         />
       </View>
+      {showAlternativeEmojis &&
+        alternativeDepiction &&
+        alternativeDepiction.length > 0 && (
+          <View style={styles.alternativeDepictionContainer}>
+            <View style={styles.alternativeDepictionRow}>
+              {alternativeDepiction.map((emoji, index) => (
+                <Text key={index} style={styles.alternativeEmoji}>
+                  {emoji}
+                </Text>
+              ))}
+            </View>
+          </View>
+        )}
     </View>
   );
 };
@@ -248,7 +271,11 @@ export const CardBack = ({
     switch (currentStep) {
       case 'meaning':
         return (
-          <MeaningContent meaning={item.meaning} textColor={colors.text} />
+          <MeaningContent
+            meaning={item.meaning}
+            textColor={colors.text}
+            alternativeDepiction={item.alternative_depiction}
+          />
         );
       case 'explanation':
         return (
@@ -510,5 +537,20 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontWeight: '400',
     flexWrap: 'wrap',
+  },
+  alternativeDepictionContainer: {
+    marginTop: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  alternativeDepictionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+  },
+  alternativeEmoji: {
+    fontSize: 24,
+    marginHorizontal: 4,
   },
 });
