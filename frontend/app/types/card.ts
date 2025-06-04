@@ -10,11 +10,9 @@ export interface CardData {
   context_diversity: string[];
   literal_transparency: number;
   translation_difficulty: number;
-  depiction?: string[];
-  alternative_depiction?: string[];
-  meaning_depiction?: string[];
-  created_at: string;
-  updated_at: string;
+  depiction: string[];
+  alternative_depiction: string[];
+  meaning_depiction: string[];
   isFavorite?: boolean;
 }
 

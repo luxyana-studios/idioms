@@ -12,6 +12,7 @@ import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { TypeAnimation } from 'react-native-type-animation';
+import IndicatorsDisplay from './IndicatorsDisplay';
 
 interface CardBackProps {
   item: CardData;
@@ -27,15 +28,22 @@ interface MeaningContentProps {
   meaning: string;
   textColor: string;
   alternativeDepiction?: string[];
+  item: CardData;
 }
 
 const MeaningContent = ({
   meaning,
   textColor,
   alternativeDepiction,
+  item,
 }: MeaningContentProps) => {
   const [showCursor, setShowCursor] = useState(true);
-  const [showAlternativeEmojis, setShowAlternativeEmojis] = useState(false);
+  const [showIndicators, setShowIndicators] = useState(false);
+
+  const emojiString =
+    alternativeDepiction && alternativeDepiction.length > 0
+      ? `\n\n${alternativeDepiction.join(' ')}`
+      : '';
 
   return (
     <View style={styles.contentContainer}>
@@ -43,58 +51,51 @@ const MeaningContent = ({
         <Ionicons name="bulb-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
       </View>
-      <View style={styles.meaningCard}>
-        <TypeAnimation
-          sequence={[
-            {
-              text: '',
-              typeSpeed: 60,
-              delayBetweenSequence: 500,
+
+      <TypeAnimation
+        sequence={[
+          {
+            text: '',
+            typeSpeed: 60,
+            delayBetweenSequence: 500,
+          },
+          {
+            action: () => setShowCursor(true),
+          },
+          {
+            text: meaning,
+            typeSpeed: 70,
+            delayBetweenSequence: 300,
+          },
+          {
+            text: meaning + emojiString,
+            typeSpeed: 100,
+            delayBetweenSequence: 100,
+          },
+          {
+            action: () => {
+              setTimeout(() => {
+                setShowCursor(false);
+                setTimeout(() => setShowIndicators(true), 500);
+              }, 800);
             },
-            {
-              action: () => setShowCursor(true),
-            },
-            {
-              text: meaning,
-              typeSpeed: 70,
-              delayBetweenSequence: 100,
-            },
-            {
-              action: () => {
-                setTimeout(() => {
-                  setShowCursor(false);
-                  setTimeout(() => setShowAlternativeEmojis(true), 300);
-                }, 800);
-              },
-            },
-          ]}
-          style={{
-            ...styles.mainText,
-            color: textColor,
-          }}
-          cursor={showCursor}
-          cursorStyle={{
-            color: textColor,
-            fontSize: 20,
-            fontWeight: 'bold',
-          }}
-          blinkSpeed={400}
-          repeat={1}
-        />
-      </View>
-      {showAlternativeEmojis &&
-        alternativeDepiction &&
-        alternativeDepiction.length > 0 && (
-          <View style={styles.alternativeDepictionContainer}>
-            <View style={styles.alternativeDepictionRow}>
-              {alternativeDepiction.map((emoji, index) => (
-                <Text key={index} style={styles.alternativeEmoji}>
-                  {emoji}
-                </Text>
-              ))}
-            </View>
-          </View>
-        )}
+          },
+        ]}
+        style={{
+          ...styles.cleanText,
+          color: textColor,
+        }}
+        cursor={showCursor}
+        cursorStyle={{
+          color: textColor,
+          fontSize: 20,
+          fontWeight: 'bold',
+        }}
+        blinkSpeed={400}
+        repeat={1}
+      />
+
+      {showIndicators && <IndicatorsDisplay item={item} />}
     </View>
   );
 };
@@ -118,42 +119,41 @@ const ExplanationContent = ({
           Explanation
         </Text>
       </View>
-      <View style={styles.explanationCard}>
-        <TypeAnimation
-          sequence={[
-            {
-              text: '',
-              typeSpeed: 50,
-              delayBetweenSequence: 300,
+
+      <TypeAnimation
+        sequence={[
+          {
+            text: '',
+            typeSpeed: 50,
+            delayBetweenSequence: 300,
+          },
+          {
+            action: () => setShowCursor(true),
+          },
+          {
+            text: explanation,
+            typeSpeed: 60,
+            delayBetweenSequence: 100,
+          },
+          {
+            action: () => {
+              setTimeout(() => setShowCursor(false), 800);
             },
-            {
-              action: () => setShowCursor(true),
-            },
-            {
-              text: explanation,
-              typeSpeed: 60,
-              delayBetweenSequence: 100,
-            },
-            {
-              action: () => {
-                setTimeout(() => setShowCursor(false), 800);
-              },
-            },
-          ]}
-          style={{
-            ...styles.explanationText,
-            color: textColor,
-          }}
-          cursor={showCursor}
-          cursorStyle={{
-            color: textColor,
-            fontSize: 20,
-            fontWeight: 'bold',
-          }}
-          blinkSpeed={400}
-          repeat={1}
-        />
-      </View>
+          },
+        ]}
+        style={{
+          ...styles.cleanText,
+          color: textColor,
+        }}
+        cursor={showCursor}
+        cursorStyle={{
+          color: textColor,
+          fontSize: 20,
+          fontWeight: 'bold',
+        }}
+        blinkSpeed={400}
+        repeat={1}
+      />
     </View>
   );
 };
@@ -169,55 +169,73 @@ const ExamplesContent = ({
 }: ExamplesContentProps) => {
   const [showCursor, setShowCursor] = useState(true);
 
-  const examplesText = examples
-    .slice(0, 3)
-    .map((example, index) => `${index + 1}. ${example}`)
-    .join('\n\n');
+  const examplesList = examples.slice(0, 3);
+
+  const calculateDelay = (text: string) => Math.max(200, text.length * 15);
+
+  const buildSequence = () => {
+    const sequence = [
+      {
+        text: '',
+        typeSpeed: 40,
+        delayBetweenSequence: 300,
+      },
+      {
+        action: () => setShowCursor(true),
+      },
+    ];
+
+    examplesList.forEach((example, index) => {
+      const exampleText = `${index + 1}. ${example}`;
+      const previousText = examplesList
+        .slice(0, index)
+        .map((ex, i) => `${i + 1}. ${ex}`)
+        .join('\n\n');
+
+      const fullText =
+        index === 0 ? exampleText : `${previousText}\n\n${exampleText}`;
+
+      sequence.push({
+        text: fullText,
+        typeSpeed: 50,
+        delayBetweenSequence: calculateDelay(exampleText),
+      });
+    });
+
+    sequence.push({
+      action: () => {
+        setTimeout(() => setShowCursor(false), 800);
+      },
+    });
+
+    return sequence;
+  };
 
   return (
-    <View style={styles.examplesContainer}>
+    <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
         <Ionicons name="list-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
       </View>
-      <View style={styles.examplesCard}>
-        <TypeAnimation
-          sequence={[
-            {
-              text: '',
-              typeSpeed: 40,
-              delayBetweenSequence: 300,
-            },
-            {
-              action: () => setShowCursor(true),
-            },
-            {
-              text: examplesText,
-              typeSpeed: 50,
-              delayBetweenSequence: 100,
-            },
-            {
-              action: () => {
-                setTimeout(() => setShowCursor(false), 800);
-              },
-            },
-          ]}
-          style={{
-            ...styles.examplesText,
-            color: textSecondaryColor,
-            flexWrap: 'wrap',
-            textAlign: 'left',
-          }}
-          cursor={showCursor}
-          cursorStyle={{
-            color: textSecondaryColor,
-            fontSize: 18,
-            fontWeight: 'bold',
-          }}
-          blinkSpeed={400}
-          repeat={1}
-        />
-      </View>
+
+      <TypeAnimation
+        sequence={buildSequence()}
+        style={{
+          ...styles.cleanText,
+          color: textSecondaryColor,
+          textAlign: 'left',
+          fontSize: 16,
+          lineHeight: 22,
+        }}
+        cursor={showCursor}
+        cursorStyle={{
+          color: textSecondaryColor,
+          fontSize: 16,
+          fontWeight: 'bold',
+        }}
+        blinkSpeed={400}
+        repeat={1}
+      />
     </View>
   );
 };
@@ -274,6 +292,7 @@ export const CardBack = ({
             meaning={item.meaning}
             textColor={colors.text}
             alternativeDepiction={item.alternative_depiction}
+            item={item}
           />
         );
       case 'explanation':
@@ -387,68 +406,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     marginLeft: 8,
   },
-  meaningCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    padding: 20,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  explanationCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    padding: 24,
-    width: '105%',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    marginHorizontal: -8,
-  },
-  explanationText: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    lineHeight: 26,
-    letterSpacing: 0.3,
-    flexWrap: 'wrap',
-  },
-  examplesContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingTop: 40,
-    paddingBottom: 60,
-    maxHeight: '100%',
-  },
-  examplesCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    padding: 20,
-    width: '100%',
-    flex: 1,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    overflow: 'hidden',
-    justifyContent: 'flex-start',
-  },
   favoriteButton: {
     position: 'absolute',
     top: 24,
@@ -530,26 +487,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
     maxWidth: '100%',
   },
-  examplesText: {
-    fontSize: 15.5,
-    lineHeight: 19,
-    textAlign: 'left',
-    fontWeight: '400',
-    flexWrap: 'wrap',
-  },
-  alternativeDepictionContainer: {
-    marginTop: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  alternativeDepictionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-  },
-  alternativeEmoji: {
-    fontSize: 24,
-    marginHorizontal: 4,
+  cleanText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 26,
+    letterSpacing: 0.3,
+    maxWidth: '100%',
   },
 });
