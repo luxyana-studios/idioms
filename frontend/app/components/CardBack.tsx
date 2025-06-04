@@ -13,6 +13,7 @@ import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { TypeAnimation } from 'react-native-type-animation';
 import IndicatorsDisplay from './IndicatorsDisplay';
+import SmileyDisplay from './SmileyDisplay';
 
 interface CardBackProps {
   item: CardData;
@@ -27,7 +28,7 @@ type ContentStep = 'meaning' | 'explanation' | 'examples';
 interface MeaningContentProps {
   meaning: string;
   textColor: string;
-  alternativeDepiction?: string[];
+  alternativeDepiction: string[];
   item: CardData;
 }
 
@@ -38,12 +39,8 @@ const MeaningContent = ({
   item,
 }: MeaningContentProps) => {
   const [showCursor, setShowCursor] = useState(true);
+  const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
-
-  const emojiString =
-    alternativeDepiction && alternativeDepiction.length > 0
-      ? `\n\n${alternativeDepiction.join(' ')}`
-      : '';
 
   return (
     <View style={styles.contentContainer}>
@@ -68,15 +65,11 @@ const MeaningContent = ({
             delayBetweenSequence: 300,
           },
           {
-            text: meaning + emojiString,
-            typeSpeed: 100,
-            delayBetweenSequence: 100,
-          },
-          {
             action: () => {
               setTimeout(() => {
                 setShowCursor(false);
-                setTimeout(() => setShowIndicators(true), 500);
+                setShowEmojis(true);
+                setTimeout(() => setShowIndicators(true), 600);
               }, 800);
             },
           },
@@ -95,7 +88,51 @@ const MeaningContent = ({
         repeat={1}
       />
 
-      {showIndicators && <IndicatorsDisplay item={item} />}
+      {showEmojis && (
+        <>
+          <View style={{ marginTop: 16, marginBottom: 12 }}>
+            <SmileyDisplay smileys={alternativeDepiction} />
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              marginTop: 8,
+              marginBottom: 16,
+            }}
+          >
+            {item.category_theme &&
+              item.category_theme.map((category, idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    backgroundColor: '#FFD70022',
+                    borderRadius: 12,
+                    paddingHorizontal: 10,
+                    paddingVertical: 4,
+                    margin: 2,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: '#FFD700',
+                      fontWeight: 'bold',
+                      fontSize: 13,
+                    }}
+                  >
+                    {category}
+                  </Text>
+                </View>
+              ))}
+          </View>
+        </>
+      )}
+      {showIndicators && (
+        <View style={{ marginTop: 16, width: '100%' }}>
+          <IndicatorsDisplay item={item} />
+        </View>
+      )}
     </View>
   );
 };
@@ -167,48 +204,15 @@ const ExamplesContent = ({
   examples,
   textSecondaryColor,
 }: ExamplesContentProps) => {
-  const [showCursor, setShowCursor] = useState(true);
-
   const examplesList = examples.slice(0, 3);
+  const [visibleIndexes, setVisibleIndexes] = useState([0]);
 
-  const calculateDelay = (text: string) => Math.max(200, text.length * 15);
-
-  const buildSequence = () => {
-    const sequence = [
-      {
-        text: '',
-        typeSpeed: 40,
-        delayBetweenSequence: 300,
-      },
-      {
-        action: () => setShowCursor(true),
-      },
-    ];
-
-    examplesList.forEach((example, index) => {
-      const exampleText = `${index + 1}. ${example}`;
-      const previousText = examplesList
-        .slice(0, index)
-        .map((ex, i) => `${i + 1}. ${ex}`)
-        .join('\n\n');
-
-      const fullText =
-        index === 0 ? exampleText : `${previousText}\n\n${exampleText}`;
-
-      sequence.push({
-        text: fullText,
-        typeSpeed: 50,
-        delayBetweenSequence: calculateDelay(exampleText),
-      });
-    });
-
-    sequence.push({
-      action: () => {
-        setTimeout(() => setShowCursor(false), 800);
-      },
-    });
-
-    return sequence;
+  const handleAnimationEnd = (idx: number) => {
+    if (idx < examplesList.length - 1) {
+      setTimeout(() => {
+        setVisibleIndexes((prev) => [...prev, idx + 1]);
+      }, 300);
+    }
   };
 
   return (
@@ -217,25 +221,35 @@ const ExamplesContent = ({
         <Ionicons name="list-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
       </View>
-
-      <TypeAnimation
-        sequence={buildSequence()}
-        style={{
-          ...styles.cleanText,
-          color: textSecondaryColor,
-          textAlign: 'left',
-          fontSize: 16,
-          lineHeight: 22,
-        }}
-        cursor={showCursor}
-        cursorStyle={{
-          color: textSecondaryColor,
-          fontSize: 16,
-          fontWeight: 'bold',
-        }}
-        blinkSpeed={400}
-        repeat={1}
-      />
+      <View style={{ width: '100%' }}>
+        {examplesList.map((example, idx) =>
+          visibleIndexes.includes(idx) ? (
+            <TypeAnimation
+              key={idx}
+              sequence={[
+                {
+                  text: `${idx + 1}. ${example}`,
+                  typeSpeed: 50,
+                  delayBetweenSequence: 0,
+                },
+                {
+                  action: () => handleAnimationEnd(idx),
+                },
+              ]}
+              style={{
+                ...styles.cleanText,
+                color: textSecondaryColor,
+                textAlign: 'left',
+                fontSize: 16,
+                lineHeight: 22,
+                marginBottom: 16,
+              }}
+              cursor={false}
+              repeat={1}
+            />
+          ) : null,
+        )}
+      </View>
     </View>
   );
 };

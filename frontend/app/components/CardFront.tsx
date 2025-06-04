@@ -45,22 +45,6 @@ const CardFront: React.FC<CardFrontProps> = ({
         frontAnimatedStyle,
       ]}
     >
-      <View className="absolute top-4 right-4 flex-row flex-wrap justify-end">
-        {item.category_theme.map((category, index) => (
-          <View
-            key={index}
-            className="bg-white/10 rounded-md px-2 py-1 ml-1 mb-1"
-          >
-            <Text
-              className="text-xs font-medium"
-              style={{ color: colors.textSecondary }}
-            >
-              {category}
-            </Text>
-          </View>
-        ))}
-      </View>
-
       <View className="flex-1 justify-center items-center w-full">
         <Text
           style={{ color: colors.text }}
@@ -69,7 +53,7 @@ const CardFront: React.FC<CardFrontProps> = ({
           {item.text}
         </Text>
 
-        <SmileyDisplay smileys={item.depiction || []} />
+        <SmileyDisplay smileys={item.depiction} />
       </View>
 
       <TouchableOpacity
