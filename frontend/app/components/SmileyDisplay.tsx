@@ -12,11 +12,7 @@ export const SmileyDisplay: React.FC<SmileyDisplayProps> = ({ smileys }) => {
 
   return (
     <View className="flex-row flex-wrap justify-center">
-      {smileys.map((emoji, index) => (
-        <Text key={index} className="text-2xl mr-2 mb-1">
-          {emoji}
-        </Text>
-      ))}
+      <Text className="text-2xl text-center">{smileys.join(' ')}</Text>
     </View>
   );
 };
