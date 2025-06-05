@@ -29,7 +29,7 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
     if (debouncedInput) {
       onSearch(debouncedInput);
     }
-  }, [debouncedInput, onSearch]);
+  }, [debouncedInput]);
 
   const handleFocus = () => {
     Animated.timing(searchAnimation, {

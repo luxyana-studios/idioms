@@ -12,6 +12,8 @@ import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { TypeAnimation } from 'react-native-type-animation';
+import IdiomStats from './IndicatorsDisplay';
+import SmileyDisplay from './SmileyDisplay';
 
 interface CardBackProps {
   item: CardData;
@@ -26,10 +28,19 @@ type ContentStep = 'meaning' | 'explanation' | 'examples';
 interface MeaningContentProps {
   meaning: string;
   textColor: string;
+  alternativeDepiction: string[];
+  item: CardData;
 }
 
-const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
+const MeaningContent = ({
+  meaning,
+  textColor,
+  alternativeDepiction,
+  item,
+}: MeaningContentProps) => {
   const [showCursor, setShowCursor] = useState(true);
+  const [showEmojis, setShowEmojis] = useState(false);
+  const [showIndicators, setShowIndicators] = useState(false);
 
   return (
     <View style={styles.contentContainer}>
@@ -37,42 +48,99 @@ const MeaningContent = ({ meaning, textColor }: MeaningContentProps) => {
         <Ionicons name="bulb-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
       </View>
-      <View style={styles.meaningCard}>
-        <TypeAnimation
-          sequence={[
-            {
-              text: '',
-              typeSpeed: 60,
-              delayBetweenSequence: 500,
+
+      <TypeAnimation
+        sequence={[
+          {
+            text: '',
+            typeSpeed: 60,
+            delayBetweenSequence: 500,
+          },
+          {
+            action: () => setShowCursor(true),
+          },
+          {
+            text: meaning,
+            typeSpeed: 70,
+            delayBetweenSequence: 300,
+          },
+          {
+            action: () => {
+              setTimeout(() => {
+                setShowCursor(false);
+                setShowEmojis(true);
+                setTimeout(() => setShowIndicators(true), 600);
+              }, 800);
             },
-            {
-              action: () => setShowCursor(true),
-            },
-            {
-              text: meaning,
-              typeSpeed: 70,
-              delayBetweenSequence: 100,
-            },
-            {
-              action: () => {
-                setTimeout(() => setShowCursor(false), 800);
-              },
-            },
-          ]}
+          },
+        ]}
+        style={{
+          ...styles.cleanText,
+          color: textColor,
+        }}
+        cursor={showCursor}
+        cursorStyle={{
+          color: textColor,
+          fontSize: 20,
+          fontWeight: 'bold',
+        }}
+        blinkSpeed={400}
+        repeat={1}
+      />
+
+      {showEmojis && (
+        <>
+          <View style={{ marginTop: 16, marginBottom: 12 }}>
+            <SmileyDisplay smileys={alternativeDepiction} />
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              marginTop: 8,
+              marginBottom: 16,
+            }}
+          >
+            {item.category_theme &&
+              item.category_theme.map((category, idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    backgroundColor: '#FFD70022',
+                    borderRadius: 12,
+                    paddingHorizontal: 10,
+                    paddingVertical: 4,
+                    margin: 2,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: '#FFD700',
+                      fontWeight: 'bold',
+                      fontSize: 13,
+                    }}
+                  >
+                    {category}
+                  </Text>
+                </View>
+              ))}
+          </View>
+        </>
+      )}
+      {showIndicators && (
+        <View
           style={{
-            ...styles.mainText,
-            color: textColor,
+            marginTop: 4,
+            width: '100%',
+            marginBottom: 35,
+            paddingHorizontal: 8,
+            alignItems: 'flex-start',
           }}
-          cursor={showCursor}
-          cursorStyle={{
-            color: textColor,
-            fontSize: 20,
-            fontWeight: 'bold',
-          }}
-          blinkSpeed={400}
-          repeat={1}
-        />
-      </View>
+        >
+          <IdiomStats item={item} />
+        </View>
+      )}
     </View>
   );
 };
@@ -96,42 +164,41 @@ const ExplanationContent = ({
           Explanation
         </Text>
       </View>
-      <View style={styles.explanationCard}>
-        <TypeAnimation
-          sequence={[
-            {
-              text: '',
-              typeSpeed: 50,
-              delayBetweenSequence: 300,
+
+      <TypeAnimation
+        sequence={[
+          {
+            text: '',
+            typeSpeed: 50,
+            delayBetweenSequence: 300,
+          },
+          {
+            action: () => setShowCursor(true),
+          },
+          {
+            text: explanation,
+            typeSpeed: 60,
+            delayBetweenSequence: 100,
+          },
+          {
+            action: () => {
+              setTimeout(() => setShowCursor(false), 800);
             },
-            {
-              action: () => setShowCursor(true),
-            },
-            {
-              text: explanation,
-              typeSpeed: 60,
-              delayBetweenSequence: 100,
-            },
-            {
-              action: () => {
-                setTimeout(() => setShowCursor(false), 800);
-              },
-            },
-          ]}
-          style={{
-            ...styles.explanationText,
-            color: textColor,
-          }}
-          cursor={showCursor}
-          cursorStyle={{
-            color: textColor,
-            fontSize: 20,
-            fontWeight: 'bold',
-          }}
-          blinkSpeed={400}
-          repeat={1}
-        />
-      </View>
+          },
+        ]}
+        style={{
+          ...styles.cleanText,
+          color: textColor,
+        }}
+        cursor={showCursor}
+        cursorStyle={{
+          color: textColor,
+          fontSize: 20,
+          fontWeight: 'bold',
+        }}
+        blinkSpeed={400}
+        repeat={1}
+      />
     </View>
   );
 };
@@ -145,56 +212,50 @@ const ExamplesContent = ({
   examples,
   textSecondaryColor,
 }: ExamplesContentProps) => {
-  const [showCursor, setShowCursor] = useState(true);
+  const [visibleIndexes, setVisibleIndexes] = useState([0]);
 
-  const examplesText = examples
-    .slice(0, 3)
-    .map((example, index) => `${index + 1}. ${example}`)
-    .join('\n\n');
+  const handleAnimationEnd = (idx: number) => {
+    if (idx < examples.length - 1) {
+      setTimeout(() => {
+        setVisibleIndexes((prev) => [...prev, idx + 1]);
+      }, 300);
+    }
+  };
 
   return (
-    <View style={styles.examplesContainer}>
+    <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
         <Ionicons name="list-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
       </View>
-      <View style={styles.examplesCard}>
-        <TypeAnimation
-          sequence={[
-            {
-              text: '',
-              typeSpeed: 40,
-              delayBetweenSequence: 300,
-            },
-            {
-              action: () => setShowCursor(true),
-            },
-            {
-              text: examplesText,
-              typeSpeed: 50,
-              delayBetweenSequence: 100,
-            },
-            {
-              action: () => {
-                setTimeout(() => setShowCursor(false), 800);
-              },
-            },
-          ]}
-          style={{
-            ...styles.examplesText,
-            color: textSecondaryColor,
-            flexWrap: 'wrap',
-            textAlign: 'left',
-          }}
-          cursor={showCursor}
-          cursorStyle={{
-            color: textSecondaryColor,
-            fontSize: 18,
-            fontWeight: 'bold',
-          }}
-          blinkSpeed={400}
-          repeat={1}
-        />
+      <View style={{ width: '100%' }}>
+        {examples.map((example, idx) =>
+          visibleIndexes.includes(idx) ? (
+            <TypeAnimation
+              key={idx}
+              sequence={[
+                {
+                  text: `${idx + 1}. ${example}`,
+                  typeSpeed: 50,
+                  delayBetweenSequence: 0,
+                },
+                {
+                  action: () => handleAnimationEnd(idx),
+                },
+              ]}
+              style={{
+                ...styles.cleanText,
+                color: textSecondaryColor,
+                textAlign: 'left',
+                fontSize: 16,
+                lineHeight: 22,
+                marginBottom: 16,
+              }}
+              cursor={false}
+              repeat={1}
+            />
+          ) : null,
+        )}
       </View>
     </View>
   );
@@ -248,7 +309,12 @@ export const CardBack = ({
     switch (currentStep) {
       case 'meaning':
         return (
-          <MeaningContent meaning={item.meaning} textColor={colors.text} />
+          <MeaningContent
+            meaning={item.meaning}
+            textColor={colors.text}
+            alternativeDepiction={item.alternative_depiction}
+            item={item}
+          />
         );
       case 'explanation':
         return (
@@ -342,9 +408,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 90,
+    paddingHorizontal: 12,
+    paddingTop: 40,
+    paddingBottom: 60,
     maxHeight: '100%',
   },
   titleSection: {
@@ -360,67 +426,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     flexShrink: 0,
     marginLeft: 8,
-  },
-  meaningCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    padding: 20,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  explanationCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    padding: 20,
-    width: '100%',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  explanationText: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    lineHeight: 26,
-    letterSpacing: 0.3,
-    flexWrap: 'wrap',
-  },
-  examplesContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 90,
-    maxHeight: '100%',
-  },
-  examplesCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 16,
-    padding: 20,
-    width: '100%',
-    flex: 1,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    overflow: 'hidden',
-    justifyContent: 'center',
   },
   favoriteButton: {
     position: 'absolute',
@@ -439,7 +444,7 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 20,
     right: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 25,
@@ -457,7 +462,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 20,
     left: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 25,
@@ -476,11 +481,12 @@ const styles = StyleSheet.create({
   stepIndicators: {
     position: 'absolute',
     bottom: 32,
-    left: '50%',
+    left: '52%',
     transform: [{ translateX: -10 }],
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 6,
   },
   dot: {
     width: 8,
@@ -503,11 +509,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
     maxWidth: '100%',
   },
-  examplesText: {
-    fontSize: 15,
-    lineHeight: 20,
-    textAlign: 'left',
-    fontWeight: '400',
-    flexWrap: 'wrap',
+  cleanText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 26,
+    letterSpacing: 0.3,
+    maxWidth: '100%',
   },
 });
