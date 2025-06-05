@@ -12,7 +12,7 @@ import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { TypeAnimation } from 'react-native-type-animation';
-import IndicatorsDisplay from './IndicatorsDisplay';
+import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
 
 interface CardBackProps {
@@ -129,8 +129,16 @@ const MeaningContent = ({
         </>
       )}
       {showIndicators && (
-        <View style={{ marginTop: 16, width: '100%' }}>
-          <IndicatorsDisplay item={item} />
+        <View
+          style={{
+            marginTop: 4,
+            width: '100%',
+            marginBottom: 35,
+            paddingHorizontal: 8,
+            alignItems: 'flex-start',
+          }}
+        >
+          <IdiomStats item={item} />
         </View>
       )}
     </View>
@@ -204,11 +212,10 @@ const ExamplesContent = ({
   examples,
   textSecondaryColor,
 }: ExamplesContentProps) => {
-  const examplesList = examples.slice(0, 3);
   const [visibleIndexes, setVisibleIndexes] = useState([0]);
 
   const handleAnimationEnd = (idx: number) => {
-    if (idx < examplesList.length - 1) {
+    if (idx < examples.length - 1) {
       setTimeout(() => {
         setVisibleIndexes((prev) => [...prev, idx + 1]);
       }, 300);
@@ -222,7 +229,7 @@ const ExamplesContent = ({
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
       </View>
       <View style={{ width: '100%' }}>
-        {examplesList.map((example, idx) =>
+        {examples.map((example, idx) =>
           visibleIndexes.includes(idx) ? (
             <TypeAnimation
               key={idx}
@@ -437,7 +444,7 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 20,
     right: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 25,
@@ -455,7 +462,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 20,
     left: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 25,
@@ -474,11 +481,12 @@ const styles = StyleSheet.create({
   stepIndicators: {
     position: 'absolute',
     bottom: 32,
-    left: '50%',
+    left: '52%',
     transform: [{ translateX: -10 }],
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 6,
   },
   dot: {
     width: 8,
