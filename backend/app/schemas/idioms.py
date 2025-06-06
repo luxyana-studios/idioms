@@ -19,6 +19,9 @@ class IdiomSchema(BaseModel):
     depiction: list[str]
     alternative_depiction: list[str]
     meaning_depiction: list[str]
+    favorite: bool = False
+    upvotes: int = 0
+    downvotes: int = 0
 
     created_at: datetime
     updated_at: datetime
@@ -41,3 +44,10 @@ class IdiomCreate(BaseModel):
     depiction: list[str]
     alternative_depiction: list[str]
     meaning_depiction: list[str]
+    favorite: bool = False
+    upvotes: int = 0
+    downvotes: int = 0
+
+
+class IdiomUpdate(BaseModel):
+    favorite: bool | None = None
