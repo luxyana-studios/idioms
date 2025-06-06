@@ -8,7 +8,11 @@ import {
 } from 'react-native';
 import React, { useState, useCallback, useEffect } from 'react';
 import { CardData } from '../types/card';
-import { fetchCards, CARDS_PER_PAGE } from '../services/cardService';
+import {
+  fetchCards,
+  updateIdiom,
+  CARDS_PER_PAGE,
+} from '../services/cardService';
 import { Card } from '../components/Card';
 import { SearchBar } from '../components/SearchBar';
 import { useTheme } from '../contexts/ThemeContext';
@@ -76,12 +80,28 @@ const Home = () => {
     loadCards();
   }, []);
 
-  const toggleFavorite = (cardId: string) => {
+  const toggleFavorite = async (cardId: string) => {
+    const currentCard = cards.find((card) => card.id === cardId);
+    if (!currentCard) return;
+
+    const newFavoriteStatus = !currentCard.favorite;
+
     setCards((prevCards) =>
       prevCards.map((card) =>
-        card.id === cardId ? { ...card, isFavorite: !card.isFavorite } : card,
+        card.id === cardId ? { ...card, favorite: newFavoriteStatus } : card,
       ),
     );
+
+    try {
+      await updateIdiom(cardId, newFavoriteStatus);
+    } catch (error) {
+      console.error('Error updating favorite status:', error);
+      setCards((prevCards) =>
+        prevCards.map((card) =>
+          card.id === cardId ? { ...card, favorite: !newFavoriteStatus } : card,
+        ),
+      );
+    }
   };
 
   const renderLoadingIndicator = () => (

@@ -359,9 +359,9 @@ export const CardBack = ({
         activeOpacity={0.7}
       >
         <Ionicons
-          name={item.isFavorite ? 'star' : 'star-outline'}
+          name={item.favorite ? 'star' : 'star-outline'}
           size={26}
-          color={item.isFavorite ? '#FFD700' : colors.text}
+          color={item.favorite ? '#FFD700' : colors.text}
         />
       </TouchableOpacity>
 
