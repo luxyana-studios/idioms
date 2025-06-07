@@ -13,7 +13,9 @@ export interface CardData {
   depiction: string[];
   alternative_depiction: string[];
   meaning_depiction: string[];
-  isFavorite?: boolean;
+  favorite: boolean;
+  upvote: number;
+  downvote: number;
 }
 
 export interface CardProps {

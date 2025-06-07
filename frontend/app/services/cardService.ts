@@ -46,3 +46,30 @@ export const fetchCards = async (
 
   return await response.json();
 };
+
+/**
+ * Updates the favorite status of an idiom
+ * @param idiomId - The ID of the idiom to update
+ * @param favorite - The new favorite status (true/false)
+ * @returns Promise<CardData> - The updated card data
+ */
+export const updateIdiom = async (
+  idiomId: string,
+  favorite: boolean,
+): Promise<CardData> => {
+  const url = new URL(`${API_ROUTES.IDIOMS}${idiomId}`, IDIOMS_BACKEND_URL);
+
+  const response = await fetch(url.toString(), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'ngrok-skip-browser-warning': 'idioms',
+    },
+    body: JSON.stringify({ favorite }),
+  });
+
+  if (!response.ok) return handleApiError(response);
+
+  return await response.json();
+};

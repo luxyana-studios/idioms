@@ -68,9 +68,9 @@ const CardFront: React.FC<CardFrontProps> = ({
         }}
       >
         <Ionicons
-          name={item.isFavorite ? 'star' : 'star-outline'}
+          name={item.favorite ? 'star' : 'star-outline'}
           size={28}
-          color={item.isFavorite ? '#FFD700' : colors.text}
+          color={item.favorite ? '#FFD700' : colors.text}
         />
       </TouchableOpacity>
     </Animated.View>
