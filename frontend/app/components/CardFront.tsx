@@ -11,6 +11,8 @@ interface CardFrontProps {
   item: CardData;
   frontAnimatedStyle: AnimatedStyle<ViewStyle>;
   handleFavoritePress: (e: GestureResponderEvent) => void;
+  handleUpvote: (e: GestureResponderEvent) => void;
+  handleDownvote: (e: GestureResponderEvent) => void;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
 }
@@ -19,6 +21,8 @@ const CardFront: React.FC<CardFrontProps> = ({
   item,
   frontAnimatedStyle,
   handleFavoritePress,
+  handleUpvote,
+  handleDownvote,
   CARD_WIDTH,
   CARD_HEIGHT,
 }) => {
@@ -73,6 +77,54 @@ const CardFront: React.FC<CardFrontProps> = ({
           color={item.favorite ? '#FFD700' : colors.text}
         />
       </TouchableOpacity>
+
+      {/* Vote Section */}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: CARD_HEIGHT * 0.05,
+          left: CARD_WIDTH * 0.05,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        <TouchableOpacity
+          onPress={handleDownvote}
+          style={{
+            padding: 8,
+            marginRight: 12,
+          }}
+          activeOpacity={0.6}
+        >
+          <Ionicons name="heart-dislike" size={22} color="#FF4500" />
+        </TouchableOpacity>
+
+        <Text
+          style={{
+            color: colors.text,
+            fontSize: 16,
+            fontWeight: '700',
+            textAlign: 'center',
+            minWidth: 30,
+            marginRight: 12,
+            textShadowColor: 'rgba(0,0,0,0.3)',
+            textShadowOffset: { width: 0, height: 1 },
+            textShadowRadius: 2,
+          }}
+        >
+          {(item.upvote || 0) - (item.downvote || 0)}
+        </Text>
+
+        <TouchableOpacity
+          onPress={handleUpvote}
+          style={{
+            padding: 8,
+          }}
+          activeOpacity={0.6}
+        >
+          <Ionicons name="heart" size={22} color="#7193FF" />
+        </TouchableOpacity>
+      </View>
     </Animated.View>
   );
 };

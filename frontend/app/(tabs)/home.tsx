@@ -11,6 +11,7 @@ import { CardData } from '../types/card';
 import {
   fetchCards,
   updateIdiom,
+  updateIdiomVote,
   CARDS_PER_PAGE,
 } from '../services/cardService';
 import { Card } from '../components/Card';
@@ -104,6 +105,63 @@ const Home = () => {
     }
   };
 
+  const handleVote = async (
+    cardId: string,
+    voteType: 'upvote' | 'downvote',
+  ) => {
+    const currentCard = cards.find((card) => card.id === cardId);
+    if (!currentCard) return;
+
+    console.log('Vote pressed:', {
+      cardId,
+      voteType,
+      currentCard: {
+        upvote: currentCard.upvote,
+        downvote: currentCard.downvote,
+      },
+    });
+
+    setCards((prevCards) => {
+      const updatedCards = prevCards.map((card) => {
+        if (card.id === cardId) {
+          const newCard = {
+            ...card,
+            [voteType]: (card[voteType] || 0) + 1,
+          };
+          console.log('Updated card:', {
+            oldCard: { upvote: card.upvote, downvote: card.downvote },
+            newCard: { upvote: newCard.upvote, downvote: newCard.downvote },
+          });
+          return newCard;
+        }
+        return card;
+      });
+
+      return updatedCards.sort((a, b) => {
+        const scoreA = (a.upvote || 0) - (a.downvote || 0);
+        const scoreB = (b.upvote || 0) - (b.downvote || 0);
+        return scoreB - scoreA;
+      });
+    });
+
+    try {
+      await updateIdiomVote(cardId, voteType, true);
+    } catch (error) {
+      console.error('Error updating vote:', error);
+      setCards((prevCards) =>
+        prevCards.map((card) => {
+          if (card.id === cardId) {
+            return {
+              ...card,
+              [voteType]: (card[voteType] || 0) - 1,
+            };
+          }
+          return card;
+        }),
+      );
+    }
+  };
+
   const renderLoadingIndicator = () => (
     <View className="py-4">
       <ActivityIndicator size="large" color={colors.text} />
@@ -144,6 +202,7 @@ const Home = () => {
                 key={card.id}
                 item={card}
                 onFavoritePress={toggleFavorite}
+                onVotePress={handleVote}
               />
             ))}
 

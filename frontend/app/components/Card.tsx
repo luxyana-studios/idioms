@@ -23,9 +23,10 @@ const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.75;
 interface CardProps {
   item: CardData;
   onFavoritePress: (id: string) => void;
+  onVotePress: (id: string, voteType: 'upvote' | 'downvote') => void;
 }
 
-export const Card = ({ item, onFavoritePress }: CardProps) => {
+export const Card = ({ item, onFavoritePress, onVotePress }: CardProps) => {
   const rotation = useSharedValue(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -58,6 +59,22 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
     onFavoritePress?.(item.id);
   };
 
+  const handleVotePress = (
+    e: GestureResponderEvent,
+    voteType: 'upvote' | 'downvote',
+  ) => {
+    e.stopPropagation();
+    onVotePress?.(item.id, voteType);
+  };
+
+  const handleUpvote = (e: GestureResponderEvent) => {
+    handleVotePress(e, 'upvote');
+  };
+
+  const handleDownvote = (e: GestureResponderEvent) => {
+    handleVotePress(e, 'downvote');
+  };
+
   return (
     <View className="m-4">
       <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
@@ -73,6 +90,8 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
             <CardFront
               item={item}
               handleFavoritePress={handleFavoritePress}
+              handleUpvote={handleUpvote}
+              handleDownvote={handleDownvote}
               CARD_WIDTH={CARD_WIDTH}
               CARD_HEIGHT={CARD_HEIGHT}
               frontAnimatedStyle={frontAnimatedStyle}

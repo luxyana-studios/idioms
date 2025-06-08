@@ -73,3 +73,36 @@ export const updateIdiom = async (
 
   return await response.json();
 };
+
+/**
+ * Updates the vote status of an idiom
+ * @param idiomId - The ID of the idiom to update
+ * @param voteType - The type of vote ('upvote' or 'downvote')
+ * @param increment - Whether to increment (true) or decrement (false) the vote
+ * @returns Promise<CardData> - The updated card data
+ */
+export const updateIdiomVote = async (
+  idiomId: string,
+  voteType: 'upvote' | 'downvote',
+  increment: boolean,
+): Promise<CardData> => {
+  const url = new URL(`${API_ROUTES.IDIOMS}${idiomId}`, IDIOMS_BACKEND_URL);
+
+  const voteData = {
+    [voteType]: increment ? 1 : -1,
+  };
+
+  const response = await fetch(url.toString(), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'ngrok-skip-browser-warning': 'idioms',
+    },
+    body: JSON.stringify(voteData),
+  });
+
+  if (!response.ok) return handleApiError(response);
+
+  return await response.json();
+};
