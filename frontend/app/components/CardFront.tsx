@@ -78,7 +78,6 @@ const CardFront: React.FC<CardFrontProps> = ({
         />
       </TouchableOpacity>
 
-      {/* Vote Section */}
       <View
         style={{
           position: 'absolute',
@@ -112,7 +111,7 @@ const CardFront: React.FC<CardFrontProps> = ({
             textShadowRadius: 2,
           }}
         >
-          {(item.upvote || 0) - (item.downvote || 0)}
+          {item.upvotes - item.downvotes}
         </Text>
 
         <TouchableOpacity

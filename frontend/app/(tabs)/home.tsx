@@ -112,53 +112,22 @@ const Home = () => {
     const currentCard = cards.find((card) => card.id === cardId);
     if (!currentCard) return;
 
-    console.log('Vote pressed:', {
-      cardId,
-      voteType,
-      currentCard: {
-        upvote: currentCard.upvote,
-        downvote: currentCard.downvote,
-      },
-    });
-
-    setCards((prevCards) => {
-      const updatedCards = prevCards.map((card) => {
-        if (card.id === cardId) {
-          const newCard = {
-            ...card,
-            [voteType]: (card[voteType] || 0) + 1,
-          };
-          console.log('Updated card:', {
-            oldCard: { upvote: card.upvote, downvote: card.downvote },
-            newCard: { upvote: newCard.upvote, downvote: newCard.downvote },
-          });
-          return newCard;
-        }
-        return card;
-      });
-
-      return updatedCards.sort((a, b) => {
-        const scoreA = (a.upvote || 0) - (a.downvote || 0);
-        const scoreB = (b.upvote || 0) - (b.downvote || 0);
-        return scoreB - scoreA;
-      });
-    });
-
     try {
-      await updateIdiomVote(cardId, voteType, true);
+      const updatedCard = await updateIdiomVote(cardId, voteType);
+
+      setCards((prevCards) => {
+        const updatedCards = prevCards.map((card) =>
+          card.id === cardId ? updatedCard : card,
+        );
+
+        return updatedCards.sort((a, b) => {
+          const scoreA = a.upvotes - a.downvotes;
+          const scoreB = b.upvotes - b.downvotes;
+          return scoreB - scoreA;
+        });
+      });
     } catch (error) {
       console.error('Error updating vote:', error);
-      setCards((prevCards) =>
-        prevCards.map((card) => {
-          if (card.id === cardId) {
-            return {
-              ...card,
-              [voteType]: (card[voteType] || 0) - 1,
-            };
-          }
-          return card;
-        }),
-      );
     }
   };
 
