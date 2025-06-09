@@ -1,58 +1,71 @@
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
-import React, { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Card } from '../components/Card';
 import { CardData } from '../types/card';
-import { fetchCards, updateIdiom } from '../services/cardService';
+import { fetchFavoriteCards, updateIdiom } from '../services/cardService';
 import { useTheme } from '../contexts/ThemeContext';
 import { useFocusEffect } from 'expo-router';
 
 const Favorites = () => {
   const [favoriteCards, setFavoriteCards] = useState<CardData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
   const { colors } = useTheme();
+  const shouldRefresh = useRef(false);
 
-  const loadFavorites = async () => {
-    setIsLoading(true);
-    try {
-      let allCards: CardData[] = [];
-      let page = 1;
-      let hasMore = true;
-      const limit = 50;
-      while (hasMore) {
-        const cardsPage = await fetchCards(page, limit);
-        allCards = allCards.concat(cardsPage);
-        if (cardsPage.length < limit) {
-          hasMore = false;
-        } else {
-          page += 1;
+  const loadFavorites = useCallback(
+    async (forceRefresh = false) => {
+      if (!forceRefresh && hasLoaded) return;
+
+      setIsLoading(true);
+      try {
+        let allFavorites: CardData[] = [];
+        let page = 1;
+        let hasMore = true;
+        const limit = 50;
+
+        while (hasMore) {
+          const favoritesPage = await fetchFavoriteCards(page, limit);
+          allFavorites = allFavorites.concat(favoritesPage);
+
+          if (favoritesPage.length < limit) {
+            hasMore = false;
+          } else {
+            page += 1;
+          }
         }
+
+        setFavoriteCards(allFavorites);
+        setHasLoaded(true);
+      } catch {
+        setFavoriteCards([]);
+      } finally {
+        setIsLoading(false);
       }
-      setFavoriteCards(allCards.filter((card) => card.favorite));
-    } catch {
-      setFavoriteCards([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [hasLoaded],
+  );
 
   useFocusEffect(
-    React.useCallback(() => {
-      loadFavorites();
-    }, []),
+    useCallback(() => {
+      if (!hasLoaded || shouldRefresh.current) {
+        loadFavorites(true);
+        shouldRefresh.current = false;
+      }
+    }, [hasLoaded, loadFavorites]),
   );
 
   const toggleFavorite = async (cardId: string) => {
     const card = favoriteCards.find((c) => c.id === cardId);
     if (!card) return;
-    const newFavorite = !card.favorite;
+
     setFavoriteCards((prev) => prev.filter((c) => c.id !== cardId));
+
     try {
-      await updateIdiom(cardId, newFavorite);
+      await updateIdiom(cardId, false);
+      shouldRefresh.current = true;
     } catch {
-      setFavoriteCards((prev) => [
-        ...prev,
-        { ...card, favorite: !newFavorite },
-      ]);
+      setFavoriteCards((prev) => [...prev, card]);
     }
   };
 
