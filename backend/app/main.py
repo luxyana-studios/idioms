@@ -58,6 +58,25 @@ def get_idioms(
         ]
 
 
+@app.get("/idioms/favorites", response_model=list[IdiomSchema])
+def get_favorite_idioms(
+    db: SessionDep,
+    page: int = 1,
+    limit: Annotated[int, Query(le=50)] = 50,
+) -> list[IdiomSchema]:
+    offset = (page - 1) * limit
+
+    return [
+        IdiomSchema.model_validate(idiom)
+        for idiom in db.query(IdiomModel)
+        .filter(IdiomModel.favorite)
+        .order_by(IdiomModel.text.asc())
+        .limit(limit)
+        .offset(offset)
+        .all()
+    ]
+
+
 @app.post("/idioms/")
 def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
     idioms = [IdiomModel(**idiom.model_dump()) for idiom in payload]
