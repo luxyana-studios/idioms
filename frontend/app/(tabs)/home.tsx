@@ -11,12 +11,12 @@ import { CardData } from '../types/card';
 import {
   fetchCards,
   updateIdiom,
-  updateIdiomVote,
   CARDS_PER_PAGE,
 } from '../services/cardService';
 import { Card } from '../components/Card';
 import { SearchBar } from '../components/SearchBar';
 import { useTheme } from '../contexts/ThemeContext';
+import { useVoting } from '../hooks/useVoting';
 
 const Home = () => {
   const [cards, setCards] = useState<CardData[]>([]);
@@ -25,6 +25,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const SCROLL_PADDING = 20;
   const { colors } = useTheme();
+  const { handleVote, isVoting } = useVoting(cards, setCards);
 
   const loadCards = async (search?: string) => {
     try {
@@ -105,32 +106,6 @@ const Home = () => {
     }
   };
 
-  const handleVote = async (
-    cardId: string,
-    voteType: 'upvote' | 'downvote',
-  ) => {
-    const currentCard = cards.find((card) => card.id === cardId);
-    if (!currentCard) return;
-
-    try {
-      const updatedCard = await updateIdiomVote(cardId, voteType);
-
-      setCards((prevCards) => {
-        const updatedCards = prevCards.map((card) =>
-          card.id === cardId ? updatedCard : card,
-        );
-
-        return updatedCards.sort((a, b) => {
-          const scoreA = a.upvotes - a.downvotes;
-          const scoreB = b.upvotes - b.downvotes;
-          return scoreB - scoreA;
-        });
-      });
-    } catch (error) {
-      console.error('Error updating vote:', error);
-    }
-  };
-
   const renderLoadingIndicator = () => (
     <View className="py-4">
       <ActivityIndicator size="large" color={colors.text} />
@@ -172,6 +147,7 @@ const Home = () => {
                 item={card}
                 onFavoritePress={toggleFavorite}
                 onVotePress={handleVote}
+                isVoting={isVoting === card.id}
               />
             ))}
 
