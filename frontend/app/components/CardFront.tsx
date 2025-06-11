@@ -12,10 +12,12 @@ interface CardFrontProps {
   item: CardData;
   frontAnimatedStyle: AnimatedStyle<ViewStyle>;
   handleFavoritePress: (e: GestureResponderEvent) => void;
-  onVotePress: (cardId: string, voteType: 'upvote' | 'downvote') => void;
+  onVotePress: (
+    cardId: string,
+    voteType: 'upvote' | 'downvote',
+  ) => Promise<void>;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
-  isVoting?: boolean;
 }
 
 const CardFront: React.FC<CardFrontProps> = ({
@@ -25,7 +27,6 @@ const CardFront: React.FC<CardFrontProps> = ({
   onVotePress,
   CARD_WIDTH,
   CARD_HEIGHT,
-  isVoting = false,
 }) => {
   const { colors } = useTheme();
 
@@ -91,7 +92,6 @@ const CardFront: React.FC<CardFrontProps> = ({
           upvotes={item.upvotes}
           downvotes={item.downvotes}
           onVote={onVotePress}
-          isVoting={isVoting}
         />
       </View>
     </Animated.View>

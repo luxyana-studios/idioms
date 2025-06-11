@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -12,8 +12,7 @@ interface VotingButtonsProps {
   cardId: string;
   upvotes: number;
   downvotes: number;
-  onVote: (cardId: string, voteType: 'upvote' | 'downvote') => void;
-  isVoting?: boolean;
+  onVote: (cardId: string, voteType: 'upvote' | 'downvote') => Promise<void>;
 }
 
 export const VotingButtons = ({
@@ -21,18 +20,32 @@ export const VotingButtons = ({
   upvotes,
   downvotes,
   onVote,
-  isVoting = false,
 }: VotingButtonsProps) => {
   const { colors } = useTheme();
+  const [isVoting, setIsVoting] = useState(false);
 
-  const handleUpvote = (e: GestureResponderEvent) => {
+  const handleUpvote = async (e: GestureResponderEvent) => {
     e.stopPropagation();
-    onVote(cardId, 'upvote');
+    if (isVoting) return;
+
+    setIsVoting(true);
+    try {
+      await onVote(cardId, 'upvote');
+    } finally {
+      setIsVoting(false);
+    }
   };
 
-  const handleDownvote = (e: GestureResponderEvent) => {
+  const handleDownvote = async (e: GestureResponderEvent) => {
     e.stopPropagation();
-    onVote(cardId, 'downvote');
+    if (isVoting) return;
+
+    setIsVoting(true);
+    try {
+      await onVote(cardId, 'downvote');
+    } finally {
+      setIsVoting(false);
+    }
   };
 
   return (
