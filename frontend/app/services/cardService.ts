@@ -48,6 +48,32 @@ export const fetchCards = async (
 };
 
 /**
+ * Fetches only favorite cards from the backend
+ * @param page - The page number to fetch
+ * @param limit - Number of cards per page
+ * @returns Promise<CardData[]> - Array of favorite card data
+ */
+export const fetchFavoriteCards = async (
+  page: number,
+  limit: number = CARDS_PER_PAGE,
+): Promise<CardData[]> => {
+  const url = new URL(`${API_ROUTES.IDIOMS}favorites`, IDIOMS_BACKEND_URL);
+  url.searchParams.append('page', page.toString());
+  url.searchParams.append('limit', limit.toString());
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      Accept: 'application/json',
+      'ngrok-skip-browser-warning': 'idioms',
+    },
+  });
+
+  if (!response.ok) return handleApiError(response);
+
+  return await response.json();
+};
+
+/**
  * Updates the favorite status of an idiom
  * @param idiomId - The ID of the idiom to update
  * @param favorite - The new favorite status (true/false)
