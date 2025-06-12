@@ -6,11 +6,16 @@ import { CardData } from '../types/card';
 import { ViewStyle, GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import SmileyDisplay from './SmileyDisplay';
+import { VotingButtons } from './VotingButtons';
 
 interface CardFrontProps {
   item: CardData;
   frontAnimatedStyle: AnimatedStyle<ViewStyle>;
   handleFavoritePress: (e: GestureResponderEvent) => void;
+  onVotePress: (
+    cardId: string,
+    voteType: 'upvote' | 'downvote',
+  ) => Promise<void>;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
 }
@@ -19,6 +24,7 @@ const CardFront: React.FC<CardFrontProps> = ({
   item,
   frontAnimatedStyle,
   handleFavoritePress,
+  onVotePress,
   CARD_WIDTH,
   CARD_HEIGHT,
 }) => {
@@ -73,6 +79,21 @@ const CardFront: React.FC<CardFrontProps> = ({
           color={item.favorite ? '#FFD700' : colors.text}
         />
       </TouchableOpacity>
+
+      <View
+        style={{
+          position: 'absolute',
+          bottom: CARD_HEIGHT * 0.05,
+          left: CARD_WIDTH * 0.05,
+        }}
+      >
+        <VotingButtons
+          cardId={item.id}
+          upvotes={item.upvotes}
+          downvotes={item.downvotes}
+          onVote={onVotePress}
+        />
+      </View>
     </Animated.View>
   );
 };

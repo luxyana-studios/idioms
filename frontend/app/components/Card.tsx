@@ -23,9 +23,10 @@ const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.75;
 interface CardProps {
   item: CardData;
   onFavoritePress: (id: string) => void;
+  onVotePress: (id: string, voteType: 'upvote' | 'downvote') => Promise<void>;
 }
 
-export const Card = ({ item, onFavoritePress }: CardProps) => {
+export const Card = ({ item, onFavoritePress, onVotePress }: CardProps) => {
   const rotation = useSharedValue(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -73,6 +74,7 @@ export const Card = ({ item, onFavoritePress }: CardProps) => {
             <CardFront
               item={item}
               handleFavoritePress={handleFavoritePress}
+              onVotePress={onVotePress}
               CARD_WIDTH={CARD_WIDTH}
               CARD_HEIGHT={CARD_HEIGHT}
               frontAnimatedStyle={frontAnimatedStyle}

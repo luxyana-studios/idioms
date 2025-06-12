@@ -11,6 +11,7 @@ import { CardData } from '../types/card';
 import {
   fetchCards,
   updateIdiom,
+  updateIdiomVote,
   CARDS_PER_PAGE,
 } from '../services/cardService';
 import { Card } from '../components/Card';
@@ -104,6 +105,24 @@ const Home = () => {
     }
   };
 
+  const handleVote = async (
+    cardId: string,
+    voteType: 'upvote' | 'downvote',
+  ) => {
+    const currentCard = cards.find((card) => card.id === cardId);
+    if (!currentCard) return;
+
+    try {
+      const updatedCard = await updateIdiomVote(cardId, voteType);
+
+      setCards((prevCards) =>
+        prevCards.map((card) => (card.id === cardId ? updatedCard : card)),
+      );
+    } catch (error) {
+      console.error('Error updating vote:', error);
+    }
+  };
+
   const renderLoadingIndicator = () => (
     <View className="py-4">
       <ActivityIndicator size="large" color={colors.text} />
@@ -144,6 +163,7 @@ const Home = () => {
                 key={card.id}
                 item={card}
                 onFavoritePress={toggleFavorite}
+                onVotePress={handleVote}
               />
             ))}
 
