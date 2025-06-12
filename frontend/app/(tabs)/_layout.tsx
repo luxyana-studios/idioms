@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useWelcome } from '../contexts/WelcomeContext';
 
 type TabIconProps = {
   focused: boolean;
@@ -26,6 +27,8 @@ const TabIcon = ({ focused, title, iconName }: TabIconProps) => {
 };
 
 const TabLayout = () => {
+  const { showWelcome } = useWelcome();
+
   return (
     <Tabs
       screenOptions={{
@@ -48,6 +51,7 @@ const TabLayout = () => {
           borderTopWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
+          display: showWelcome ? 'none' : 'flex', // Ocultar tabs durante la bienvenida
         },
       }}
     >
