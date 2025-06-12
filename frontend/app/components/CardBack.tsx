@@ -53,15 +53,15 @@ const MeaningContent = ({
         sequence={[
           {
             text: '',
-            typeSpeed: 60,
-            delayBetweenSequence: 500,
+            typeSpeed: 30,
+            delayBetweenSequence: 200,
           },
           {
             action: () => setShowCursor(true),
           },
           {
             text: meaning,
-            typeSpeed: 70,
+            typeSpeed: 30,
             delayBetweenSequence: 300,
           },
           {
@@ -169,16 +169,16 @@ const ExplanationContent = ({
         sequence={[
           {
             text: '',
-            typeSpeed: 50,
-            delayBetweenSequence: 300,
+            typeSpeed: 20,
+            delayBetweenSequence: 100,
           },
           {
             action: () => setShowCursor(true),
           },
           {
             text: explanation,
-            typeSpeed: 60,
-            delayBetweenSequence: 100,
+            typeSpeed: 20,
+            delayBetweenSequence: 300,
           },
           {
             action: () => {
@@ -212,15 +212,33 @@ const ExamplesContent = ({
   examples,
   textSecondaryColor,
 }: ExamplesContentProps) => {
+  const [showAllExamples, setShowAllExamples] = useState(false);
+  const [firstExampleComplete, setFirstExampleComplete] = useState(false);
   const [visibleIndexes, setVisibleIndexes] = useState([0]);
+  const { colors } = useTheme();
 
   const handleAnimationEnd = (idx: number) => {
-    if (idx < examples.length - 1) {
+    if (idx === 0) {
+      setFirstExampleComplete(true);
+    }
+
+    if (showAllExamples && idx < examples.length - 1) {
       setTimeout(() => {
         setVisibleIndexes((prev) => [...prev, idx + 1]);
       }, 300);
     }
   };
+
+  const handleShowMoreExamples = () => {
+    setShowAllExamples(true);
+    if (examples.length > 1) {
+      setTimeout(() => {
+        setVisibleIndexes((prev) => [...prev, 1]);
+      }, 100);
+    }
+  };
+
+  const examplesToShow = showAllExamples ? examples : [examples[0]];
 
   return (
     <View style={styles.contentContainer}>
@@ -229,15 +247,15 @@ const ExamplesContent = ({
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
       </View>
       <View style={{ width: '100%' }}>
-        {examples.map((example, idx) =>
+        {examplesToShow.map((example, idx) =>
           visibleIndexes.includes(idx) ? (
             <TypeAnimation
               key={idx}
               sequence={[
                 {
                   text: `${idx + 1}. ${example}`,
-                  typeSpeed: 50,
-                  delayBetweenSequence: 0,
+                  typeSpeed: 20,
+                  delayBetweenSequence: 100,
                 },
                 {
                   action: () => handleAnimationEnd(idx),
@@ -255,6 +273,23 @@ const ExamplesContent = ({
               repeat={1}
             />
           ) : null,
+        )}
+
+        {examples.length > 1 && !showAllExamples && firstExampleComplete && (
+          <TouchableOpacity
+            onPress={handleShowMoreExamples}
+            style={[
+              styles.showMoreButton,
+              { backgroundColor: colors.cardBackBackground },
+            ]}
+            activeOpacity={0.8}
+          >
+            <View style={styles.showMoreContent}>
+              <Ionicons name="add-circle-outline" size={20} color="#FFD700" />
+              <Text style={styles.showMoreText}>Show more examples</Text>
+              <Ionicons name="chevron-down" size={16} color="#FFD700" />
+            </View>
+          </TouchableOpacity>
         )}
       </View>
     </View>
@@ -516,5 +551,31 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     letterSpacing: 0.3,
     maxWidth: '100%',
+  },
+  showMoreButton: {
+    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#FFD70040',
+    backgroundColor: 'rgba(255, 215, 0, 0.08)',
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  showMoreContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  showMoreText: {
+    color: '#FFD700',
+    fontWeight: '600',
+    fontSize: 15,
+    marginLeft: 8,
+    marginRight: 6,
+    letterSpacing: 0.3,
   },
 });
