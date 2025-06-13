@@ -43,7 +43,7 @@ const TabLayout = () => {
           backgroundColor: '#0f0D23',
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
-          height: 60,
+          height: 45,
           position: 'absolute',
           bottom: 0,
           left: 0,
@@ -51,7 +51,7 @@ const TabLayout = () => {
           borderTopWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
-          display: showWelcome ? 'none' : 'flex', // Ocultar tabs durante la bienvenida
+          display: showWelcome ? 'none' : 'flex',
         },
       }}
     >

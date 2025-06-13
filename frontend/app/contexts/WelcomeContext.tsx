@@ -20,7 +20,7 @@ interface WelcomeProviderProps {
 }
 
 export const WelcomeProvider = ({ children }: WelcomeProviderProps) => {
-  const [showWelcome, setShowWelcome] = useState(true); // Durante desarrollo siempre true
+  const [showWelcome, setShowWelcome] = useState(true);
 
   return (
     <WelcomeContext.Provider value={{ showWelcome, setShowWelcome }}>

@@ -145,11 +145,8 @@ const Home = () => {
 
   const handleWelcomeComplete = () => {
     setShowWelcome(false);
-    // TODO: En producción, aquí guardaríamos en AsyncStorage que ya vio la bienvenida
-    // AsyncStorage.setItem('hasSeenWelcome', 'true');
   };
 
-  // Si debe mostrar la bienvenida, renderizarla en lugar del contenido principal
   if (showWelcome) {
     return <WelcomeScreen onComplete={handleWelcomeComplete} />;
   }

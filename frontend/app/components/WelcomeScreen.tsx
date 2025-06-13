@@ -16,6 +16,7 @@ import Animated, {
   interpolate,
   runOnJS,
 } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -30,13 +31,11 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [cardFlipped, setCardFlipped] = useState(false);
   const { colors } = useTheme();
 
-  // Animated values - todos declarados al inicio
   const pulseAnim = useSharedValue(1);
   const cardFlipAnim = useSharedValue(0);
   const progressAnim = useSharedValue(0);
   const starsOpacity = useSharedValue(0.3);
 
-  // Sparkle animations
   const sparkle1 = useSharedValue(0);
   const sparkle2 = useSharedValue(0);
   const sparkle3 = useSharedValue(0);
@@ -44,12 +43,10 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const sparkle5 = useSharedValue(0);
   const sparkle6 = useSharedValue(0);
 
-  // Scroll animations
   const scroll1 = useSharedValue(0);
   const scroll2 = useSharedValue(0);
   const scroll3 = useSharedValue(0);
 
-  // Todos los animated styles declarados al inicio
   const pulseStyle = useAnimatedStyle(() => ({
     transform: [
       { scale: pulseAnim.value },
@@ -251,10 +248,8 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   ];
 
   useEffect(() => {
-    // Progress animation
     progressAnim.value = withTiming(currentStep, { duration: 300 });
 
-    // Step-specific animations
     switch (currentStep) {
       case 0:
         startPulseAnimation();
@@ -294,7 +289,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     runOnJS(setCardFlipped)(true);
     cardFlipAnim.value = withTiming(1, { duration: 700 });
 
-    // Sparkle effect
     sparkle1.value = withSequence(
       withTiming(0, { duration: 0 }),
       withTiming(1, { duration: 600 }),
@@ -357,10 +351,11 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const startFinalAnimation = () => {
     pulseAnim.value = withRepeat(
       withSequence(
-        withTiming(1.2, { duration: 800 }),
-        withTiming(1, { duration: 800 }),
+        withTiming(1.2, { duration: 1500 }),
+        withTiming(1, { duration: 1500 }),
       ),
       -1,
+      false,
     );
   };
 
@@ -381,18 +376,14 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const renderWelcomeAnimation = () => (
     <View style={styles.animationContainer}>
       <Animated.View style={[styles.welcomeCard, pulseStyle]}>
-        <View
-          style={[
-            styles.cardGradient,
-            { backgroundColor: colors.cardBackground },
-          ]}
+        <LinearGradient
+          colors={['#8B5CF6', '#EC4899', '#F97316']}
+          style={styles.cardGradient}
         >
-          <Ionicons name="language" size={64} color={colors.text} />
-          <Text style={[styles.cardTitle, { color: colors.text }]}>Idioms</Text>
-          <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>
-            World Expressions
-          </Text>
-        </View>
+          <Ionicons name="language" size={64} color="white" />
+          <Text style={styles.cardTitle}>Idioms</Text>
+          <Text style={styles.cardSubtitle}>World Expressions</Text>
+        </LinearGradient>
       </Animated.View>
 
       <View style={styles.sparkleContainer}>
@@ -429,15 +420,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         </Animated.View>
       </TouchableOpacity>
 
-      {!cardFlipped && (
-        <View style={styles.tapIndicator}>
-          <Animated.View style={[styles.tapButton, pulseStyle]}>
-            <Ionicons name="refresh" size={24} color="#8B5CF6" />
-          </Animated.View>
-        </View>
-      )}
-
-      {/* Sparkle effects */}
       <Animated.View
         style={[
           styles.sparkleEffect,
@@ -638,7 +620,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         }
       />
 
-      {/* Background stars */}
       <View style={styles.starsContainer}>
         {[...Array(20)].map((_, i) => (
           <Animated.View
@@ -657,7 +638,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       </View>
 
       <View style={styles.content}>
-        {/* Progress indicators */}
         <View style={styles.progressContainer}>
           <Animated.View style={[styles.progressDot, progressDot0Style]} />
           <Animated.View style={[styles.progressDot, progressDot1Style]} />
@@ -665,7 +645,6 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Animated.View style={[styles.progressDot, progressDot3Style]} />
         </View>
 
-        {/* Title and subtitle */}
         <View style={styles.titleContainer}>
           <Text style={[styles.title, { color: colors.text }]}>
             {steps[currentStep].title}
@@ -675,10 +654,8 @@ const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           </Text>
         </View>
 
-        {/* Animation */}
         {renderAnimation()}
 
-        {/* Buttons */}
         <View style={styles.buttonContainer}>
           {currentStep < steps.length - 1 ? (
             <TouchableOpacity
@@ -903,7 +880,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   scrollIndicator: {
-    marginTop: 16,
+    marginTop: 2,
     alignItems: 'center',
   },
   startButton: {
