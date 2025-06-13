@@ -17,6 +17,8 @@ import {
 import { Card } from '../components/Card';
 import { SearchBar } from '../components/SearchBar';
 import { useTheme } from '../contexts/ThemeContext';
+import { useWelcome } from '../contexts/WelcomeContext';
+import WelcomeScreen from '../components/WelcomeScreen';
 
 const Home = () => {
   const [cards, setCards] = useState<CardData[]>([]);
@@ -25,6 +27,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const SCROLL_PADDING = 20;
   const { colors } = useTheme();
+  const { showWelcome, setShowWelcome } = useWelcome();
 
   const loadCards = async (search?: string) => {
     try {
@@ -139,6 +142,14 @@ const Home = () => {
       </Text>
     </View>
   );
+
+  const handleWelcomeComplete = () => {
+    setShowWelcome(false);
+  };
+
+  if (showWelcome) {
+    return <WelcomeScreen onComplete={handleWelcomeComplete} />;
+  }
 
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
