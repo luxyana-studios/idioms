@@ -5,13 +5,14 @@ import {
   Text,
   RefreshControl,
 } from 'react-native';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card } from '../components/Card';
 import { SearchBar } from '../components/SearchBar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useCards } from '../hooks/useCards';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useCardActions } from '../hooks/useCardActions';
+import { CardData } from '../types/card';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,7 +41,7 @@ const Home = () => {
 
   const { toggleFavorite, handleVote } = useCardActions({ cards });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
     }, 300);
@@ -102,7 +103,7 @@ const Home = () => {
       >
         {cards.length === 0 && !isLoading
           ? renderNoResults()
-          : cards.map((card) => (
+          : cards.map((card: CardData) => (
               <Card
                 key={card.id}
                 item={card}
