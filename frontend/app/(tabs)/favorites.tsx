@@ -1,119 +1,41 @@
 import {
   View,
   ScrollView,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
   ActivityIndicator,
   Text,
+  RefreshControl,
 } from 'react-native';
-import React, { useState, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { Card } from '../components/Card';
-import { CardData } from '../types/card';
-import {
-  fetchFavoriteCards,
-  updateIdiom,
-  CARDS_PER_PAGE,
-} from '../services/cardService';
 import { useTheme } from '../contexts/ThemeContext';
-import { useFocusEffect } from 'expo-router';
+import { useFavoriteCards } from '../hooks/useCards';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import { useCardActions } from '../hooks/useCardActions';
 
 const Favorites = () => {
-  const [cards, setCards] = useState<CardData[]>([]);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const SCROLL_PADDING = 20;
   const { colors } = useTheme();
 
-  const loadCards = async () => {
-    try {
-      setIsLoading(true);
-      const newCards = await fetchFavoriteCards(1, CARDS_PER_PAGE);
-      setCards(newCards);
-      setPage(1);
-      setHasLoaded(true);
-    } catch (error) {
-      console.error('Error loading favorite cards:', error);
-      setCards([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+    refetch,
+  } = useFavoriteCards();
 
-  const loadMoreCards = useCallback(async () => {
-    if (isLoading) return;
+  const cards = useMemo(() => {
+    return data?.pages.flat() ?? [];
+  }, [data]);
 
-    try {
-      setIsLoading(true);
-      const newCards = await fetchFavoriteCards(page + 1, CARDS_PER_PAGE);
-      if (newCards.length === 0) {
-        return;
-      }
-      setCards((prevCards) => [...prevCards, ...newCards]);
-      setPage((prev) => prev + 1);
-    } catch (error) {
-      console.error('Error loading more favorite cards:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, isLoading]);
+  const { handleScroll } = useInfiniteScroll({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
 
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const { layoutMeasurement, contentOffset, contentSize } =
-        event.nativeEvent;
-
-      if (
-        layoutMeasurement.height + contentOffset.y >=
-        contentSize.height - SCROLL_PADDING
-      ) {
-        loadMoreCards();
-      }
-    },
-    [loadMoreCards],
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!hasLoaded) {
-        loadCards();
-      }
-    }, [hasLoaded]),
-  );
-
-  const toggleFavorite = async (cardId: string) => {
-    const currentCard = cards.find((card) => card.id === cardId);
-    if (!currentCard) return;
-
-    const newFavoriteStatus = !currentCard.favorite;
-
-    if (!newFavoriteStatus) {
-      setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
-    } else {
-      setCards((prevCards) =>
-        prevCards.map((card) =>
-          card.id === cardId ? { ...card, favorite: newFavoriteStatus } : card,
-        ),
-      );
-    }
-
-    try {
-      await updateIdiom(cardId, newFavoriteStatus);
-    } catch (error) {
-      console.error('Error updating favorite status:', error);
-      if (!newFavoriteStatus) {
-        setCards((prevCards) => [...prevCards, currentCard]);
-      } else {
-        setCards((prevCards) =>
-          prevCards.map((card) =>
-            card.id === cardId
-              ? { ...card, favorite: !newFavoriteStatus }
-              : card,
-          ),
-        );
-      }
-    }
-  };
+  const { toggleFavorite, handleVote } = useCardActions({ cards });
 
   const renderLoadingIndicator = () => (
     <View className="py-4">
@@ -123,7 +45,14 @@ const Favorites = () => {
 
   const renderNoFavorites = () => (
     <View className="flex-1 justify-center items-center">
-      <Text className="text-xl text-blue-400 font-bold">No favorites yet</Text>
+      <Text className="text-xl text-blue-400 font-bold">
+        {error ? 'Error loading favorites' : 'No favorites yet'}
+      </Text>
+      {error && (
+        <Text style={{ color: colors.textSecondary }} className="mt-2">
+          Pull to refresh or try again
+        </Text>
+      )}
     </View>
   );
 
@@ -139,6 +68,14 @@ const Favorites = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={() => refetch()}
+            tintColor={colors.text}
+            colors={[colors.text]}
+          />
+        }
       >
         {cards.length === 0 && !isLoading
           ? renderNoFavorites()
@@ -147,10 +84,11 @@ const Favorites = () => {
                 key={card.id}
                 item={card}
                 onFavoritePress={toggleFavorite}
+                onVotePress={handleVote}
               />
             ))}
 
-        {isLoading && renderLoadingIndicator()}
+        {isFetchingNextPage && renderLoadingIndicator()}
       </ScrollView>
     </View>
   );
