@@ -5,10 +5,9 @@ import {
   Text,
   RefreshControl,
 } from 'react-native';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Card } from '../components/Card';
 import { useTheme } from '../contexts/ThemeContext';
-import { useFocusEffect } from 'expo-router';
 import { useFavoriteCards } from '../hooks/useCards';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useCardActions } from '../hooks/useCardActions';
@@ -37,12 +36,6 @@ const Favorites = () => {
   });
 
   const { toggleFavorite, handleVote } = useCardActions({ cards });
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch]),
-  );
 
   const renderLoadingIndicator = () => (
     <View className="py-4">
