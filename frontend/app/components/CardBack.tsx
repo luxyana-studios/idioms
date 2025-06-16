@@ -14,6 +14,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { TypeAnimation } from 'react-native-type-animation';
 import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
+import { SimpleProgressDots } from './SimpleProgressDots';
 
 interface CardBackProps {
   item: CardData;
@@ -261,22 +262,6 @@ const ExamplesContent = ({
   );
 };
 
-interface StepIndicatorsProps {
-  currentStep: ContentStep;
-  steps: ContentStep[];
-}
-
-const StepIndicators = ({ currentStep, steps }: StepIndicatorsProps) => (
-  <View style={styles.stepIndicators}>
-    {steps.map((step) => (
-      <View
-        key={step}
-        style={[styles.dot, currentStep === step && styles.activeDot]}
-      />
-    ))}
-  </View>
-);
-
 export const CardBack = ({
   item,
   handleFavoritePress,
@@ -365,7 +350,12 @@ export const CardBack = ({
         />
       </TouchableOpacity>
 
-      <StepIndicators currentStep={currentStep} steps={steps} />
+      <SimpleProgressDots
+        currentStep={currentStep}
+        totalSteps={3}
+        steps={steps}
+        containerStyle={styles.stepIndicators}
+      />
 
       {currentStep !== 'examples' && (
         <TouchableOpacity
@@ -487,19 +477,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 6,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: '#FFD700',
-    width: 10,
-    height: 10,
-    borderRadius: 5,
   },
   mainText: {
     fontSize: 20,
