@@ -11,6 +11,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useFavoriteCards } from '../hooks/useCards';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useCardActions } from '../hooks/useCardActions';
+import { CardData } from '../types/card';
 
 const Favorites = () => {
   const { colors } = useTheme();
@@ -79,7 +80,7 @@ const Favorites = () => {
       >
         {cards.length === 0 && !isLoading
           ? renderNoFavorites()
-          : cards.map((card) => (
+          : cards.map((card: CardData) => (
               <Card
                 key={card.id}
                 item={card}
