@@ -1,8 +1,8 @@
-import pydantic_settings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class AppSettings(pydantic_settings.BaseSettings):
-    model_config = pydantic_settings.SettingsConfigDict(
+class AppSettings(BaseSettings):
+    model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
     )

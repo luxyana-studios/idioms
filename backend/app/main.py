@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import Annotated
 from uuid import UUID
 
@@ -11,7 +12,14 @@ from app.schemas.idioms import IdiomCreate, IdiomSchema, IdiomUpdate
 
 SessionDep = Annotated[Session, Depends(database.get_session)]
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    database.create_db_and_tables()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,13 +30,13 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-def on_startup():
-    database.create_db_and_tables()
+@app.get("/")
+async def status():
+    return {"status": "ok"}
 
 
 @app.get("/idioms/", response_model=list[IdiomSchema])
-def get_idioms(
+async def get_idioms(
     db: SessionDep,
     page: int = 1,
     limit: Annotated[int, Query(le=50)] = 50,
@@ -59,7 +67,7 @@ def get_idioms(
 
 
 @app.get("/idioms/favorites", response_model=list[IdiomSchema])
-def get_favorite_idioms(
+async def get_favorite_idioms(
     db: SessionDep,
     page: int = 1,
     limit: Annotated[int, Query(le=50)] = 50,
@@ -78,7 +86,7 @@ def get_favorite_idioms(
 
 
 @app.post("/idioms/")
-def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
+async def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
     idioms = [IdiomModel(**idiom.model_dump()) for idiom in payload]
     db.add_all(idioms)
     db.commit()
