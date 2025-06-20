@@ -1,0 +1,312 @@
+{
+  "All in a day's work": {
+    "text": "All in a day's work",
+    "meaning": "It refers to tasks or challenges that are considered normal and not extraordinary, often implying that one is used to dealing with them.",
+    "explanation": "The phrase 'all in a day's work' suggests that the effort or tasks involved are part of the daily routine. It emphasizes that certain activities, even if challenging or unusual, are standard for someone's job or daily life.",
+    "examples": [
+      "When the cat got stuck in the tree and I had to rescue it, I thought, 'Just another day at the office!'",
+      "Fixing the printer after it exploded with paper was all in a day's work for the office manager.",
+      "After saving the company thousands of dollars this week, I just smiled and said, 'All in a day's work!'"
+    ],
+    "frequency_of_use": 7.0,
+    "category_theme": [
+      "work",
+      "effort"
+    ],
+    "sentiment": [
+      "neutral"
+    ],
+    "context_diversity": [
+      "business",
+      "daily life",
+      "military"
+    ],
+    "literal_transparency": 5.0,
+    "translation_difficulty": 5.0,
+    "depiction": [
+      "🌞",
+      "🛠️",
+      "👷‍♂️"
+    ],
+    "alternative_depiction": [
+      "🛠️",
+      "☀️"
+    ],
+    "meaning_depiction": [
+      "🌅",
+      "👔",
+      "💼"
+    ]
+  },
+  "Burning bridges": {
+    "text": "Burning bridges",
+    "meaning": "To destroy relationships or connections irreparably, especially to the point of making it impossible to return to a former state.",
+    "explanation": "The phrase originates from the literal act of burning bridges to prevent an army from retreating or to ensure that they cannot come back. In a metaphorical sense, it refers to making decisions that cut off all chances of return or reconciliation.",
+    "examples": [
+      "When I quit my job without notice, I was really burning bridges.",
+      "After that argument, I think I burnt the bridges with my best friend.",
+      "He burned his bridge with the boss when he ranted about the office on social media."
+    ],
+    "frequency_of_use": 6.0,
+    "category_theme": [
+      "business",
+      "emotions"
+    ],
+    "sentiment": [
+      "negative"
+    ],
+    "context_diversity": [
+      "business",
+      "relationships",
+      "daily life"
+    ],
+    "literal_transparency": 5.0,
+    "translation_difficulty": 6.0,
+    "depiction": [
+      "🔥",
+      "🌉"
+    ],
+    "alternative_depiction": [
+      "🔥",
+      "🌉"
+    ],
+    "meaning_depiction": [
+      "🔥",
+      "🌉"
+    ]
+  },
+  "Cry over spilled milk": {
+    "text": "Cry over spilled milk",
+    "meaning": "To waste time worrying or being upset about something that has already happened and cannot be changed.",
+    "explanation": "The idiom relates to a common, trivial misfortune. Spilling milk is an incident that occurs and can't be undone, just like worrying about it accomplishes nothing. It encourages people to focus on what can be done rather than what has happened. The phrase is old, with traces back to the 17th century, emphasizing the futility of being upset about small mishaps.",
+    "examples": [
+      "After losing the match, John realized it was better to learn from his mistakes than to cry over spilled milk.",
+      "Sarah was upset about her exam grade, but her teacher told her not to cry over spilled milk and to focus on studying for the next one.",
+      "Even though the project didn't go as planned, the team decided not to cry over spilled milk and work on improvements."
+    ],
+    "frequency_of_use": 7.0,
+    "category_theme": [
+      "regret"
+    ],
+    "sentiment": [
+      "neutral"
+    ],
+    "context_diversity": [
+      "everyday life",
+      "personal development",
+      "psychology",
+      "parenting"
+    ],
+    "literal_transparency": 7.0,
+    "translation_difficulty": 6.0,
+    "depiction": [
+      "😢",
+      "🥛",
+      "🛋️"
+    ],
+    "alternative_depiction": [
+      "🥛",
+      "😢",
+      "💔"
+    ],
+    "meaning_depiction": [
+      "😢",
+      "🥛",
+      "📉"
+    ]
+  },
+  "Don't throw the baby out with the bathwater": {
+    "text": "Don't throw the baby out with the bathwater",
+    "meaning": "Don't discard something valuable along with the undesirable.",
+    "explanation": "This idiom originates from an old saying, traditionally pointing to the care one must take when disposing of waste—meaning, when you are getting rid of something you don't need (bathwater), be careful not to lose something very important (the baby). It serves as a metaphor for making sure to preserve what is valuable while discarding the rest.",
+    "examples": [
+      "When sorting through old clothes, remember not to throw the baby out with the bathwater; those jeans might still fit!",
+      "After a hard day at work, don't give up on your job altogether just because of a few annoying meetings—don't throw the baby out with the bathwater!",
+      "When cleaning your fridge, don't throw away the leftover cake just because you're tossing the old milk—don't throw the baby out with the bathwater!"
+    ],
+    "frequency_of_use": 5.0,
+    "category_theme": [
+      "decision making",
+      "caution"
+    ],
+    "sentiment": [
+      "neutral"
+    ],
+    "context_diversity": [
+      "business",
+      "daily life",
+      "problem-solving"
+    ],
+    "literal_transparency": 3.0,
+    "translation_difficulty": 7.0,
+    "depiction": [
+      "🚫",
+      "👶",
+      "🛁",
+      "💧"
+    ],
+    "alternative_depiction": [
+      "🚼",
+      "🛁",
+      "❌"
+    ],
+    "meaning_depiction": [
+      "👶",
+      "🛁",
+      "🚫",
+      "💧"
+    ]
+  },
+  "Every rose has its thorn": {
+    "text": "Every rose has its thorn",
+    "meaning": "Every good thing has its drawbacks or challenges.",
+    "explanation": "This idiom suggests that even the most beautiful things in life, like a rose, have some unpleasant or difficult aspects, represented by the thorn. It highlights the contrast between beauty and pain, emphasizing that nothing is perfect.",
+    "examples": [
+      "Getting a promotion is great, but every rose has its thorn because now I have to work late.",
+      "He loves the beach, but every rose has its thorn; the sand gets everywhere!",
+      "Her cooking is amazing, but every rose has its thorn – she always burns the garlic bread!"
+    ],
+    "frequency_of_use": 6.0,
+    "category_theme": [
+      "life",
+      "relationships"
+    ],
+    "sentiment": [
+      "neutral"
+    ],
+    "context_diversity": [
+      "relationships",
+      "music",
+      "daily life"
+    ],
+    "literal_transparency": 5.0,
+    "translation_difficulty": 5.0,
+    "depiction": [
+      "🌹",
+      "🌵"
+    ],
+    "alternative_depiction": [
+      "🌹",
+      "🌵"
+    ],
+    "meaning_depiction": [
+      "🌹",
+      "🌵"
+    ]
+  },
+  "If it ain't broke, don't fix it": {
+    "text": "If it ain't broke, don't fix it",
+    "meaning": "Don't mess with something that is already working fine.",
+    "explanation": "This idiom suggests that unnecessary changes or improvements should not be made to something that is functioning well. It emphasizes the idea of preserving what works rather than risking problems through alterations.",
+    "examples": [
+      "Adele used to sing in a bar and was discovered. Now she's famous! If it ain't broke, don't fix it!",
+      "I have a friend who insists on using a typewriter for his novels. If it ain't broke, don't fix it!",
+      "My grandfather still uses a flip phone since it works for him. If it ain't broke, don't fix it!"
+    ],
+    "frequency_of_use": 7.0,
+    "category_theme": [
+      "advice",
+      "common sense"
+    ],
+    "sentiment": [
+      "neutral"
+    ],
+    "context_diversity": [
+      "business",
+      "engineering",
+      "daily life"
+    ],
+    "literal_transparency": 5.0,
+    "translation_difficulty": 6.0,
+    "depiction": [
+      "❌",
+      "🔧",
+      "😅"
+    ],
+    "alternative_depiction": [
+      "🔧",
+      "🚫",
+      "🛠️"
+    ],
+    "meaning_depiction": [
+      "🛠️",
+      "🚫",
+      "🔧"
+    ]
+  },
+  "Wild goose chase": {
+    "text": "Wild goose chase",
+    "meaning": "A futile pursuit or a hopeless endeavor.",
+    "explanation": "The idiom \"wild goose chase\" originated from a 16th-century expression describing an elaborate and pointless horse race that followed a wild goose's unpredictable movements. The term implies a fruitless and absurd quest, similar to attempting to catch a goose that is known for its erratic flight patterns.",
+    "examples": [
+      "I spent all day looking for my keys, but it turned out to be a wild goose chase—they were in my pocket all along.",
+      "Trying to get my cat to take a bath is just a wild goose chase; she already made a run for it!",
+      "Looking for a matching sock in this laundry pile feels like a wild goose chase!"
+    ],
+    "frequency_of_use": 7.0,
+    "category_theme": [
+      "emotions",
+      "daily life"
+    ],
+    "sentiment": [
+      "negative"
+    ],
+    "context_diversity": [
+      "business",
+      "daily life",
+      "education",
+      "entertainment"
+    ],
+    "literal_transparency": 4.0,
+    "translation_difficulty": 7.0,
+    "depiction": [
+      "🦢",
+      "🏃‍♂️"
+    ],
+    "alternative_depiction": [
+      "🦢",
+      "🏃"
+    ],
+    "meaning_depiction": [
+      "🦢",
+      "🏃"
+    ]
+  },
+  "Your guess is as good as mine": {
+    "text": "Your guess is as good as mine",
+    "meaning": "I have no idea; we are equally uninformed about the situation.",
+    "explanation": "This idiom suggests that the speaker and the listener have the same amount of knowledge or insight about a particular topic. It underscores the lack of information or certainty regarding a matter.",
+    "examples": [
+      "When asked who would win the game, I said, 'Your guess is as good as mine!'",
+      "I don't know why the cat is staring at the wall—your guess is as good as mine!",
+      "When my friend asked me why the chicken crossed the road, I replied, 'Your guess is as good as mine!'"
+    ],
+    "frequency_of_use": 7.0,
+    "category_theme": [
+      "emotions",
+      "daily life"
+    ],
+    "sentiment": [
+      "neutral"
+    ],
+    "context_diversity": [
+      "daily life",
+      "education",
+      "business"
+    ],
+    "literal_transparency": 8.0,
+    "translation_difficulty": 4.0,
+    "depiction": [
+      "❓",
+      "🤷‍♂️"
+    ],
+    "alternative_depiction": [
+      "❓",
+      "🤔"
+    ],
+    "meaning_depiction": [
+      "❓",
+      "🤷"
+    ]
+  }
+}
