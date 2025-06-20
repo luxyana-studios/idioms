@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   useMutation,
   useQueryClient,
@@ -58,6 +59,51 @@ export const useShuffledCards = () => {
   return useInfiniteCardQuery(queryKeys.shuffled, (pageParam) =>
     fetchShuffledCards(pageParam, CARDS_PER_PAGE),
   );
+};
+
+export type FilterKey = 'all' | 'favorites' | 'random' | 'search';
+
+type UseFilteredCardsProps = {
+  activeFilter: FilterKey;
+  debouncedSearchInput: string;
+  searchSort?: 'frequency' | 'imagery';
+};
+
+export const useFilteredCards = ({
+  activeFilter,
+  debouncedSearchInput,
+  searchSort,
+}: UseFilteredCardsProps) => {
+  const sortParam =
+    searchSort === 'frequency'
+      ? '-frequency'
+      : searchSort === 'imagery'
+        ? '-imagery'
+        : undefined;
+
+  const queries = {
+    all: useCards(),
+    favorites: useFavoriteCards(),
+    random: useShuffledCards(),
+    search: useCards(debouncedSearchInput || undefined, sortParam),
+  };
+
+  const activeQuery = queries[activeFilter];
+
+  const cards = useMemo(
+    () => activeQuery.data?.pages.flat() ?? [],
+    [activeQuery.data],
+  );
+
+  return {
+    cards,
+    isLoading: activeQuery.isLoading,
+    error: activeQuery.error,
+    refetch: activeQuery.refetch,
+    fetchNextPage: activeQuery.fetchNextPage,
+    hasNextPage: activeQuery.hasNextPage,
+    isFetchingNextPage: activeQuery.isFetchingNextPage,
+  };
 };
 
 const updateCacheData = (
