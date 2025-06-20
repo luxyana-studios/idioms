@@ -31,12 +31,17 @@ async def get_idioms(
     if text:
         query = query.filter(IdiomModel.text.ilike(f"%{text}%"))
 
-    if sort == "frequency":
-        query = query.order_by(IdiomModel.frequency_of_use.desc())
-    elif sort == "imagery":
-        query = query.order_by(IdiomModel.literal_transparency.desc())
-    else:
-        query = query.order_by(IdiomModel.text.asc())
+    match sort:
+        case "frequency":
+            query = query.order_by(IdiomModel.frequency_of_use.asc())
+        case "-frequency":
+            query = query.order_by(IdiomModel.frequency_of_use.desc())
+        case "imagery":
+            query = query.order_by(IdiomModel.literal_transparency.asc())
+        case "-imagery":
+            query = query.order_by(IdiomModel.literal_transparency.desc())
+        case _:
+            query = query.order_by(IdiomModel.text.asc())
 
     return [
         IdiomSchema.model_validate(idiom)
