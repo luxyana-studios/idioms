@@ -18,12 +18,12 @@ async def get_idioms(
     db: SessionDep,
     page: int = 1,
     limit: Annotated[int, Query(le=50)] = 50,
-    search: Annotated[str, Query()] = "",
+    text: Annotated[str, Query()] = "",
 ) -> list[IdiomSchema]:
-    search = search.strip()
+    text = text.strip()
     offset = (page - 1) * limit
 
-    if not search:
+    if not text:
         return [
             IdiomSchema.model_validate(idiom)
             for idiom in db.query(IdiomModel)
@@ -36,7 +36,7 @@ async def get_idioms(
         return [
             IdiomSchema.model_validate(idiom)
             for idiom in db.query(IdiomModel)
-            .filter(IdiomModel.text.ilike(f"%{search}%"))
+            .filter(IdiomModel.text.ilike(f"%{text}%"))
             .order_by(IdiomModel.text.asc())
             .limit(limit)
             .offset(offset)

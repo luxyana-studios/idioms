@@ -10,7 +10,7 @@ def test_get_idioms_returns_8_elements(test_server):
 
 
 def test_get_idioms_search_query_full_name(test_server, idioms_test_data):
-    response = test_server.get("/idioms/?search=work")
+    response = test_server.get("/idioms/?text=work")
     assert response.status_code == 200
 
     actual_idioms = response.json()
