@@ -2,6 +2,8 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func
+from sqlalchemy import text as sql_text
 from sqlalchemy.orm import Session
 
 from app import database
@@ -42,6 +44,26 @@ async def get_idioms(
             .offset(offset)
             .all()
         ]
+
+
+@router.get("/random", response_model=list[IdiomSchema])
+async def get_random_idioms(
+    db: SessionDep,
+    page: int = 1,
+    limit: Annotated[int, Query(le=50)] = 50,
+    seed: Annotated[int | None, Query()] = None,
+) -> list[IdiomSchema]:
+    offset = (page - 1) * limit
+    if seed is not None:
+        db.execute(sql_text(f"SELECT setseed({seed % 1000 / 1000.0})"))
+    return [
+        IdiomSchema.model_validate(idiom)
+        for idiom in db.query(IdiomModel)
+        .order_by(func.random())
+        .limit(limit)
+        .offset(offset)
+        .all()
+    ]
 
 
 @router.get("/favorites", response_model=list[IdiomSchema])

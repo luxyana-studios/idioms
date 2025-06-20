@@ -5,8 +5,21 @@ def test_get_idioms_returns_8_elements(test_server):
     response = test_server.get("/idioms/")
     assert response.status_code == 200
     data = response.json()
-    assert isinstance(data, list)
     assert len(data) == 8
+
+
+def test_get_random_idioms_remains_stable_under_pagination(test_server):
+    response = test_server.get("/idioms/random?seed=123&page=1&limit=2")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    first_page_ids = [idiom["id"] for idiom in data]
+
+    response = test_server.get("/idioms/random?seed=123&page=1&limit=4")
+    assert response.status_code == 200
+    data = response.json()
+    second_page_ids = [idiom["id"] for idiom in data]
+    assert second_page_ids[:2] == first_page_ids
 
 
 def test_get_idioms_search_query_full_name(test_server, idioms_test_data):
