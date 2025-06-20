@@ -28,11 +28,11 @@ def docker_compose_file():
 
 
 @pytest.fixture(scope="session")
-def database(_docker_services):
+def _database(docker_services):  # noqa: ARG001
     yield
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def test_server(_database):
     from fastapi.testclient import TestClient
 
