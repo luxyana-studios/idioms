@@ -32,7 +32,7 @@ export const fetchCards = async (
   url.searchParams.append('limit', limit.toString());
 
   if (search) {
-    url.searchParams.append('search', search.trim());
+    url.searchParams.append('text', search.trim());
   }
 
   const response = await fetch(url.toString(), {
