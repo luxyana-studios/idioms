@@ -6,14 +6,14 @@ import {
   ViewStyle,
   View,
 } from 'react-native';
-import Animated, { AnimatedStyle } from 'react-native-reanimated';
+import Animated, { AnimatedStyle, Easing } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import { TypeAnimation } from 'react-native-type-animation';
 import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
+import { MotiView } from 'moti';
 
 interface CardBackProps {
   item: CardData;
@@ -38,7 +38,6 @@ const MeaningContent = ({
   alternativeDepiction,
   item,
 }: MeaningContentProps) => {
-  const [showCursor, setShowCursor] = useState(true);
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
 
@@ -49,97 +48,104 @@ const MeaningContent = ({
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
       </View>
 
-      <TypeAnimation
-        sequence={[
-          {
-            text: '',
-            typeSpeed: 30,
-            delayBetweenSequence: 200,
-          },
-          {
-            action: () => setShowCursor(true),
-          },
-          {
-            text: meaning,
-            typeSpeed: 30,
-            delayBetweenSequence: 300,
-          },
-          {
-            action: () => {
-              setTimeout(() => {
-                setShowCursor(false);
-                setShowEmojis(true);
-                setTimeout(() => setShowIndicators(true), 600);
-              }, 800);
-            },
-          },
-        ]}
-        style={{
-          ...styles.cleanText,
-          color: textColor,
+      <MotiView
+        from={{ opacity: 0, scale: 0.85, translateY: 24 }}
+        animate={{ opacity: 1, scale: 1, translateY: 0 }}
+        transition={{
+          type: 'timing',
+          duration: 1800,
+          easing: Easing.out(Easing.exp),
         }}
-        cursor={showCursor}
-        cursorStyle={{
-          color: textColor,
-          fontSize: 20,
-          fontWeight: 'bold',
+        onDidAnimate={(key, finished) => {
+          if (key === 'opacity' && finished) {
+            setTimeout(() => setShowEmojis(true), 100);
+          }
         }}
-        blinkSpeed={400}
-        repeat={1}
-      />
+      >
+        <Text style={[styles.cleanText, { color: textColor }]}>{meaning}</Text>
+      </MotiView>
 
       {showEmojis && (
-        <>
-          <View style={{ marginTop: 16, marginBottom: 12 }}>
-            <SmileyDisplay smileys={alternativeDepiction} />
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              marginTop: 8,
-              marginBottom: 16,
-            }}
-          >
-            {item.category_theme &&
-              item.category_theme.map((category, idx) => (
-                <View
-                  key={idx}
-                  style={{
-                    backgroundColor: '#FFD70022',
-                    borderRadius: 12,
-                    paddingHorizontal: 10,
-                    paddingVertical: 4,
-                    margin: 2,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: '#FFD700',
-                      fontWeight: 'bold',
-                      fontSize: 13,
-                    }}
-                  >
-                    {category}
-                  </Text>
-                </View>
-              ))}
-          </View>
-        </>
-      )}
-      {showIndicators && (
-        <View
-          style={{
-            marginTop: 4,
-            width: '100%',
-            marginBottom: 35,
-            paddingHorizontal: 8,
-            alignItems: 'flex-start',
+        <MotiView
+          from={{ opacity: 0, scale: 0.85, translateY: 16 }}
+          animate={{ opacity: 1, scale: 1, translateY: 0 }}
+          transition={{
+            type: 'spring',
+            damping: 18,
+            stiffness: 120,
+            mass: 0.8,
+            delay: 100,
+          }}
+          onDidAnimate={(key, finished) => {
+            if (key === 'scale' && finished) {
+              setTimeout(() => setShowIndicators(true), 150);
+            }
           }}
         >
-          <IdiomStats item={item} />
-        </View>
+          <>
+            <View style={{ marginTop: 16, marginBottom: 12 }}>
+              <SmileyDisplay smileys={alternativeDepiction} />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                marginTop: 8,
+                marginBottom: 16,
+              }}
+            >
+              {item.category_theme &&
+                item.category_theme.map((category, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      backgroundColor: '#FFD70022',
+                      borderRadius: 12,
+                      paddingHorizontal: 10,
+                      paddingVertical: 4,
+                      margin: 2,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#FFD700',
+                        fontWeight: 'bold',
+                        fontSize: 13,
+                      }}
+                    >
+                      {category}
+                    </Text>
+                  </View>
+                ))}
+            </View>
+          </>
+        </MotiView>
+      )}
+
+      {showIndicators && (
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{
+            type: 'timing',
+            duration: 400,
+            easing: Easing.out(Easing.exp),
+            delay: 50,
+          }}
+        >
+          <View
+            style={{
+              marginTop: 4,
+              width: '100%',
+              marginBottom: 35,
+              paddingHorizontal: 8,
+              alignItems: 'flex-start',
+            }}
+          >
+            <IdiomStats item={item} />
+          </View>
+        </MotiView>
       )}
     </View>
   );
@@ -154,8 +160,6 @@ const ExplanationContent = ({
   explanation,
   textColor,
 }: ExplanationContentProps) => {
-  const [showCursor, setShowCursor] = useState(true);
-
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
@@ -165,40 +169,19 @@ const ExplanationContent = ({
         </Text>
       </View>
 
-      <TypeAnimation
-        sequence={[
-          {
-            text: '',
-            typeSpeed: 20,
-            delayBetweenSequence: 100,
-          },
-          {
-            action: () => setShowCursor(true),
-          },
-          {
-            text: explanation,
-            typeSpeed: 20,
-            delayBetweenSequence: 300,
-          },
-          {
-            action: () => {
-              setTimeout(() => setShowCursor(false), 800);
-            },
-          },
-        ]}
-        style={{
-          ...styles.cleanText,
-          color: textColor,
+      <MotiView
+        from={{ opacity: 0, scale: 0.95, translateY: 30 }}
+        animate={{ opacity: 1, scale: 1, translateY: 0 }}
+        transition={{
+          type: 'timing',
+          duration: 1800,
+          easing: Easing.out(Easing.exp),
         }}
-        cursor={showCursor}
-        cursorStyle={{
-          color: textColor,
-          fontSize: 20,
-          fontWeight: 'bold',
-        }}
-        blinkSpeed={400}
-        repeat={1}
-      />
+      >
+        <Text style={[styles.cleanText, { color: textColor }]}>
+          {explanation}
+        </Text>
+      </MotiView>
     </View>
   );
 };
@@ -213,29 +196,11 @@ const ExamplesContent = ({
   textSecondaryColor,
 }: ExamplesContentProps) => {
   const [showAllExamples, setShowAllExamples] = useState(false);
-  const [firstExampleComplete, setFirstExampleComplete] = useState(false);
-  const [visibleIndexes, setVisibleIndexes] = useState([0]);
+  const [showButton, setShowButton] = useState(false);
   const { colors } = useTheme();
-
-  const handleAnimationEnd = (idx: number) => {
-    if (idx === 0) {
-      setFirstExampleComplete(true);
-    }
-
-    if (showAllExamples && idx < examples.length - 1) {
-      setTimeout(() => {
-        setVisibleIndexes((prev) => [...prev, idx + 1]);
-      }, 300);
-    }
-  };
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
-    if (examples.length > 1) {
-      setTimeout(() => {
-        setVisibleIndexes((prev) => [...prev, 1]);
-      }, 100);
-    }
   };
 
   const examplesToShow = showAllExamples ? examples : [examples[0]];
@@ -246,50 +211,75 @@ const ExamplesContent = ({
         <Ionicons name="list-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
       </View>
+
       <View style={{ width: '100%' }}>
-        {examplesToShow.map((example, idx) =>
-          visibleIndexes.includes(idx) ? (
-            <TypeAnimation
-              key={idx}
-              sequence={[
+        {examplesToShow.map((example, idx) => (
+          <MotiView
+            key={idx}
+            from={{ opacity: 0, scale: 0.95, translateY: 24 }}
+            animate={{ opacity: 1, scale: 1, translateY: 0 }}
+            transition={{
+              type: 'timing',
+              duration: 800,
+              easing: Easing.out(Easing.exp),
+              delay: idx * 220,
+            }}
+            onDidAnimate={(key, finished) => {
+              if (
+                key === 'opacity' &&
+                finished &&
+                idx === 0 &&
+                examples.length > 1 &&
+                !showAllExamples
+              ) {
+                setTimeout(() => setShowButton(true), 100);
+              }
+            }}
+          >
+            <Text
+              style={[
+                styles.cleanText,
                 {
-                  text: `${idx + 1}. ${example}`,
-                  typeSpeed: 20,
-                  delayBetweenSequence: 100,
-                },
-                {
-                  action: () => handleAnimationEnd(idx),
+                  color: textSecondaryColor,
+                  textAlign: 'left',
+                  fontSize: 16,
+                  lineHeight: 22,
+                  marginBottom: 16,
                 },
               ]}
-              style={{
-                ...styles.cleanText,
-                color: textSecondaryColor,
-                textAlign: 'left',
-                fontSize: 16,
-                lineHeight: 22,
-                marginBottom: 16,
-              }}
-              cursor={false}
-              repeat={1}
-            />
-          ) : null,
-        )}
+            >
+              {idx + 1}. {example}
+            </Text>
+          </MotiView>
+        ))}
 
-        {examples.length > 1 && !showAllExamples && firstExampleComplete && (
-          <TouchableOpacity
-            onPress={handleShowMoreExamples}
-            style={[
-              styles.showMoreButton,
-              { backgroundColor: colors.cardBackBackground },
-            ]}
-            activeOpacity={0.8}
+        {showButton && examples.length > 1 && !showAllExamples && (
+          <MotiView
+            from={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              type: 'spring',
+              damping: 16,
+              stiffness: 100,
+              mass: 0.15,
+              delay: 100,
+            }}
           >
-            <View style={styles.showMoreContent}>
-              <Ionicons name="add-circle-outline" size={20} color="#FFD700" />
-              <Text style={styles.showMoreText}>Show more examples</Text>
-              <Ionicons name="chevron-down" size={16} color="#FFD700" />
-            </View>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleShowMoreExamples}
+              style={[
+                styles.showMoreButton,
+                { backgroundColor: colors.cardBackBackground },
+              ]}
+              activeOpacity={0.8}
+            >
+              <View style={styles.showMoreContent}>
+                <Ionicons name="add-circle-outline" size={20} color="#FFD700" />
+                <Text style={styles.showMoreText}>Show more examples</Text>
+                <Ionicons name="chevron-down" size={16} color="#FFD700" />
+              </View>
+            </TouchableOpacity>
+          </MotiView>
         )}
       </View>
     </View>
