@@ -8,7 +8,7 @@
       "Fixing the printer after it exploded with paper was all in a day's work for the office manager.",
       "After saving the company thousands of dollars this week, I just smiled and said, 'All in a day's work!'"
     ],
-    "frequency_of_use": 7.0,
+    "frequency_of_use": 3.0,
     "category_theme": [
       "work",
       "effort"
@@ -21,7 +21,7 @@
       "daily life",
       "military"
     ],
-    "literal_transparency": 5.0,
+    "literal_transparency": 2.0,
     "translation_difficulty": 5.0,
     "depiction": [
       "🌞",
@@ -47,7 +47,7 @@
       "After that argument, I think I burnt the bridges with my best friend.",
       "He burned his bridge with the boss when he ranted about the office on social media."
     ],
-    "frequency_of_use": 6.0,
+    "frequency_of_use": 4.0,
     "category_theme": [
       "business",
       "emotions"
@@ -60,7 +60,7 @@
       "relationships",
       "daily life"
     ],
-    "literal_transparency": 5.0,
+    "literal_transparency": 3.0,
     "translation_difficulty": 6.0,
     "depiction": [
       "🔥",
@@ -84,7 +84,7 @@
       "Sarah was upset about her exam grade, but her teacher told her not to cry over spilled milk and to focus on studying for the next one.",
       "Even though the project didn't go as planned, the team decided not to cry over spilled milk and work on improvements."
     ],
-    "frequency_of_use": 7.0,
+    "frequency_of_use": 8.0,
     "category_theme": [
       "regret"
     ],
@@ -137,7 +137,7 @@
       "daily life",
       "problem-solving"
     ],
-    "literal_transparency": 3.0,
+    "literal_transparency": 4.0,
     "translation_difficulty": 7.0,
     "depiction": [
       "🚫",
@@ -179,7 +179,7 @@
       "music",
       "daily life"
     ],
-    "literal_transparency": 5.0,
+    "literal_transparency": 8.0,
     "translation_difficulty": 5.0,
     "depiction": [
       "🌹",
@@ -216,7 +216,7 @@
       "engineering",
       "daily life"
     ],
-    "literal_transparency": 5.0,
+    "literal_transparency": 9.0,
     "translation_difficulty": 6.0,
     "depiction": [
       "❌",
@@ -243,7 +243,7 @@
       "Trying to get my cat to take a bath is just a wild goose chase; she already made a run for it!",
       "Looking for a matching sock in this laundry pile feels like a wild goose chase!"
     ],
-    "frequency_of_use": 7.0,
+    "frequency_of_use": 2.0,
     "category_theme": [
       "emotions",
       "daily life"
@@ -257,7 +257,7 @@
       "education",
       "entertainment"
     ],
-    "literal_transparency": 4.0,
+    "literal_transparency": 1.0,
     "translation_difficulty": 7.0,
     "depiction": [
       "🦢",
@@ -281,7 +281,7 @@
       "I don't know why the cat is staring at the wall—your guess is as good as mine!",
       "When my friend asked me why the chicken crossed the road, I replied, 'Your guess is as good as mine!'"
     ],
-    "frequency_of_use": 7.0,
+    "frequency_of_use": 9.0,
     "category_theme": [
       "emotions",
       "daily life"
@@ -294,7 +294,7 @@
       "education",
       "business"
     ],
-    "literal_transparency": 8.0,
+    "literal_transparency": 6.0,
     "translation_difficulty": 4.0,
     "depiction": [
       "❓",

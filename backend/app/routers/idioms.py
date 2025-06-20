@@ -21,29 +21,27 @@ async def get_idioms(
     page: int = 1,
     limit: Annotated[int, Query(le=50)] = 50,
     text: Annotated[str, Query()] = "",
+    sort: Annotated[str | None, Query()] = None,
 ) -> list[IdiomSchema]:
     text = text.strip()
     offset = (page - 1) * limit
 
-    if not text:
-        return [
-            IdiomSchema.model_validate(idiom)
-            for idiom in db.query(IdiomModel)
-            .order_by(IdiomModel.text.asc())
-            .limit(limit)
-            .offset(offset)
-            .all()
-        ]
+    query = db.query(IdiomModel)
+
+    if text:
+        query = query.filter(IdiomModel.text.ilike(f"%{text}%"))
+
+    if sort == "frequency":
+        query = query.order_by(IdiomModel.frequency_of_use.desc())
+    elif sort == "imagery":
+        query = query.order_by(IdiomModel.literal_transparency.desc())
     else:
-        return [
-            IdiomSchema.model_validate(idiom)
-            for idiom in db.query(IdiomModel)
-            .filter(IdiomModel.text.ilike(f"%{text}%"))
-            .order_by(IdiomModel.text.asc())
-            .limit(limit)
-            .offset(offset)
-            .all()
-        ]
+        query = query.order_by(IdiomModel.text.asc())
+
+    return [
+        IdiomSchema.model_validate(idiom)
+        for idiom in (query.limit(limit).offset(offset).all())
+    ]
 
 
 @router.get("/random", response_model=list[IdiomSchema])

@@ -31,6 +31,26 @@ def test_get_idioms_search_query_full_name(test_server, idioms_test_data):
     assert_idioms(actual_idioms, expected_idioms)
 
 
+def test_get_idioms_sort_frequency(test_server, idioms_test_data):
+    response = test_server.get("/idioms/?sort=frequency")
+    assert response.status_code == 200
+    actual_idioms = response.json()
+    expected_idioms = sorted(
+        idioms_test_data.values(), key=lambda x: x.frequency_of_use, reverse=True
+    )
+    assert_idioms(actual_idioms, expected_idioms)
+
+
+def test_get_idioms_sort_imagery(test_server, idioms_test_data):
+    response = test_server.get("/idioms/?sort=imagery")
+    assert response.status_code == 200
+    actual_idioms = response.json()
+    expected_idioms = sorted(
+        idioms_test_data.values(), key=lambda x: x.literal_transparency, reverse=True
+    )
+    assert_idioms(actual_idioms, expected_idioms)
+
+
 def assert_idioms(actual: list[dict], expected: list[IdiomCreate]) -> None:
     assert len(actual) == len(expected)
     actual = [IdiomCreate(**idiom) for idiom in actual]
