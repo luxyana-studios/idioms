@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Text, TouchableOpacity, View, Alert, Share } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import * as Clipboard from 'expo-clipboard';
+import { setStringAsync } from 'expo-clipboard';
 import { CardData } from '../types/card';
 import { ViewStyle, GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import SmileyDisplay from './SmileyDisplay';
 import { VotingButtons } from './VotingButtons';
+import DropdownMenu from './DropdownMenu';
 
 interface CardFrontProps {
   item: CardData;
@@ -41,44 +42,35 @@ const CardFront: React.FC<CardFrontProps> = ({
     setMenuVisible(false);
   };
 
-  const handleShare = async (e: GestureResponderEvent) => {
-    e.stopPropagation();
+  const handleShare = async () => {
     try {
       await Share.share({
         message: `"${item.text}" - ${item.meaning}`,
         title: 'Share Idiom',
       });
-      closeMenu();
     } catch (error) {
       console.log('Error sharing:', error);
-      closeMenu();
     }
   };
 
-  const handleViewStats = (e: GestureResponderEvent) => {
-    e.stopPropagation();
+  const handleViewStats = () => {
     Alert.alert(
       'Idiom Statistics',
       `Frequency: ${item.frequency_of_use}/10\nUpvotes: ${item.upvotes}\nDownvotes: ${item.downvotes}\nLiteral Transparency: ${item.literal_transparency}/10\nTranslation Difficulty: ${item.translation_difficulty}/10`,
       [{ text: 'Close', style: 'default' }],
     );
-    closeMenu();
   };
 
-  const handleCopyText = async (e: GestureResponderEvent) => {
-    e.stopPropagation();
+  const handleCopyText = async () => {
     try {
-      await Clipboard.setStringAsync(item.text);
+      await setStringAsync(item.text);
       Alert.alert('Copied!', 'Text copied to clipboard.');
-      closeMenu();
     } catch (error) {
       console.log('Error copying:', error);
-      closeMenu();
     }
   };
 
-  const handleReportError = (e: GestureResponderEvent) => {
-    e.stopPropagation();
+  const handleReportError = () => {
     Alert.alert(
       'Report Error',
       'Thank you for helping us improve. What type of error would you like to report?',
@@ -98,8 +90,34 @@ const CardFront: React.FC<CardFrontProps> = ({
         { text: 'Cancel', style: 'cancel' },
       ],
     );
-    closeMenu();
   };
+
+  const menuItems = [
+    {
+      id: 'share',
+      label: 'Share',
+      icon: 'share-outline' as const,
+      onPress: handleShare,
+    },
+    {
+      id: 'stats',
+      label: 'View Stats',
+      icon: 'stats-chart-outline' as const,
+      onPress: handleViewStats,
+    },
+    {
+      id: 'copy',
+      label: 'Copy Text',
+      icon: 'copy-outline' as const,
+      onPress: handleCopyText,
+    },
+    {
+      id: 'report',
+      label: 'Report Error',
+      icon: 'flag-outline' as const,
+      onPress: handleReportError,
+    },
+  ];
 
   return (
     <>
@@ -185,128 +203,12 @@ const CardFront: React.FC<CardFrontProps> = ({
         </View>
       </Animated.View>
 
-      {menuVisible && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              backgroundColor: 'rgba(0,0,0,0.3)',
-            }}
-            onPress={closeMenu}
-            activeOpacity={1}
-          />
-
-          <View
-            style={{
-              position: 'absolute',
-              top: 60,
-              right: 20,
-              backgroundColor: colors.cardBackground,
-              borderRadius: 12,
-              paddingVertical: 8,
-              minWidth: 160,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 8,
-              elevation: 15,
-              borderWidth: 1,
-              borderColor: 'rgba(255,255,255,0.1)',
-            }}
-          >
-            <TouchableOpacity
-              onPress={handleShare}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-              }}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="share-outline"
-                size={18}
-                color={colors.text}
-                style={{ marginRight: 12 }}
-              />
-              <Text style={{ color: colors.text, fontSize: 16 }}>Share</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleViewStats}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-              }}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="stats-chart-outline"
-                size={18}
-                color={colors.text}
-                style={{ marginRight: 12 }}
-              />
-              <Text style={{ color: colors.text, fontSize: 16 }}>
-                View Stats
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleCopyText}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-              }}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="copy-outline"
-                size={18}
-                color={colors.text}
-                style={{ marginRight: 12 }}
-              />
-              <Text style={{ color: colors.text, fontSize: 16 }}>
-                Copy Text
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={handleReportError}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-              }}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="flag-outline"
-                size={18}
-                color={colors.text}
-                style={{ marginRight: 12 }}
-              />
-              <Text style={{ color: colors.text, fontSize: 16 }}>
-                Report Error
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
+      <DropdownMenu
+        visible={menuVisible}
+        onClose={closeMenu}
+        items={menuItems}
+        position={{ top: 60, right: 20 }}
+      />
     </>
   );
 };
