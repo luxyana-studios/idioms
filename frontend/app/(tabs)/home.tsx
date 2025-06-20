@@ -5,19 +5,19 @@ import {
   Text,
   RefreshControl,
 } from 'react-native';
-import React, { useState, useMemo, useEffect } from 'react';
-import { Card } from '../components/Card';
+import React from 'react';
 import { SearchBar } from '../components/SearchBar';
 import { useTheme } from '../contexts/ThemeContext';
+import { useRouter } from 'expo-router';
+import { Card } from '../components/Card';
 import { useCards } from '../hooks/useCards';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useCardActions } from '../hooks/useCardActions';
 import { CardData } from '../types/card';
 
 const Home = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const { colors } = useTheme();
+  const router = useRouter();
 
   const {
     data,
@@ -27,9 +27,9 @@ const Home = () => {
     isLoading,
     error,
     refetch,
-  } = useCards(debouncedSearchQuery || undefined);
+  } = useCards();
 
-  const cards = useMemo(() => {
+  const cards = React.useMemo(() => {
     return data?.pages.flat() ?? [];
   }, [data]);
 
@@ -41,21 +41,8 @@ const Home = () => {
 
   const { toggleFavorite, handleVote } = useCardActions({ cards });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const handleClear = () => {
-    setSearchQuery('');
-    setDebouncedSearchQuery('');
+  const handleSearchBarFocus = () => {
+    router.push({ pathname: '/(tabs)/search', params: { autoFocus: 'true' } });
   };
 
   const renderLoadingIndicator = () => (
@@ -67,20 +54,21 @@ const Home = () => {
   const renderNoResults = () => (
     <View className="py-10 px-4 items-center">
       <Text style={{ color: colors.textSecondary }} className="text-lg">
-        {error ? 'Error loading cards' : 'No results found'}
+        {error ? 'Error loading cards' : 'No cards found'}
       </Text>
       <Text style={{ color: colors.textSecondary }} className="mt-2">
-        {error
-          ? 'Pull to refresh or try again'
-          : 'Try with different search terms'}
+        {error ? 'Pull to refresh or try again' : 'No cards to display'}
       </Text>
     </View>
   );
 
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
-      <SearchBar onSearch={handleSearch} onClear={handleClear} />
-
+      <SearchBar
+        onSearch={() => {}}
+        onClear={() => {}}
+        onFocus={handleSearchBarFocus}
+      />
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -111,7 +99,6 @@ const Home = () => {
                 onVotePress={handleVote}
               />
             ))}
-
         {isFetchingNextPage && renderLoadingIndicator()}
       </ScrollView>
     </View>

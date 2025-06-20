@@ -7,9 +7,10 @@ import { ThemeToggle } from './ThemeToggle';
 interface SearchBarProps {
   onSearch: (query: string) => void;
   onClear: () => void;
+  onFocus?: () => void;
 }
 
-export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
+export const SearchBar = ({ onSearch, onClear, onFocus }: SearchBarProps) => {
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
   const searchAnimation = React.useRef(new Animated.Value(0)).current;
@@ -37,6 +38,7 @@ export const SearchBar = ({ onSearch, onClear }: SearchBarProps) => {
       duration: 200,
       useNativeDriver: true,
     }).start();
+    if (onFocus) onFocus();
   };
 
   const handleClear = () => {
