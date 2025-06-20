@@ -9,6 +9,7 @@ from psycopg2 import OperationalError
 from app.schemas.idioms import IdiomCreate
 
 TEST_DIR = Path(__file__).parent
+RESOURCES_DIR = TEST_DIR.parent / "resources"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -49,7 +50,7 @@ def write_sample_idioms_to_db():
 
     create_db_and_tables()
 
-    sample_path = Path(TEST_DIR).parent / "resources" / "sample_idioms.json"
+    sample_path = RESOURCES_DIR / "sample_idioms.json"
     with open(sample_path, encoding="utf-8") as f:
         idioms_data = json.load(f)
 
@@ -81,3 +82,13 @@ def test_server(_database):
 
     client = TestClient(app)
     yield client
+
+
+@pytest.fixture(scope="session")
+def idioms_test_data() -> dict[str, IdiomCreate]:
+    sample_path = RESOURCES_DIR / "sample_idioms.json"
+    with open(sample_path, encoding="utf-8") as f:
+        idioms_data = json.load(f)
+    return {
+        idiom_text: IdiomCreate(**idiom) for idiom_text, idiom in idioms_data.items()
+    }
