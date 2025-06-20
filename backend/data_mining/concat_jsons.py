@@ -1,7 +1,7 @@
 import json
 import pathlib
 
-INPUT_DIR = "corrected_stats"
+INPUT_DIR = "resources/corrected_stats"
 OUTFILE = f"{INPUT_DIR}.json"
 
 result = []
