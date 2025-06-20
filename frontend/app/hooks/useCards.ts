@@ -7,6 +7,7 @@ import {
 import {
   fetchCards,
   fetchFavoriteCards,
+  fetchShuffledCards,
   updateIdiom,
   updateIdiomVote,
   CARDS_PER_PAGE,
@@ -19,7 +20,10 @@ type QueryFn = (pageParam: number) => Promise<CardData[]>;
 export const queryKeys = {
   cards: ['cards'] as const,
   cardsWithSearch: (search?: string) => ['cards', search] as const,
+  cardsWithSort: (search?: string, sort?: string) =>
+    ['cards', search, sort] as const,
   favorites: ['favorites'] as const,
+  shuffled: ['shuffled'] as const,
   card: (id: string) => ['card', id] as const,
 };
 
@@ -37,15 +41,22 @@ const useInfiniteCardQuery = (queryKey: QueryKey, queryFn: QueryFn) => {
   });
 };
 
-export const useCards = (search?: string) => {
-  return useInfiniteCardQuery(queryKeys.cardsWithSearch(search), (pageParam) =>
-    fetchCards(pageParam, CARDS_PER_PAGE, search),
+export const useCards = (search?: string, sort?: string) => {
+  return useInfiniteCardQuery(
+    queryKeys.cardsWithSort(search, sort),
+    (pageParam) => fetchCards(pageParam, CARDS_PER_PAGE, search, sort),
   );
 };
 
 export const useFavoriteCards = () => {
   return useInfiniteCardQuery(queryKeys.favorites, (pageParam) =>
     fetchFavoriteCards(pageParam, CARDS_PER_PAGE),
+  );
+};
+
+export const useShuffledCards = () => {
+  return useInfiniteCardQuery(queryKeys.shuffled, (pageParam) =>
+    fetchShuffledCards(pageParam, CARDS_PER_PAGE),
   );
 };
 
@@ -82,12 +93,13 @@ export const useUpdateFavorite = () => {
      *
      * 1. PREVENT RACE CONDITIONS: Cancel any in-flight queries that might overwrite our optimistic updates
      * 2. BACKUP CURRENT STATE: Store the current cache data so we can rollback if the request fails
-     * 3. UPDATE ALL CARDS CACHE: Update the favorite status in the main cards list (used in home/search)
+     * 3. UPDATE ALL CARDS CACHE: Update the favorite status in all card lists (cards, shuffled, favorites)
      * 4. UPDATE FAVORITES CACHE: Either add the card to favorites or remove it from the favorites list
      *
-     * The complexity comes from managing TWO different infinite query caches that both contain
+     * The complexity comes from managing THREE different infinite query caches that both contain
      * the same cards but serve different purposes:
-     * - queryKeys.cards: Main list of all cards (with pagination)
+     * - queryKeys.cards: Main list of all cards (with pagination) - used in search
+     * - queryKeys.shuffled: Shuffled/random cards (with pagination) - used in home
      * - queryKeys.favorites: Filtered list of only favorited cards (with pagination)
      */
     onMutate: async ({ cardId, favorite }) => {
@@ -99,28 +111,33 @@ export const useUpdateFavorite = () => {
        *
        * 1. PREVENT RACE CONDITIONS: Cancel any in-flight queries that might overwrite our optimistic updates
        * 2. BACKUP CURRENT STATE: Store the current cache data so we can rollback if the request fails
-       * 3. UPDATE ALL CARDS CACHE: Update the favorite status in the main cards list (used in home/search)
+       * 3. UPDATE ALL CARDS CACHE: Update the favorite status in all card lists (cards, shuffled, favorites)
        * 4. UPDATE FAVORITES CACHE: Either add the card to favorites or remove it from the favorites list
        *
-       * The complexity comes from managing TWO different infinite query caches that both contain
+       * The complexity comes from managing THREE different infinite query caches that both contain
        * the same cards but serve different purposes:
-       * - queryKeys.cards: Main list of all cards (with pagination)
+       * - queryKeys.cards: Main list of all cards (with pagination) - used in search
+       * - queryKeys.shuffled: Shuffled/random cards (with pagination) - used in home
        * - queryKeys.favorites: Filtered list of only favorited cards (with pagination)
        */
       // Step 1: Cancel any outgoing refetches to prevent race conditions
       // This ensures our optimistic updates won't be overwritten by stale server responses
       await queryClient.cancelQueries({ queryKey: queryKeys.cards });
+      await queryClient.cancelQueries({ queryKey: queryKeys.shuffled });
       await queryClient.cancelQueries({ queryKey: queryKeys.favorites });
 
       // Step 2: Snapshot the previous values for rollback on error
       const previousCards = queryClient.getQueryData(queryKeys.cards);
+      const previousShuffled = queryClient.getQueryData(queryKeys.shuffled);
       const previousFavorites = queryClient.getQueryData(queryKeys.favorites);
 
-      // Step 3: Update the favorite status in the main cards cache
-      // This updates the card across all pages in the infinite query
-      updateCacheData(queryClient, queryKeys.cards, (card: CardData) =>
-        card.id === cardId ? { ...card, favorite } : card,
-      );
+      // Step 3: Update the favorite status in all card caches
+      // This updates the card across all pages in the infinite queries
+      const updateCardFavorite = (card: CardData) =>
+        card.id === cardId ? { ...card, favorite } : card;
+
+      updateCacheData(queryClient, queryKeys.cards, updateCardFavorite);
+      updateCacheData(queryClient, queryKeys.shuffled, updateCardFavorite);
 
       // Step 4: Update the favorites cache with more complex logic
       // - If favoriting: keep the page as-is (card will appear when cache refreshes)
@@ -145,12 +162,15 @@ export const useUpdateFavorite = () => {
       );
 
       // Return snapshot for potential rollback in onError
-      return { previousCards, previousFavorites };
+      return { previousCards, previousShuffled, previousFavorites };
     },
 
     onError: (err, variables, context) => {
       if (context?.previousCards) {
         queryClient.setQueryData(queryKeys.cards, context.previousCards);
+      }
+      if (context?.previousShuffled) {
+        queryClient.setQueryData(queryKeys.shuffled, context.previousShuffled);
       }
       if (context?.previousFavorites) {
         queryClient.setQueryData(
@@ -162,6 +182,7 @@ export const useUpdateFavorite = () => {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.cards });
+      queryClient.invalidateQueries({ queryKey: queryKeys.shuffled });
       queryClient.invalidateQueries({ queryKey: queryKeys.favorites });
     },
   });
@@ -198,13 +219,15 @@ export const useVote = () => {
     onMutate: async ({ cardId, voteType }) => {
       // Step 1: Prevent race conditions with in-flight requests
       await queryClient.cancelQueries({ queryKey: queryKeys.cards });
+      await queryClient.cancelQueries({ queryKey: queryKeys.shuffled });
       await queryClient.cancelQueries({ queryKey: queryKeys.favorites });
 
       // Step 2: Snapshot current state for rollback on error
       const previousCards = queryClient.getQueryData(queryKeys.cards);
+      const previousShuffled = queryClient.getQueryData(queryKeys.shuffled);
       const previousFavorites = queryClient.getQueryData(queryKeys.favorites);
 
-      // Step 3: Optimistically update vote counts in both caches
+      // Step 3: Optimistically update vote counts in all caches
       // This gives immediate feedback while the server processes the vote
       const updateCardVotes = (card: CardData) => {
         if (card.id !== cardId) return card;
@@ -218,9 +241,10 @@ export const useVote = () => {
       };
 
       updateCacheData(queryClient, queryKeys.cards, updateCardVotes);
+      updateCacheData(queryClient, queryKeys.shuffled, updateCardVotes);
       updateCacheData(queryClient, queryKeys.favorites, updateCardVotes);
 
-      return { previousCards, previousFavorites };
+      return { previousCards, previousShuffled, previousFavorites };
     },
 
     /**
@@ -237,12 +261,16 @@ export const useVote = () => {
         card.id === updatedCard.id ? updatedCard : card;
 
       updateCacheData(queryClient, queryKeys.cards, updateWithServerData);
+      updateCacheData(queryClient, queryKeys.shuffled, updateWithServerData);
       updateCacheData(queryClient, queryKeys.favorites, updateWithServerData);
     },
 
     onError: (err, variables, context) => {
       if (context?.previousCards) {
         queryClient.setQueryData(queryKeys.cards, context.previousCards);
+      }
+      if (context?.previousShuffled) {
+        queryClient.setQueryData(queryKeys.shuffled, context.previousShuffled);
       }
       if (context?.previousFavorites) {
         queryClient.setQueryData(

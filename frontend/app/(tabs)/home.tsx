@@ -4,8 +4,10 @@ import {
   ActivityIndicator,
   Text,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '../components/SearchBar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useRouter } from 'expo-router';
@@ -18,6 +20,15 @@ import { CardData } from '../types/card';
 const Home = () => {
   const { colors } = useTheme();
   const router = useRouter();
+  const [sortByFrequency, setSortByFrequency] = useState(false);
+  const [sortByImagery, setSortByImagery] = useState(false);
+
+  // Determine which sort parameter to use
+  const getSortParameter = () => {
+    if (sortByFrequency) return '-frequency';
+    if (sortByImagery) return '-imagery';
+    return undefined;
+  };
 
   const {
     data,
@@ -27,7 +38,7 @@ const Home = () => {
     isLoading,
     error,
     refetch,
-  } = useCards();
+  } = useCards(undefined, getSortParameter());
 
   const cards = React.useMemo(() => {
     return data?.pages.flat() ?? [];
@@ -54,7 +65,7 @@ const Home = () => {
   const renderNoResults = () => (
     <View className="py-10 px-4 items-center">
       <Text style={{ color: colors.textSecondary }} className="text-lg">
-        {error ? 'Error loading cards' : 'No cards found'}
+        {error ? 'Error loading shuffled cards' : 'No shuffled cards found'}
       </Text>
       <Text style={{ color: colors.textSecondary }} className="mt-2">
         {error ? 'Pull to refresh or try again' : 'No cards to display'}
@@ -62,13 +73,66 @@ const Home = () => {
     </View>
   );
 
+  const handleTrendPress = () => {
+    setSortByFrequency((prev) => !prev);
+    if (sortByImagery) setSortByImagery(false); // Disable imagery when enabling frequency
+  };
+
+  const handleImageryPress = () => {
+    setSortByImagery((prev) => !prev);
+    if (sortByFrequency) setSortByFrequency(false); // Disable frequency when enabling imagery
+  };
+
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
-      <SearchBar
-        onSearch={() => {}}
-        onClear={() => {}}
-        onFocus={handleSearchBarFocus}
-      />
+      <View className="px-6 pt-6 pb-3">
+        <View className="flex-row items-center space-x-3">
+          <View className="flex-1">
+            <SearchBar
+              onSearch={() => {}}
+              onClear={() => {}}
+              onFocus={handleSearchBarFocus}
+            />
+          </View>
+
+          {/* Trend Arrow Button */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: sortByFrequency
+                ? colors.text
+                : colors.searchBackground,
+              borderColor: colors.border,
+            }}
+            className="p-4 rounded-2xl border shadow-lg"
+            onPress={handleTrendPress}
+          >
+            <Ionicons
+              name="trending-up"
+              size={20}
+              color={sortByFrequency ? colors.background : colors.text}
+            />
+          </TouchableOpacity>
+
+          {/* Theater Mask Button */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: sortByImagery
+                ? colors.text
+                : colors.searchBackground,
+              borderColor: colors.border,
+            }}
+            className="p-4 rounded-2xl border shadow-lg"
+            onPress={handleImageryPress}
+          >
+            <Ionicons
+              name="happy"
+              size={20}
+              color={sortByImagery ? colors.background : colors.text}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <ScrollView
         className="flex-1"
         contentContainerStyle={{

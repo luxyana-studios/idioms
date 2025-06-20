@@ -20,12 +20,14 @@ const handleApiError = async (response: Response) => {
  * @param page - The page number to fetch
  * @param limit - Number of cards per page
  * @param search - Optional search term to filter cards by title
+ * @param sort - Optional sort parameter (e.g., 'frequency', '-frequency')
  * @returns Promise<CardData[]> - Array of card data
  */
 export const fetchCards = async (
   page: number,
   limit: number = CARDS_PER_PAGE,
   search?: string,
+  sort?: string,
 ): Promise<CardData[]> => {
   const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
   url.searchParams.append('page', page.toString());
@@ -33,6 +35,10 @@ export const fetchCards = async (
 
   if (search) {
     url.searchParams.append('text', search.trim());
+  }
+
+  if (sort) {
+    url.searchParams.append('sort', sort);
   }
 
   const response = await fetch(url.toString(), {
@@ -48,7 +54,34 @@ export const fetchCards = async (
 };
 
 /**
- * Fetches only favorite cards from the backend
+ * Fetches shuffled cards from the backend
+ * @param page - The page number to fetch
+ * @param limit - Number of cards per page
+ * @returns Promise<CardData[]> - Array of shuffled card data
+ */
+export const fetchShuffledCards = async (
+  page: number,
+  limit: number = CARDS_PER_PAGE,
+): Promise<CardData[]> => {
+  const url = new URL(`${API_ROUTES.IDIOMS}random`, IDIOMS_BACKEND_URL);
+  url.searchParams.append('page', page.toString());
+  url.searchParams.append('limit', limit.toString());
+  url.searchParams.append('seed', '1234');
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      Accept: 'application/json',
+      'ngrok-skip-browser-warning': 'idioms',
+    },
+  });
+
+  if (!response.ok) return handleApiError(response);
+
+  return await response.json();
+};
+
+/**
+ * Fetches favorite cards from the backend
  * @param page - The page number to fetch
  * @param limit - Number of cards per page
  * @returns Promise<CardData[]> - Array of favorite card data
