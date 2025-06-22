@@ -23,6 +23,9 @@ const Home = () => {
   const [searchSort, setSearchSort] = useState<
     'frequency' | 'imagery' | undefined
   >(undefined);
+  const [shuffleSeed, setShuffleSeed] = useState<number>(() =>
+    Math.floor(Math.random() * 1000000),
+  );
   const searchAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -42,6 +45,7 @@ const Home = () => {
     activeFilter,
     debouncedSearchInput: debouncedInput,
     searchSort,
+    shuffleSeed,
   });
 
   const { handleScroll } = useInfiniteScroll({
@@ -88,11 +92,19 @@ const Home = () => {
     </View>
   );
 
+  const handleFilterChange = (filter: FilterKey) => {
+    setActiveFilter(filter);
+
+    if (filter === 'random') {
+      setShuffleSeed(Math.floor(Math.random() * 1000000));
+    }
+  };
+
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
       <FilterBar
         activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
+        onFilterChange={handleFilterChange}
         searchInput={searchInput}
         onSearchInputChange={setSearchInput}
         searchSort={searchSort}
