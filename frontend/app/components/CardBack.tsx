@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -424,6 +424,9 @@ export const CardBack = ({
     </Animated.View>
   );
 };
+
+// memoized to prevent rerenders when props unchanged
+export default memo(CardBack);
 
 const styles = StyleSheet.create({
   cardContainer: {

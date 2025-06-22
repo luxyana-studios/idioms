@@ -1,19 +1,21 @@
 import {
   View,
-  ScrollView,
   ActivityIndicator,
   Text,
-  RefreshControl,
+  ViewToken,
   Animated,
+  Dimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
-import React, { useState, useRef, useEffect } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
 import { Card } from '../components/Card';
 import { FilterBar } from '../components/FilterBar';
 import { useFilteredCards, FilterKey } from '../hooks/useCards';
-import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { useCardActions } from '../hooks/useCardActions';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CardData } from '../types/card';
+import { useTheme } from '../contexts/ThemeContext';
+import { FlatList } from 'react-native';
 
 const Home = () => {
   const { colors } = useTheme();
@@ -23,6 +25,31 @@ const Home = () => {
   const [searchSort, setSearchSort] = useState<
     'frequency' | 'imagery' | undefined
   >(undefined);
+  const [viewableIndices, setViewableIndices] = useState<Set<number>>(
+    new Set(),
+  );
+  // track scroll velocity
+  const scrollOffset = useRef(0);
+  const scrollTime = useRef(Date.now());
+  const [scrollDown, setScrollDown] = useState(false);
+  // stable viewability config and callback refs
+  const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 5 });
+  const prevViewableRef = useRef<Set<number>>(new Set());
+  const onViewableItemsChangedRef = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      const newSet = new Set(viewableItems.map((v) => v.index ?? 0));
+      // compare with previous to avoid redundant updates
+      const prevSet = prevViewableRef.current;
+      const isEqual =
+        newSet.size === prevSet.size &&
+        [...newSet].every((i) => prevSet.has(i));
+      if (!isEqual) {
+        prevViewableRef.current = newSet;
+        setViewableIndices(newSet);
+      }
+    },
+  );
+
   const searchAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -42,12 +69,6 @@ const Home = () => {
     activeFilter,
     debouncedSearchInput: debouncedInput,
     searchSort,
-  });
-
-  const { handleScroll } = useInfiniteScroll({
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
   });
 
   const { toggleFavorite, handleVote } = useCardActions({ cards });
@@ -88,6 +109,9 @@ const Home = () => {
     </View>
   );
 
+  // fixed item height for getItemLayout
+  const ITEM_HEIGHT = Dimensions.get('window').height * 0.75 + 32; // card height + vertical margins
+
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
       <FilterBar
@@ -102,38 +126,57 @@ const Home = () => {
         searchBarScale={searchBarScale}
       />
 
-      <ScrollView
-        className="flex-1"
+      <FlatList
+        // virtualization props
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
+        windowSize={10}
+        removeClippedSubviews
+        getItemLayout={(data, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
+        data={cards}
+        keyExtractor={(item: CardData) => item.id}
         contentContainerStyle={{
           alignItems: 'center',
           paddingVertical: 20,
           paddingHorizontal: 16,
         }}
-        onScroll={handleScroll}
+        // measure scroll speed
+        onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => {
+          const now = Date.now();
+          const y = e.nativeEvent.contentOffset.y;
+          const dy = y - scrollOffset.current;
+          setScrollDown(dy > 0);
+          scrollOffset.current = y;
+          scrollTime.current = now;
+        }}
         scrollEventThrottle={16}
-        keyboardShouldPersistTaps="handled"
+        renderItem={useCallback(
+          ({ item, index }: { item: CardData; index: number }) => (
+            <Card
+              item={item}
+              index={index}
+              visible={viewableIndices.has(index)}
+              scrollDown={scrollDown}
+              onFavoritePress={toggleFavorite}
+              onVotePress={handleVote}
+            />
+          ),
+          [viewableIndices, scrollDown, toggleFavorite, handleVote],
+        )}
+        ListEmptyComponent={!isLoading ? renderNoResults : null}
+        ListFooterComponent={isFetchingNextPage ? renderLoadingIndicator : null}
+        onRefresh={refetch}
+        refreshing={isLoading}
+        onEndReached={() => hasNextPage && fetchNextPage()}
+        onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={() => refetch()}
-            tintColor={colors.text}
-            colors={[colors.text]}
-          />
-        }
-      >
-        {cards.length === 0 && !isLoading
-          ? renderNoResults()
-          : cards.map((card: CardData) => (
-              <Card
-                key={card.id}
-                item={card}
-                onFavoritePress={toggleFavorite}
-                onVotePress={handleVote}
-              />
-            ))}
-        {isFetchingNextPage && renderLoadingIndicator()}
-      </ScrollView>
+        viewabilityConfig={viewabilityConfigRef.current}
+        onViewableItemsChanged={onViewableItemsChangedRef.current}
+      />
     </View>
   );
 };
