@@ -69,7 +69,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 paddingHorizontal: 16,
                 marginHorizontal: 0,
               }}
-              className="p-3 rounded-2xl border shadow-lg"
+              className="p-3 rounded-3xl border shadow-lg"
             >
               <Ionicons
                 name={f.icon}
@@ -101,7 +101,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 backgroundColor: colors.searchBackground,
                 borderColor: colors.border,
               }}
-              className="flex-row items-center rounded-2xl overflow-hidden border shadow-lg"
+              className="flex-row items-center rounded-3xl overflow-hidden border shadow-lg"
             >
               <View className="pl-4">
                 <Ionicons
@@ -145,7 +145,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 borderColor: colors.border,
                 flex: 1,
               }}
-              className="flex-row items-center justify-center p-3 rounded-2xl border shadow-lg"
+              className="flex-row items-center justify-center p-3 rounded-3xl border shadow-lg"
             >
               <Ionicons
                 name="trending-up"
@@ -181,7 +181,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 borderColor: colors.border,
                 flex: 1,
               }}
-              className="flex-row items-center justify-center p-3 rounded-2xl border shadow-lg"
+              className="flex-row items-center justify-center p-3 rounded-3xl border shadow-lg"
             >
               <Ionicons
                 name="image-outline"
