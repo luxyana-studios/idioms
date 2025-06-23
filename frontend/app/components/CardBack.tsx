@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -14,6 +14,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
 import { MotiView } from 'moti';
+import { ContentStep } from './Card';
 
 interface CardBackProps {
   item: CardData;
@@ -21,15 +22,30 @@ interface CardBackProps {
   handleFavoritePress: (e: GestureResponderEvent) => void;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
+  currentStep: ContentStep;
+  onStepChange: (step: ContentStep) => void;
 }
-
-type ContentStep = 'meaning' | 'explanation' | 'examples';
 
 interface MeaningContentProps {
   meaning: string;
   textColor: string;
   alternativeDepiction: string[];
   item: CardData;
+}
+
+interface ExplanationContentProps {
+  explanation: string;
+  textColor: string;
+}
+
+interface ExamplesContentProps {
+  examples: string[];
+  textSecondaryColor: string;
+}
+
+interface StepIndicatorsProps {
+  currentStep: ContentStep;
+  steps: ContentStep[];
 }
 
 const MeaningContent = ({
@@ -40,6 +56,12 @@ const MeaningContent = ({
 }: MeaningContentProps) => {
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
+
+  // Reset animation states when step changes
+  useEffect(() => {
+    setShowEmojis(false);
+    setShowIndicators(false);
+  }, []);
 
   return (
     <View style={styles.contentContainer}>
@@ -53,7 +75,7 @@ const MeaningContent = ({
         animate={{ opacity: 1, scale: 1, translateY: 0 }}
         transition={{
           type: 'timing',
-          duration: 1800,
+          duration: 1200,
           easing: Easing.out(Easing.exp),
         }}
         onDidAnimate={(key, finished) => {
@@ -151,11 +173,6 @@ const MeaningContent = ({
   );
 };
 
-interface ExplanationContentProps {
-  explanation: string;
-  textColor: string;
-}
-
 const ExplanationContent = ({
   explanation,
   textColor,
@@ -174,7 +191,7 @@ const ExplanationContent = ({
         animate={{ opacity: 1, scale: 1, translateY: 0 }}
         transition={{
           type: 'timing',
-          duration: 1800,
+          duration: 1200,
           easing: Easing.out(Easing.exp),
         }}
       >
@@ -186,11 +203,6 @@ const ExplanationContent = ({
   );
 };
 
-interface ExamplesContentProps {
-  examples: string[];
-  textSecondaryColor: string;
-}
-
 const ExamplesContent = ({
   examples,
   textSecondaryColor,
@@ -198,6 +210,12 @@ const ExamplesContent = ({
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const { colors } = useTheme();
+
+  // Reset state when component mounts
+  useEffect(() => {
+    setShowAllExamples(false);
+    setShowButton(false);
+  }, []);
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
@@ -286,11 +304,6 @@ const ExamplesContent = ({
   );
 };
 
-interface StepIndicatorsProps {
-  currentStep: ContentStep;
-  steps: ContentStep[];
-}
-
 const StepIndicators = ({ currentStep, steps }: StepIndicatorsProps) => (
   <View style={styles.stepIndicators}>
     {steps.map((step) => (
@@ -308,25 +321,26 @@ export const CardBack = ({
   backAnimatedStyle,
   CARD_WIDTH,
   CARD_HEIGHT,
+  currentStep,
+  onStepChange,
 }: CardBackProps) => {
-  const [currentStep, setCurrentStep] = useState<ContentStep>('meaning');
   const { colors } = useTheme();
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
 
   const handleNextPress = () => {
     if (currentStep === 'meaning') {
-      setCurrentStep('explanation');
+      onStepChange('explanation');
     } else if (currentStep === 'explanation') {
-      setCurrentStep('examples');
+      onStepChange('examples');
     }
   };
 
   const handleBackPress = () => {
     if (currentStep === 'examples') {
-      setCurrentStep('explanation');
+      onStepChange('explanation');
     } else if (currentStep === 'explanation') {
-      setCurrentStep('meaning');
+      onStepChange('meaning');
     }
   };
 
@@ -509,8 +523,8 @@ const styles = StyleSheet.create({
   stepIndicators: {
     position: 'absolute',
     bottom: 32,
-    left: '52%',
-    transform: [{ translateX: -10 }],
+    left: '50%',
+    transform: [{ translateX: -5 }],
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
