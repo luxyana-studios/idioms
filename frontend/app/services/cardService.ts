@@ -57,16 +57,21 @@ export const fetchCards = async (
  * Fetches shuffled cards from the backend
  * @param page - The page number to fetch
  * @param limit - Number of cards per page
+ * @param seed - Optional integer seed for shuffling (generates random if not provided)
  * @returns Promise<CardData[]> - Array of shuffled card data
  */
 export const fetchShuffledCards = async (
   page: number,
   limit: number = CARDS_PER_PAGE,
+  seed?: number,
 ): Promise<CardData[]> => {
   const url = new URL(`${API_ROUTES.IDIOMS}random`, IDIOMS_BACKEND_URL);
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
-  url.searchParams.append('seed', '1234');
+  url.searchParams.append(
+    'seed',
+    (seed || Math.floor(Math.random() * 1000000)).toString(),
+  );
 
   const response = await fetch(url.toString(), {
     headers: {
