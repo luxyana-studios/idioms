@@ -1,4 +1,4 @@
-import { useState, memo, useEffect } from 'react';
+import { useState, memo } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -56,12 +56,6 @@ const MeaningContent = ({
 }: MeaningContentProps) => {
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
-
-  // Reset animation states when step changes
-  useEffect(() => {
-    setShowEmojis(false);
-    setShowIndicators(false);
-  }, []);
 
   return (
     <View style={styles.contentContainer}>
@@ -210,12 +204,6 @@ const ExamplesContent = ({
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const { colors } = useTheme();
-
-  // Reset state when component mounts
-  useEffect(() => {
-    setShowAllExamples(false);
-    setShowButton(false);
-  }, []);
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);

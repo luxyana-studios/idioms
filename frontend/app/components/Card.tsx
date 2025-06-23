@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useMemo } from 'react';
+import { useState, useEffect, memo, useMemo } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -150,13 +150,6 @@ export const Card = ({
     });
 
   const handleSwipeRight = () => {
-    console.log(
-      'Swipe Right - isFlipped:',
-      isFlipped,
-      'currentStep:',
-      currentStep,
-    );
-
     if (!isFlipped) {
       handleFlip();
       setCurrentStep('meaning');
@@ -173,13 +166,6 @@ export const Card = ({
   };
 
   const handleSwipeLeft = () => {
-    console.log(
-      'Swipe Left - isFlipped:',
-      isFlipped,
-      'currentStep:',
-      currentStep,
-    );
-
     if (isFlipped) {
       if (currentStep === 'examples') {
         setCurrentStep('explanation');
