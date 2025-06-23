@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,28 +29,28 @@ const CardFront: React.FC<CardFrontProps> = ({
   CARD_HEIGHT,
 }) => {
   const { colors } = useTheme();
+  // memoize static container style
+  const containerStyle = useMemo<ViewStyle>(
+    () => ({
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
+      backgroundColor: colors.cardBackground,
+      borderRadius: 20,
+      padding: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      position: 'absolute' as const,
+      shadowColor: colors.shadowColor,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+      elevation: 5,
+    }),
+    [CARD_WIDTH, CARD_HEIGHT, colors.cardBackground, colors.shadowColor],
+  );
 
   return (
-    <Animated.View
-      style={[
-        {
-          width: CARD_WIDTH,
-          height: CARD_HEIGHT,
-          backgroundColor: colors.cardBackground,
-          borderRadius: 20,
-          padding: 24,
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'absolute',
-          shadowColor: colors.shadowColor,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.2,
-          shadowRadius: 6,
-          elevation: 5,
-        },
-        frontAnimatedStyle,
-      ]}
-    >
+    <Animated.View style={[containerStyle, frontAnimatedStyle]}>
       <View className="flex-1 justify-center items-center w-full">
         <Text
           style={{ color: colors.text }}
@@ -98,4 +98,5 @@ const CardFront: React.FC<CardFrontProps> = ({
   );
 };
 
-export default CardFront;
+// memoized to prevent rerenders when props unchanged
+export default memo(CardFront);

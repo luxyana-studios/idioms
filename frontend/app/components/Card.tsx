@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, memo, useMemo } from 'react';
 import {
   View,
   TouchableOpacity,
   Dimensions,
   GestureResponderEvent,
 } from 'react-native';
-import {
+import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   interpolate,
+  withDelay,
 } from 'react-native-reanimated';
 
 import { CardData } from '../types/card';
@@ -24,10 +25,56 @@ interface CardProps {
   item: CardData;
   onFavoritePress: (id: string) => void;
   onVotePress: (id: string, voteType: 'upvote' | 'downvote') => Promise<void>;
+  visible?: boolean;
+  scrollDown?: boolean;
 }
 
-export const Card = ({ item, onFavoritePress, onVotePress }: CardProps) => {
+export const Card = ({
+  item,
+  onFavoritePress,
+  onVotePress,
+  visible = false,
+  scrollDown = false,
+  index = 0,
+}: CardProps & { index?: number }) => {
+  // flip rotation
   const rotation = useSharedValue(0);
+  // entry animation values
+  const entry = useSharedValue(0);
+  // memoize random offsets so they do not change on each render
+  const { randomAngle, randomX, randomY } = useMemo(
+    () => ({
+      randomAngle: Math.random() * 20 - 10,
+      randomX: Math.random() * 40 - 20,
+      randomY: Math.random() * 40 + 20,
+    }),
+    [],
+  );
+  const entryStyle = useAnimatedStyle(() => ({
+    opacity: entry.value,
+    transform: [
+      { translateX: interpolate(entry.value, [0, 1], [randomX, 0]) },
+      { translateY: interpolate(entry.value, [0, 1], [randomY, 0]) },
+      { rotateZ: `${interpolate(entry.value, [0, 1], [randomAngle, 0])}deg` },
+    ],
+  }));
+  // animate when card becomes visible
+  useEffect(() => {
+    if (!visible) return;
+    if (!scrollDown) {
+      // immediately show when scrolling up
+      entry.value = 1;
+    } else {
+      // animate on scroll down
+      const baseDelay = 30;
+      const delay = Math.min(index * baseDelay, 300);
+      entry.value = withDelay(
+        delay,
+        withSpring(1, { damping: 12, stiffness: 120 }),
+      );
+    }
+  }, [visible, scrollDown, index, entry]);
+  // flip state
   const [isFlipped, setIsFlipped] = useState(false);
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
@@ -60,7 +107,14 @@ export const Card = ({ item, onFavoritePress, onVotePress }: CardProps) => {
   };
 
   return (
-    <View className="m-4">
+    <Animated.View
+      style={entryStyle}
+      // GPU render optimization flags
+      renderToHardwareTextureAndroid
+      shouldRasterizeIOS
+      collapsable={false}
+      className="m-4"
+    >
       <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
         <View
           style={{
@@ -90,8 +144,9 @@ export const Card = ({ item, onFavoritePress, onVotePress }: CardProps) => {
           )}
         </View>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
-export default Card;
+// memoized to prevent re-render when props didn't change
+export default memo(Card);
