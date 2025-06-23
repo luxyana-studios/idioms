@@ -15,6 +15,7 @@ import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
 import { MotiView } from 'moti';
 import { ContentStep } from './Card';
+import GradientBackground from './GradientBackground';
 
 interface CardBackProps {
   item: CardData;
@@ -338,7 +339,7 @@ export const CardBack = ({
         return (
           <MeaningContent
             meaning={item.meaning}
-            textColor={colors.text}
+            textColor="#FFFFFF" // White text for better contrast on gradient
             alternativeDepiction={item.alternative_depiction}
             item={item}
           />
@@ -347,14 +348,14 @@ export const CardBack = ({
         return (
           <ExplanationContent
             explanation={item.explanation}
-            textColor={colors.text}
+            textColor="#FFFFFF" // White text for better contrast on gradient
           />
         );
       case 'examples':
         return (
           <ExamplesContent
             examples={item.examples}
-            textSecondaryColor={colors.textSecondary}
+            textSecondaryColor="#F3F4F6" // Light gray for secondary text
           />
         );
       default:
@@ -369,26 +370,30 @@ export const CardBack = ({
         {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
-          backgroundColor: colors.cardBackBackground,
           shadowColor: colors.shadowColor,
         },
         backAnimatedStyle,
       ]}
     >
+      <GradientBackground hasMatte={true} />
+
       {renderContent()}
 
       <TouchableOpacity
         onPress={handleFavoritePress}
         style={[
           styles.favoriteButton,
-          { backgroundColor: `${colors.cardBackBackground}CC` },
+          {
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          },
         ]}
         activeOpacity={0.7}
       >
         <Ionicons
           name={item.favorite ? 'star' : 'star-outline'}
           size={26}
-          color={item.favorite ? '#FFD700' : colors.text}
+          color={item.favorite ? '#FFD700' : '#FFFFFF'}
         />
       </TouchableOpacity>
 
@@ -397,20 +402,32 @@ export const CardBack = ({
       {currentStep !== 'examples' && (
         <TouchableOpacity
           onPress={handleNextPress}
-          style={styles.nextButton}
+          style={[
+            styles.nextButton,
+            {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+            },
+          ]}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-forward" size={24} color={colors.text} />
+          <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       )}
 
       {currentStep !== 'meaning' && (
         <TouchableOpacity
           onPress={handleBackPress}
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+            },
+          ]}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-back" size={24} color={colors.text} />
+          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       )}
     </Animated.View>
