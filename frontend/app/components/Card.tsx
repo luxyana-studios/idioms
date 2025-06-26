@@ -119,6 +119,34 @@ export const Card = ({
     setCurrentStep(step);
   };
 
+  const handleSwipeRight = () => {
+    if (!isFlipped) {
+      handleFlip();
+      setCurrentStep('meaning');
+    } else {
+      if (currentStep === 'meaning') {
+        setCurrentStep('explanation');
+      } else if (currentStep === 'explanation') {
+        setCurrentStep('examples');
+      } else if (currentStep === 'examples') {
+        handleFlip();
+        setTimeout(() => setCurrentStep('meaning'), 300);
+      }
+    }
+  };
+
+  const handleSwipeLeft = () => {
+    if (isFlipped) {
+      if (currentStep === 'examples') {
+        setCurrentStep('explanation');
+      } else if (currentStep === 'explanation') {
+        setCurrentStep('meaning');
+      } else if (currentStep === 'meaning') {
+        handleFlip();
+      }
+    }
+  };
+
   // Gesture handlers
   const swipeGesture = Gesture.Pan()
     .minDistance(50)
@@ -148,34 +176,6 @@ export const Card = ({
         }
       }
     });
-
-  const handleSwipeRight = () => {
-    if (!isFlipped) {
-      handleFlip();
-      setCurrentStep('meaning');
-    } else {
-      if (currentStep === 'meaning') {
-        setCurrentStep('explanation');
-      } else if (currentStep === 'explanation') {
-        setCurrentStep('examples');
-      } else if (currentStep === 'examples') {
-        handleFlip();
-        setTimeout(() => setCurrentStep('meaning'), 300);
-      }
-    }
-  };
-
-  const handleSwipeLeft = () => {
-    if (isFlipped) {
-      if (currentStep === 'examples') {
-        setCurrentStep('explanation');
-      } else if (currentStep === 'explanation') {
-        setCurrentStep('meaning');
-      } else if (currentStep === 'meaning') {
-        handleFlip();
-      }
-    }
-  };
 
   return (
     <Animated.View
