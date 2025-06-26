@@ -54,7 +54,7 @@ const Home = () => {
   const [shuffleSeed, setShuffleSeed] = useState<number>(() =>
     Math.floor(Math.random() * 1000000),
   );
-  
+
   const searchAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {

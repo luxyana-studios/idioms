@@ -14,6 +14,8 @@ import { useTheme } from '../contexts/ThemeContext';
 import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
 import { MotiView } from 'moti';
+import { ContentStep } from './Card';
+import GradientBackground from './GradientBackground';
 
 interface CardBackProps {
   item: CardData;
@@ -21,15 +23,30 @@ interface CardBackProps {
   handleFavoritePress: (e: GestureResponderEvent) => void;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
+  currentStep: ContentStep;
+  onStepChange: (step: ContentStep) => void;
 }
-
-type ContentStep = 'meaning' | 'explanation' | 'examples';
 
 interface MeaningContentProps {
   meaning: string;
   textColor: string;
   alternativeDepiction: string[];
   item: CardData;
+}
+
+interface ExplanationContentProps {
+  explanation: string;
+  textColor: string;
+}
+
+interface ExamplesContentProps {
+  examples: string[];
+  textSecondaryColor: string;
+}
+
+interface StepIndicatorsProps {
+  currentStep: ContentStep;
+  steps: ContentStep[];
 }
 
 const MeaningContent = ({
@@ -53,7 +70,7 @@ const MeaningContent = ({
         animate={{ opacity: 1, scale: 1, translateY: 0 }}
         transition={{
           type: 'timing',
-          duration: 1800,
+          duration: 1200,
           easing: Easing.out(Easing.exp),
         }}
         onDidAnimate={(key, finished) => {
@@ -151,11 +168,6 @@ const MeaningContent = ({
   );
 };
 
-interface ExplanationContentProps {
-  explanation: string;
-  textColor: string;
-}
-
 const ExplanationContent = ({
   explanation,
   textColor,
@@ -174,7 +186,7 @@ const ExplanationContent = ({
         animate={{ opacity: 1, scale: 1, translateY: 0 }}
         transition={{
           type: 'timing',
-          duration: 1800,
+          duration: 1200,
           easing: Easing.out(Easing.exp),
         }}
       >
@@ -185,11 +197,6 @@ const ExplanationContent = ({
     </View>
   );
 };
-
-interface ExamplesContentProps {
-  examples: string[];
-  textSecondaryColor: string;
-}
 
 const ExamplesContent = ({
   examples,
@@ -286,11 +293,6 @@ const ExamplesContent = ({
   );
 };
 
-interface StepIndicatorsProps {
-  currentStep: ContentStep;
-  steps: ContentStep[];
-}
-
 const StepIndicators = ({ currentStep, steps }: StepIndicatorsProps) => (
   <View style={styles.stepIndicators}>
     {steps.map((step) => (
@@ -308,25 +310,26 @@ export const CardBack = ({
   backAnimatedStyle,
   CARD_WIDTH,
   CARD_HEIGHT,
+  currentStep,
+  onStepChange,
 }: CardBackProps) => {
-  const [currentStep, setCurrentStep] = useState<ContentStep>('meaning');
   const { colors } = useTheme();
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
 
   const handleNextPress = () => {
     if (currentStep === 'meaning') {
-      setCurrentStep('explanation');
+      onStepChange('explanation');
     } else if (currentStep === 'explanation') {
-      setCurrentStep('examples');
+      onStepChange('examples');
     }
   };
 
   const handleBackPress = () => {
     if (currentStep === 'examples') {
-      setCurrentStep('explanation');
+      onStepChange('explanation');
     } else if (currentStep === 'explanation') {
-      setCurrentStep('meaning');
+      onStepChange('meaning');
     }
   };
 
@@ -336,7 +339,7 @@ export const CardBack = ({
         return (
           <MeaningContent
             meaning={item.meaning}
-            textColor={colors.text}
+            textColor="#FFFFFF" // White text for better contrast on gradient
             alternativeDepiction={item.alternative_depiction}
             item={item}
           />
@@ -345,14 +348,14 @@ export const CardBack = ({
         return (
           <ExplanationContent
             explanation={item.explanation}
-            textColor={colors.text}
+            textColor="#FFFFFF" // White text for better contrast on gradient
           />
         );
       case 'examples':
         return (
           <ExamplesContent
             examples={item.examples}
-            textSecondaryColor={colors.textSecondary}
+            textSecondaryColor="#F3F4F6" // Light gray for secondary text
           />
         );
       default:
@@ -367,26 +370,30 @@ export const CardBack = ({
         {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
-          backgroundColor: colors.cardBackBackground,
           shadowColor: colors.shadowColor,
         },
         backAnimatedStyle,
       ]}
     >
+      <GradientBackground hasMatte={true} />
+
       {renderContent()}
 
       <TouchableOpacity
         onPress={handleFavoritePress}
         style={[
           styles.favoriteButton,
-          { backgroundColor: `${colors.cardBackBackground}CC` },
+          {
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+          },
         ]}
         activeOpacity={0.7}
       >
         <Ionicons
           name={item.favorite ? 'star' : 'star-outline'}
           size={26}
-          color={item.favorite ? '#FFD700' : colors.text}
+          color={item.favorite ? '#FFD700' : '#FFFFFF'}
         />
       </TouchableOpacity>
 
@@ -395,20 +402,32 @@ export const CardBack = ({
       {currentStep !== 'examples' && (
         <TouchableOpacity
           onPress={handleNextPress}
-          style={styles.nextButton}
+          style={[
+            styles.nextButton,
+            {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+            },
+          ]}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-forward" size={24} color={colors.text} />
+          <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       )}
 
       {currentStep !== 'meaning' && (
         <TouchableOpacity
           onPress={handleBackPress}
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            {
+              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+            },
+          ]}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-back" size={24} color={colors.text} />
+          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       )}
     </Animated.View>
@@ -509,8 +528,8 @@ const styles = StyleSheet.create({
   stepIndicators: {
     position: 'absolute',
     bottom: 32,
-    left: '52%',
-    transform: [{ translateX: -10 }],
+    left: '50%',
+    transform: [{ translateX: -5 }],
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

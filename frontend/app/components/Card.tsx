@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useMemo } from 'react';
+import { useState, useEffect, memo, useMemo } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -11,7 +11,9 @@ import Animated, {
   withSpring,
   interpolate,
   withDelay,
+  runOnJS,
 } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import { CardData } from '../types/card';
 import CardFront from './CardFront';
@@ -29,6 +31,8 @@ interface CardProps {
   scrollDown?: boolean;
 }
 
+export type ContentStep = 'meaning' | 'explanation' | 'examples';
+
 export const Card = ({
   item,
   onFavoritePress,
@@ -41,6 +45,11 @@ export const Card = ({
   const rotation = useSharedValue(0);
   // entry animation values
   const entry = useSharedValue(0);
+  // flip state
+  const [isFlipped, setIsFlipped] = useState(false);
+  // current step for back navigation
+  const [currentStep, setCurrentStep] = useState<ContentStep>('meaning');
+
   // memoize random offsets so they do not change on each render
   const { randomAngle, randomX, randomY } = useMemo(
     () => ({
@@ -50,6 +59,7 @@ export const Card = ({
     }),
     [],
   );
+
   const entryStyle = useAnimatedStyle(() => ({
     opacity: entry.value,
     transform: [
@@ -58,6 +68,7 @@ export const Card = ({
       { rotateZ: `${interpolate(entry.value, [0, 1], [randomAngle, 0])}deg` },
     ],
   }));
+
   // animate when card becomes visible
   useEffect(() => {
     if (!visible) return;
@@ -74,8 +85,6 @@ export const Card = ({
       );
     }
   }, [visible, scrollDown, index, entry]);
-  // flip state
-  const [isFlipped, setIsFlipped] = useState(false);
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotateY = interpolate(rotation.value, [0, 1], [0, 180]);
@@ -106,6 +115,68 @@ export const Card = ({
     onFavoritePress?.(item.id);
   };
 
+  const handleStepChange = (step: ContentStep) => {
+    setCurrentStep(step);
+  };
+
+  // Gesture handlers
+  const swipeGesture = Gesture.Pan()
+    .minDistance(50)
+    .activeOffsetX([-15, 15])
+    .failOffsetY([-60, 60])
+    .maxPointers(1)
+    .shouldCancelWhenOutside(true)
+    .runOnJS(true)
+    .onEnd((event) => {
+      const { velocityX, translationX, translationY } = event;
+      const swipeThreshold = 80;
+      const velocityThreshold = 600;
+
+      const isStrictlyHorizontal =
+        Math.abs(translationX) > Math.abs(translationY) * 1.5 &&
+        Math.abs(translationX) > 40;
+
+      if (
+        isStrictlyHorizontal &&
+        (Math.abs(translationX) > swipeThreshold ||
+          Math.abs(velocityX) > velocityThreshold)
+      ) {
+        if (translationX > 0) {
+          runOnJS(handleSwipeRight)();
+        } else {
+          runOnJS(handleSwipeLeft)();
+        }
+      }
+    });
+
+  const handleSwipeRight = () => {
+    if (!isFlipped) {
+      handleFlip();
+      setCurrentStep('meaning');
+    } else {
+      if (currentStep === 'meaning') {
+        setCurrentStep('explanation');
+      } else if (currentStep === 'explanation') {
+        setCurrentStep('examples');
+      } else if (currentStep === 'examples') {
+        handleFlip();
+        setTimeout(() => setCurrentStep('meaning'), 300);
+      }
+    }
+  };
+
+  const handleSwipeLeft = () => {
+    if (isFlipped) {
+      if (currentStep === 'examples') {
+        setCurrentStep('explanation');
+      } else if (currentStep === 'explanation') {
+        setCurrentStep('meaning');
+      } else if (currentStep === 'meaning') {
+        handleFlip();
+      }
+    }
+  };
+
   return (
     <Animated.View
       style={entryStyle}
@@ -115,35 +186,39 @@ export const Card = ({
       collapsable={false}
       className="m-4"
     >
-      <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
-        <View
-          style={{
-            width: CARD_WIDTH,
-            height: CARD_HEIGHT,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          {!isFlipped ? (
-            <CardFront
-              item={item}
-              handleFavoritePress={handleFavoritePress}
-              onVotePress={onVotePress}
-              CARD_WIDTH={CARD_WIDTH}
-              CARD_HEIGHT={CARD_HEIGHT}
-              frontAnimatedStyle={frontAnimatedStyle}
-            />
-          ) : (
-            <CardBack
-              item={item}
-              handleFavoritePress={handleFavoritePress}
-              CARD_WIDTH={CARD_WIDTH}
-              CARD_HEIGHT={CARD_HEIGHT}
-              backAnimatedStyle={backAnimatedStyle}
-            />
-          )}
-        </View>
-      </TouchableOpacity>
+      <GestureDetector gesture={swipeGesture}>
+        <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
+          <View
+            style={{
+              width: CARD_WIDTH,
+              height: CARD_HEIGHT,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {!isFlipped ? (
+              <CardFront
+                item={item}
+                handleFavoritePress={handleFavoritePress}
+                onVotePress={onVotePress}
+                CARD_WIDTH={CARD_WIDTH}
+                CARD_HEIGHT={CARD_HEIGHT}
+                frontAnimatedStyle={frontAnimatedStyle}
+              />
+            ) : (
+              <CardBack
+                item={item}
+                handleFavoritePress={handleFavoritePress}
+                CARD_WIDTH={CARD_WIDTH}
+                CARD_HEIGHT={CARD_HEIGHT}
+                backAnimatedStyle={backAnimatedStyle}
+                currentStep={currentStep}
+                onStepChange={handleStepChange}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
+      </GestureDetector>
     </Animated.View>
   );
 };
