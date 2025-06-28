@@ -11,7 +11,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
 import { MotiView } from 'moti';
 import { ContentStep } from './Card';
@@ -160,7 +159,7 @@ const MeaningContent = ({
               alignItems: 'flex-start',
             }}
           >
-            <IdiomStats item={item} />
+            {/* <IdiomStats item={item} /> */}
           </View>
         </MotiView>
       )}
