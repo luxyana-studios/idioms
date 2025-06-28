@@ -158,9 +158,7 @@ const MeaningContent = ({
               paddingHorizontal: 8,
               alignItems: 'flex-start',
             }}
-          >
-            {/* <IdiomStats item={item} /> */}
-          </View>
+          ></View>
         </MotiView>
       )}
     </View>
@@ -338,7 +336,7 @@ export const CardBack = ({
         return (
           <MeaningContent
             meaning={item.meaning}
-            textColor="#FFFFFF" // White text for better contrast on gradient
+            textColor="#FFFFFF"
             alternativeDepiction={item.alternative_depiction}
             item={item}
           />
@@ -347,14 +345,14 @@ export const CardBack = ({
         return (
           <ExplanationContent
             explanation={item.explanation}
-            textColor="#FFFFFF" // White text for better contrast on gradient
+            textColor="#FFFFFF"
           />
         );
       case 'examples':
         return (
           <ExamplesContent
             examples={item.examples}
-            textSecondaryColor="#F3F4F6" // Light gray for secondary text
+            textSecondaryColor="#F3F4F6"
           />
         );
       default:

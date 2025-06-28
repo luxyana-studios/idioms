@@ -135,16 +135,20 @@ const CardFront: React.FC<CardFrontProps> = ({
     icon: IoniconsName;
   }[] = [
     {
-      id: 'wrong-translation',
-      title: 'Wrong translation',
-      icon: 'language-outline',
+      id: 'wrong-meaning',
+      title: 'Wrong meaning',
+      icon: 'alert-circle-outline',
     },
     {
-      id: 'missing-context',
-      title: 'Missing context',
-      icon: 'information-circle-outline',
+      id: 'inappropriate',
+      title: 'Inappropriate content',
+      icon: 'warning-outline',
     },
-    { id: 'poor-example', title: 'Poor example', icon: 'list-outline' },
+    {
+      id: 'poor-example',
+      title: 'Poor example',
+      icon: 'list-outline',
+    },
   ];
 
   // memoize static container style without backgroundColor
@@ -170,7 +174,6 @@ const CardFront: React.FC<CardFrontProps> = ({
     <Animated.View style={[containerStyle, frontAnimatedStyle]}>
       <GradientBackground hasMatte={false} />
 
-      {/* Dot Menu Button */}
       <TouchableOpacity
         onPress={handleMenuPress}
         style={{
@@ -191,7 +194,7 @@ const CardFront: React.FC<CardFrontProps> = ({
       <View className="flex-1 justify-center items-center w-full">
         <Text
           style={{
-            color: '#FFFFFF', // White text for better contrast
+            color: '#FFFFFF',
             textShadowColor: 'rgba(0, 0, 0, 0.3)',
             textShadowOffset: { width: 1, height: 1 },
             textShadowRadius: 2,
@@ -239,7 +242,6 @@ const CardFront: React.FC<CardFrontProps> = ({
         />
       </View>
 
-      {/* Dot Menu Modal */}
       {isMenuVisible && (
         <View
           style={{
@@ -249,10 +251,10 @@ const CardFront: React.FC<CardFrontProps> = ({
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            borderRadius: 20, // Matching card border radius
+            borderRadius: 20,
             justifyContent: 'flex-start',
             alignItems: 'flex-end',
-            paddingTop: CARD_HEIGHT * 0.12, // Position below dot menu button
+            paddingTop: CARD_HEIGHT * 0.12,
             paddingRight: CARD_WIDTH * 0.05,
             zIndex: 9999,
           }}
@@ -264,7 +266,7 @@ const CardFront: React.FC<CardFrontProps> = ({
               left: 0,
               right: 0,
               bottom: 0,
-              borderRadius: 20, // Matching card border radius
+              borderRadius: 20,
             }}
             activeOpacity={1}
             onPress={() => setIsMenuVisible(false)}
@@ -272,9 +274,9 @@ const CardFront: React.FC<CardFrontProps> = ({
 
           <View
             style={{
-              backgroundColor: 'rgba(31, 41, 55, 0.9)', // Added transparency
+              backgroundColor: 'rgba(31, 41, 55, 0.9)',
               borderRadius: 16,
-              padding: 16, // Reduced padding since no title
+              padding: 16,
               minWidth: 200,
               maxWidth: 260,
               shadowColor: '#000',
@@ -323,7 +325,6 @@ const CardFront: React.FC<CardFrontProps> = ({
         </View>
       )}
 
-      {/* Report Menu */}
       {showReportMenu && (
         <View
           style={{
@@ -334,8 +335,10 @@ const CardFront: React.FC<CardFrontProps> = ({
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.6)',
             borderRadius: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-end',
+            paddingTop: CARD_HEIGHT * 0.18,
+            paddingRight: CARD_WIDTH * 0.05,
             zIndex: 10000,
           }}
         >
@@ -361,7 +364,7 @@ const CardFront: React.FC<CardFrontProps> = ({
               borderRadius: 16,
               padding: 20,
               minWidth: 200,
-              maxWidth: 280,
+              maxWidth: 240,
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 8 },
               shadowOpacity: 0.4,
@@ -435,7 +438,6 @@ const CardFront: React.FC<CardFrontProps> = ({
         </View>
       )}
 
-      {/* Stats Display */}
       {showStats && (
         <MotiView
           from={{ opacity: 0, translateY: -20, scale: 0.9 }}
@@ -460,7 +462,6 @@ const CardFront: React.FC<CardFrontProps> = ({
             elevation: 8,
           }}
         >
-          {/* Header del stats */}
           <View
             style={{
               flexDirection: 'row',
@@ -495,7 +496,6 @@ const CardFront: React.FC<CardFrontProps> = ({
         </MotiView>
       )}
 
-      {/* Simple Notification */}
       {showNotification && (
         <MotiView
           from={{ opacity: 0, translateY: -20 }}
@@ -507,7 +507,7 @@ const CardFront: React.FC<CardFrontProps> = ({
             top: CARD_HEIGHT * 0.12,
             left: CARD_WIDTH * 0.15,
             right: CARD_WIDTH * 0.15,
-            backgroundColor: 'rgba(31, 41, 55, 0.95)', // Same as dot menu
+            backgroundColor: 'rgba(31, 41, 55, 0.95)',
             borderRadius: 12,
             padding: 12,
             borderWidth: 1,
