@@ -63,10 +63,22 @@ const CardFront: React.FC<CardFrontProps> = ({
         style={StyleSheet.absoluteFill}
       />
 
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(128, 128, 128, 0.5)',
+          borderRadius: 20,
+        }}
+      />
+
       <View className="flex-1 justify-center items-center w-full">
         <Text
           style={{
-            color: '#FFFFFF', // White text for better contrast
+            color: '#FFFFFF',
             textShadowColor: 'rgba(0, 0, 0, 0.3)',
             textShadowOffset: { width: 1, height: 1 },
             textShadowRadius: 2,
