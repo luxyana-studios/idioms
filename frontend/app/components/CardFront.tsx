@@ -1,13 +1,14 @@
 import React, { memo, useMemo } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { ViewStyle, GestureResponderEvent } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
 import SmileyDisplay from './SmileyDisplay';
 import { VotingButtons } from './VotingButtons';
 import GradientBackground from './GradientBackground';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CardFrontProps {
   item: CardData;
@@ -42,17 +43,25 @@ const CardFront: React.FC<CardFrontProps> = ({
       alignItems: 'center',
       position: 'absolute' as const,
       shadowColor: colors.shadowColor,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-      elevation: 8,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.4,
+      shadowRadius: 10,
+      elevation: 12,
+      borderWidth: 0.8,
+      borderColor: 'rgba(255,255,255,0.2)',
+      overflow: 'hidden',
     }),
     [CARD_WIDTH, CARD_HEIGHT, colors.shadowColor],
   );
 
   return (
     <Animated.View style={[containerStyle, frontAnimatedStyle]}>
-      <GradientBackground hasMatte={false} />
+      <GradientBackground hasMatte={true} />
+      <LinearGradient
+        colors={['rgba(0,0,0,0.2)', 'transparent', 'rgba(0,0,0,0.2)']}
+        locations={[0, 0.1, 1]}
+        style={StyleSheet.absoluteFill}
+      />
 
       <View className="flex-1 justify-center items-center w-full">
         <Text
