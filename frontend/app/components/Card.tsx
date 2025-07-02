@@ -208,7 +208,6 @@ export const Card = ({
             ) : (
               <CardBack
                 item={item}
-                handleFavoritePress={handleFavoritePress}
                 CARD_WIDTH={CARD_WIDTH}
                 CARD_HEIGHT={CARD_HEIGHT}
                 backAnimatedStyle={backAnimatedStyle}
