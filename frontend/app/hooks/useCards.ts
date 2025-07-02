@@ -4,11 +4,13 @@ import {
   useQueryClient,
   useInfiniteQuery,
   InfiniteData,
+  useQuery,
 } from '@tanstack/react-query';
 import {
   fetchCards,
   fetchFavoriteCards,
   fetchShuffledCards,
+  fetchCategories,
   updateIdiom,
   updateIdiomVote,
   CARDS_PER_PAGE,
@@ -21,8 +23,8 @@ type QueryFn = (pageParam: number) => Promise<CardData[]>;
 export const queryKeys = {
   cards: ['cards'] as const,
   cardsWithSearch: (search?: string) => ['cards', search] as const,
-  cardsWithSort: (search?: string, sort?: string) =>
-    ['cards', search, sort] as const,
+  cardsWithSort: (search?: string, sort?: string, category?: string) =>
+    ['cards', search, sort, category] as const,
   favorites: ['favorites'] as const,
   shuffled: (seed?: number) => ['shuffled', seed] as const,
   card: (id: string) => ['card', id] as const,
@@ -42,10 +44,11 @@ const useInfiniteCardQuery = (queryKey: QueryKey, queryFn: QueryFn) => {
   });
 };
 
-export const useCards = (search?: string, sort?: string) => {
+export const useCards = (search?: string, sort?: string, category?: string) => {
   return useInfiniteCardQuery(
-    queryKeys.cardsWithSort(search, sort),
-    (pageParam) => fetchCards(pageParam, CARDS_PER_PAGE, search, sort),
+    queryKeys.cardsWithSort(search, sort, category),
+    (pageParam) =>
+      fetchCards(pageParam, CARDS_PER_PAGE, search, sort, category),
   );
 };
 
@@ -68,6 +71,7 @@ type UseFilteredCardsProps = {
   debouncedSearchInput: string;
   searchSort?: 'frequency' | 'imagery';
   shuffleSeed?: number;
+  selectedCategory?: string | null;
 };
 
 export const useFilteredCards = ({
@@ -75,6 +79,7 @@ export const useFilteredCards = ({
   debouncedSearchInput,
   searchSort,
   shuffleSeed,
+  selectedCategory,
 }: UseFilteredCardsProps) => {
   const sortParam =
     searchSort === 'frequency'
@@ -87,7 +92,11 @@ export const useFilteredCards = ({
     all: useCards(),
     favorites: useFavoriteCards(),
     random: useShuffledCards(shuffleSeed),
-    search: useCards(debouncedSearchInput || undefined, sortParam),
+    search: useCards(
+      debouncedSearchInput || undefined,
+      sortParam,
+      selectedCategory || undefined,
+    ),
   };
 
   const activeQuery = queries[activeFilter];
@@ -373,5 +382,13 @@ export const useVote = () => {
         );
       }
     },
+  });
+};
+
+export const useCategories = () => {
+  return useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+    staleTime: 1000 * 60 * 30, // 30 minutes - categories don't change often
   });
 };

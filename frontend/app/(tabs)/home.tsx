@@ -25,6 +25,7 @@ const Home = () => {
   const [searchSort, setSearchSort] = useState<
     'frequency' | 'imagery' | undefined
   >(undefined);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const [viewableIndices, setViewableIndices] = useState<Set<number>>(
     new Set(),
@@ -75,6 +76,7 @@ const Home = () => {
     debouncedSearchInput: debouncedInput,
     searchSort,
     shuffleSeed,
+    selectedCategory,
   });
 
   const { toggleFavorite, handleVote } = useCardActions({ cards });
@@ -88,6 +90,7 @@ const Home = () => {
   };
   const handleClear = () => {
     setSearchInput('');
+    setSelectedCategory(null);
     Animated.timing(searchAnimation, {
       toValue: 0,
       duration: 200,
@@ -120,9 +123,17 @@ const Home = () => {
   const handleFilterChange = (filter: FilterKey) => {
     setActiveFilter(filter);
 
+    if (filter !== 'search') {
+      setSelectedCategory(null);
+    }
+
     if (filter === 'random') {
       setShuffleSeed(Math.floor(Math.random() * 1000000));
     }
+  };
+
+  const handleCategoryPress = (category: string) => {
+    setSelectedCategory(category);
   };
 
   return (
@@ -137,6 +148,8 @@ const Home = () => {
         onSearchFocus={handleFocus}
         onSearchClear={handleClear}
         searchBarScale={searchBarScale}
+        selectedCategory={selectedCategory}
+        onCategoryPress={handleCategoryPress}
       />
 
       <FlatList
