@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { MotiView } from 'moti';
-
-type IoniconsName = keyof typeof Ionicons.glyphMap;
+import ReportModal from '../components/ReportModal';
 
 const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
@@ -26,33 +25,6 @@ const Profile = () => {
     setShowTechnicalReport(false);
     showSuccessNotification(`${reportType} reported`);
   };
-
-  const technicalReportOptions: {
-    id: string;
-    title: string;
-    icon: IoniconsName;
-  }[] = [
-    {
-      id: 'app-crash',
-      title: 'App crashes',
-      icon: 'bug-outline',
-    },
-    {
-      id: 'loading-issues',
-      title: 'Loading issues',
-      icon: 'refresh-outline',
-    },
-    {
-      id: 'ui-problems',
-      title: 'UI problems',
-      icon: 'eye-outline',
-    },
-    {
-      id: 'other-technical',
-      title: 'Other technical issue',
-      icon: 'settings-outline',
-    },
-  ];
 
   const SettingItem = ({
     title,
@@ -195,117 +167,11 @@ const Profile = () => {
         </View>
       </ScrollView>
 
-      {showTechnicalReport && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 10000,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}
-            activeOpacity={1}
-            onPress={() => setShowTechnicalReport(false)}
-          />
-
-          <MotiView
-            from={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: 16,
-              padding: 20,
-              minWidth: 280,
-              maxWidth: 320,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: 0.4,
-              shadowRadius: 20,
-              elevation: 20,
-              borderWidth: 1,
-              borderColor: colors.border,
-              marginHorizontal: 20,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 16,
-                borderBottomWidth: 1,
-                borderBottomColor: colors.border,
-                paddingBottom: 8,
-              }}
-            >
-              <Text
-                style={{
-                  color: colors.text,
-                  fontSize: 18,
-                  fontWeight: '600',
-                }}
-              >
-                Report Technical Issue
-              </Text>
-              <TouchableOpacity
-                onPress={() => setShowTechnicalReport(false)}
-                style={{ padding: 4 }}
-              >
-                <Ionicons name="close" size={20} color={colors.textSecondary} />
-              </TouchableOpacity>
-            </View>
-
-            {technicalReportOptions.map((option, index) => (
-              <TouchableOpacity
-                key={option.id}
-                onPress={() => handleTechnicalReportOption(option.title)}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 14,
-                  paddingHorizontal: 12,
-                  borderBottomWidth:
-                    index < technicalReportOptions.length - 1 ? 1 : 0,
-                  borderBottomColor: colors.border,
-                  borderRadius: 8,
-                }}
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name={option.icon}
-                  size={22}
-                  color={colors.text}
-                  style={{ marginRight: 16 }}
-                />
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontSize: 16,
-                    fontWeight: '500',
-                    flex: 1,
-                  }}
-                >
-                  {option.title}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </MotiView>
-        </View>
-      )}
+      <ReportModal
+        isVisible={showTechnicalReport}
+        onClose={() => setShowTechnicalReport(false)}
+        onReportSelected={handleTechnicalReportOption}
+      />
 
       {showNotification && (
         <MotiView
