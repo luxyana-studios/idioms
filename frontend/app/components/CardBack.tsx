@@ -374,6 +374,18 @@ export const CardBack = ({
     >
       <GradientBackground hasMatte={true} />
 
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(128, 128, 128, 0.3)',
+          borderRadius: 20,
+        }}
+      />
+
       {renderContent()}
 
       <StepIndicators currentStep={currentStep} steps={steps} />
