@@ -9,7 +9,6 @@ import {
 import Animated, { AnimatedStyle, Easing } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
-import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import SmileyDisplay from './SmileyDisplay';
 import { MotiView } from 'moti';
@@ -19,7 +18,6 @@ import GradientBackground from './GradientBackground';
 interface CardBackProps {
   item: CardData;
   backAnimatedStyle: AnimatedStyle<ViewStyle>;
-  handleFavoritePress: (e: GestureResponderEvent) => void;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
   currentStep: ContentStep;
@@ -311,7 +309,6 @@ const StepIndicators = ({ currentStep, steps }: StepIndicatorsProps) => (
 
 export const CardBack = ({
   item,
-  handleFavoritePress,
   backAnimatedStyle,
   CARD_WIDTH,
   CARD_HEIGHT,
@@ -382,25 +379,19 @@ export const CardBack = ({
     >
       <GradientBackground hasMatte={true} />
 
-      {renderContent()}
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(128, 128, 128, 0.3)',
+          borderRadius: 20,
+        }}
+      />
 
-      <TouchableOpacity
-        onPress={handleFavoritePress}
-        style={[
-          styles.favoriteButton,
-          {
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
-          },
-        ]}
-        activeOpacity={0.7}
-      >
-        <Ionicons
-          name={item.favorite ? 'star' : 'star-outline'}
-          size={26}
-          color={item.favorite ? '#FFD700' : '#FFFFFF'}
-        />
-      </TouchableOpacity>
+      {renderContent()}
 
       <StepIndicators currentStep={currentStep} steps={steps} />
 
@@ -487,21 +478,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     flexShrink: 0,
     marginLeft: 8,
-  },
-  favoriteButton: {
-    position: 'absolute',
-    top: 24,
-    right: 24,
-    backgroundColor: 'rgba(28, 26, 45, 0.7)',
-    borderRadius: 30,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
   },
   nextButton: {
     position: 'absolute',

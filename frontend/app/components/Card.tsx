@@ -77,6 +77,8 @@ export const Card = ({
               height: CARD_DIMENSIONS.HEIGHT,
               justifyContent: 'center',
               alignItems: 'center',
+              borderRadius: 20,
+              overflow: 'hidden',
             }}
           >
             {!isFlipped ? (
@@ -91,7 +93,6 @@ export const Card = ({
             ) : (
               <CardBack
                 item={item}
-                handleFavoritePress={handleFavoritePress}
                 CARD_WIDTH={CARD_DIMENSIONS.WIDTH}
                 CARD_HEIGHT={CARD_DIMENSIONS.HEIGHT}
                 backAnimatedStyle={backAnimatedStyle}
