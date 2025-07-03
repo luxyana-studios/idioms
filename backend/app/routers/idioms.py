@@ -15,12 +15,26 @@ SessionDep = Annotated[Session, Depends(database.get_session)]
 router = APIRouter(prefix="/idioms", tags=["idioms"])
 
 
+@router.get("/categories", response_model=list[str])
+async def get_categories(db: SessionDep) -> list[str]:
+    """Get all unique categories from the database"""
+    result = db.execute(
+        sql_text(
+            "SELECT DISTINCT unnest(context_diversity) as context_diversity "
+            "FROM idioms ORDER BY context_diversity"
+        )
+    )
+    # print( len([row[0] for row in result.fetchall()]) )
+    return [row[0] for row in result.fetchall()]
+
+
 @router.get("/", response_model=list[IdiomSchema])
 async def get_idioms(
     db: SessionDep,
     page: int = 1,
     limit: Annotated[int, Query(le=50)] = 50,
     text: Annotated[str, Query()] = "",
+    category: Annotated[str | None, Query()] = None,
     sort: Annotated[str | None, Query()] = None,
 ) -> list[IdiomSchema]:
     text = text.strip()
@@ -30,6 +44,8 @@ async def get_idioms(
 
     if text:
         query = query.filter(IdiomModel.text.ilike(f"%{text}%"))
+    if category:
+        query = query.filter(IdiomModel.context_diversity.any(category))
 
     match sort:
         case "frequency":
