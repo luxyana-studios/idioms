@@ -194,6 +194,8 @@ export const Card = ({
               height: CARD_HEIGHT,
               justifyContent: 'center',
               alignItems: 'center',
+              borderRadius: 20,
+              overflow: 'hidden',
             }}
           >
             {!isFlipped ? (
