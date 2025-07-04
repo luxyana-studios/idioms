@@ -5,7 +5,6 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   interpolate,
-  withDelay,
   runOnJS,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -23,7 +22,6 @@ interface CardProps {
   onFavoritePress: (id: string) => void;
   onVotePress: (id: string, voteType: 'upvote' | 'downvote') => Promise<void>;
   visible?: boolean;
-  scrollDown?: boolean;
 }
 
 export type ContentStep = 'meaning' | 'explanation' | 'examples';
@@ -33,53 +31,48 @@ export const Card = ({
   onFavoritePress,
   onVotePress,
   visible = false,
-  scrollDown = false,
-  index = 0,
-}: CardProps & { index?: number }) => {
+}: CardProps) => {
   // flip rotation
   const rotation = useSharedValue(0);
-  // entry animation values
-  const entry = useSharedValue(0);
+  // simple scale animation for entry
+  const scale = useSharedValue(visible ? 1 : 0.8);
+  const opacity = useSharedValue(visible ? 1 : 0);
   // flip state
   const [isFlipped, setIsFlipped] = useState(false);
   // current step for back navigation
   const [currentStep, setCurrentStep] = useState<ContentStep>('meaning');
 
-  // memoize random offsets so they do not change on each render
-  const { randomAngle, randomX, randomY } = useMemo(
-    () => ({
-      randomAngle: Math.random() * 20 - 10,
-      randomX: Math.random() * 40 - 20,
-      randomY: Math.random() * 40 + 20,
-    }),
-    [],
-  );
-
   const entryStyle = useAnimatedStyle(() => ({
-    opacity: entry.value,
-    transform: [
-      { translateX: interpolate(entry.value, [0, 1], [randomX, 0]) },
-      { translateY: interpolate(entry.value, [0, 1], [randomY, 0]) },
-      { rotateZ: `${interpolate(entry.value, [0, 1], [randomAngle, 0])}deg` },
-    ],
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
   }));
 
-  // animate when card becomes visible
+  // animate when card becomes visible with simple scale animation
   useEffect(() => {
-    if (!visible) return;
-    if (!scrollDown) {
-      // immediately show when scrolling up
-      entry.value = 1;
+    if (visible) {
+      scale.value = withSpring(1, {
+        damping: 20,
+        stiffness: 300,
+        mass: 0.8,
+      });
+      opacity.value = withSpring(1, {
+        damping: 20,
+        stiffness: 300,
+        mass: 0.8,
+      });
     } else {
-      // animate on scroll down
-      const baseDelay = 30;
-      const delay = Math.min(index * baseDelay, 300);
-      entry.value = withDelay(
-        delay,
-        withSpring(1, { damping: 12, stiffness: 120 }),
-      );
+      scale.value = withSpring(0.8, {
+        damping: 20,
+        stiffness: 300,
+        mass: 0.8,
+      });
+      opacity.value = withSpring(0, {
+        damping: 20,
+        stiffness: 300,
+        mass: 0.8,
+      });
     }
-  }, [visible, scrollDown, index, entry]);
+  }, [visible, scale, opacity]);
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotateY = interpolate(rotation.value, [0, 1, 2], [0, -180, -360]);
@@ -219,4 +212,10 @@ export const Card = ({
 };
 
 // memoized to prevent re-render when props didn't change
-export default memo(Card);
+export default memo(Card, (prevProps, nextProps) => {
+  return (
+    prevProps.item.id === nextProps.item.id &&
+    prevProps.visible === nextProps.visible
+  );
+});
+
