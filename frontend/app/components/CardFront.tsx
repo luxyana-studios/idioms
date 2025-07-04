@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,8 @@ import VotingButtons from './VotingButtons';
 import GradientBackground from './GradientBackground';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../contexts/ThemeContext';
+import DotMenu from './DotMenu';
+import StatsModal from './StatsModal';
 
 interface CardFrontProps {
   item: CardData;
@@ -31,6 +33,11 @@ const CardFront: React.FC<CardFrontProps> = ({
   CARD_HEIGHT,
 }) => {
   const { colors } = useTheme();
+  const [showStats, setShowStats] = useState(false);
+
+  const handleStatsToggle = () => {
+    setShowStats(!showStats);
+  };
 
   // memoize static container style without backgroundColor
   const containerStyle = useMemo<ViewStyle>(
@@ -73,6 +80,13 @@ const CardFront: React.FC<CardFrontProps> = ({
           backgroundColor: 'rgba(128, 128, 128, 0.5)',
           borderRadius: 20,
         }}
+      />
+
+      <DotMenu
+        item={item}
+        onStatsToggle={handleStatsToggle}
+        CARD_WIDTH={CARD_WIDTH}
+        CARD_HEIGHT={CARD_HEIGHT}
       />
 
       <View className="flex-1 justify-center items-center w-full">
@@ -125,6 +139,14 @@ const CardFront: React.FC<CardFrontProps> = ({
           onVote={onVotePress}
         />
       </View>
+
+      <StatsModal
+        item={item}
+        isVisible={showStats}
+        onClose={() => setShowStats(false)}
+        CARD_WIDTH={CARD_WIDTH}
+        CARD_HEIGHT={CARD_HEIGHT}
+      />
     </Animated.View>
   );
 };

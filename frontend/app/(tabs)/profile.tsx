@@ -1,10 +1,30 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React from 'react';
+import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
+import { MotiView } from 'moti';
+import ReportModal from '../components/ReportModal';
 
 const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
+  const [showTechnicalReport, setShowTechnicalReport] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+
+  const showSuccessNotification = (message: string) => {
+    setNotificationMessage(message);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 2000);
+  };
+
+  const handleTechnicalReportPress = () => {
+    setShowTechnicalReport(true);
+  };
+
+  const handleTechnicalReportOption = (reportType: string) => {
+    setShowTechnicalReport(false);
+    showSuccessNotification(`${reportType} reported`);
+  };
 
   const SettingItem = ({
     title,
@@ -108,6 +128,28 @@ const Profile = () => {
             style={{ color: colors.text }}
             className="text-xl font-semibold mb-4"
           >
+            Support
+          </Text>
+
+          <SettingItem
+            title="Report Technical Issue"
+            description="Report bugs, crashes, or app problems"
+            onPress={handleTechnicalReportPress}
+            rightComponent={
+              <Ionicons
+                name="bug-outline"
+                size={24}
+                color={colors.textSecondary}
+              />
+            }
+          />
+        </View>
+
+        <View className="mb-6">
+          <Text
+            style={{ color: colors.text }}
+            className="text-xl font-semibold mb-4"
+          >
             About
           </Text>
 
@@ -124,6 +166,50 @@ const Profile = () => {
           />
         </View>
       </ScrollView>
+
+      <ReportModal
+        isVisible={showTechnicalReport}
+        onClose={() => setShowTechnicalReport(false)}
+        onReportSelected={handleTechnicalReportOption}
+      />
+
+      {showNotification && (
+        <MotiView
+          from={{ opacity: 0, translateY: -20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          exit={{ opacity: 0, translateY: -20 }}
+          transition={{ type: 'timing', duration: 200 }}
+          style={{
+            position: 'absolute',
+            top: 100,
+            left: 20,
+            right: 20,
+            backgroundColor: colors.surface,
+            borderRadius: 12,
+            padding: 16,
+            borderWidth: 1,
+            borderColor: colors.border,
+            zIndex: 10001,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
+            elevation: 8,
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              color: colors.text,
+              fontSize: 14,
+              fontWeight: '500',
+              textAlign: 'center',
+            }}
+          >
+            {notificationMessage}
+          </Text>
+        </MotiView>
+      )}
     </View>
   );
 };
