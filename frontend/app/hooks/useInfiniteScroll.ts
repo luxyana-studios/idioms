@@ -8,7 +8,7 @@ interface UseInfiniteScrollProps {
   scrollPadding?: number;
 }
 
-export const useInfiniteScroll = ({
+const useInfiniteScroll = ({
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
@@ -33,3 +33,5 @@ export const useInfiniteScroll = ({
 
   return { handleScroll };
 };
+
+export default useInfiniteScroll;

@@ -168,3 +168,14 @@ export const updateIdiomVote = async (
 
   return await response.json();
 };
+
+const cardService = {
+  fetchCards,
+  fetchShuffledCards,
+  fetchFavoriteCards,
+  updateIdiom,
+  updateIdiomVote,
+  CARDS_PER_PAGE,
+};
+
+export default cardService;

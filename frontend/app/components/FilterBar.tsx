@@ -31,7 +31,7 @@ interface FilterBarProps {
   searchBarScale: Animated.AnimatedInterpolation<number>;
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({
+const FilterBar: React.FC<FilterBarProps> = ({
   activeFilter,
   onFilterChange,
   searchInput,
@@ -207,3 +207,5 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     </>
   );
 };
+
+export default FilterBar;

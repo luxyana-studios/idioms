@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { ViewStyle, GestureResponderEvent } from 'react-native';
 import SmileyDisplay from './SmileyDisplay';
-import { VotingButtons } from './VotingButtons';
+import VotingButtons from './VotingButtons';
 import GradientBackground from './GradientBackground';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../contexts/ThemeContext';

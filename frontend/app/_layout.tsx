@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import './globals.css';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { QueryProvider } from './contexts/QueryProvider';
+import ThemeProvider from './contexts/ThemeContext';
+import QueryProvider from './contexts/QueryProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function RootLayout() {
