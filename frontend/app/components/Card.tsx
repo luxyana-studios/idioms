@@ -1,10 +1,5 @@
 import { useState, useEffect, memo, useMemo } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Dimensions,
-  GestureResponderEvent,
-} from 'react-native';
+import { View, Dimensions, GestureResponderEvent } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -87,7 +82,7 @@ export const Card = ({
   }, [visible, scrollDown, index, entry]);
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
-    const rotateY = interpolate(rotation.value, [0, 1], [0, 180]);
+    const rotateY = interpolate(rotation.value, [0, 1, 2], [0, -180, -360]);
     return {
       transform: [{ rotateY: `${rotateY}deg` }],
       backfaceVisibility: 'hidden',
@@ -95,7 +90,7 @@ export const Card = ({
   });
 
   const backAnimatedStyle = useAnimatedStyle(() => {
-    const rotateY = interpolate(rotation.value, [0, 1], [180, 360]);
+    const rotateY = interpolate(rotation.value, [0, 1], [-180, -360]);
     return {
       transform: [{ rotateY: `${rotateY}deg` }],
       backfaceVisibility: 'hidden',
@@ -119,7 +114,7 @@ export const Card = ({
     setCurrentStep(step);
   };
 
-  const handleSwipeRight = () => {
+  const handleSwipeNext = () => {
     if (!isFlipped) {
       handleFlip();
       setCurrentStep('meaning');
@@ -129,13 +124,14 @@ export const Card = ({
       } else if (currentStep === 'explanation') {
         setCurrentStep('examples');
       } else if (currentStep === 'examples') {
-        handleFlip();
+        rotation.value = withSpring(2, { damping: 10, stiffness: 100 });
+        setIsFlipped(false);
         setTimeout(() => setCurrentStep('meaning'), 300);
       }
     }
   };
 
-  const handleSwipeLeft = () => {
+  const handleSwipePrev = () => {
     if (isFlipped) {
       if (currentStep === 'examples') {
         setCurrentStep('explanation');
@@ -169,10 +165,10 @@ export const Card = ({
         (Math.abs(translationX) > swipeThreshold ||
           Math.abs(velocityX) > velocityThreshold)
       ) {
-        if (translationX > 0) {
-          runOnJS(handleSwipeRight)();
+        if (translationX < 0) {
+          runOnJS(handleSwipeNext)();
         } else {
-          runOnJS(handleSwipeLeft)();
+          runOnJS(handleSwipePrev)();
         }
       }
     });
@@ -187,38 +183,36 @@ export const Card = ({
       className="m-4"
     >
       <GestureDetector gesture={swipeGesture}>
-        <TouchableOpacity onPress={handleFlip} activeOpacity={1}>
-          <View
-            style={{
-              width: CARD_WIDTH,
-              height: CARD_HEIGHT,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 20,
-              overflow: 'hidden',
-            }}
-          >
-            {!isFlipped ? (
-              <CardFront
-                item={item}
-                handleFavoritePress={handleFavoritePress}
-                onVotePress={onVotePress}
-                CARD_WIDTH={CARD_WIDTH}
-                CARD_HEIGHT={CARD_HEIGHT}
-                frontAnimatedStyle={frontAnimatedStyle}
-              />
-            ) : (
-              <CardBack
-                item={item}
-                CARD_WIDTH={CARD_WIDTH}
-                CARD_HEIGHT={CARD_HEIGHT}
-                backAnimatedStyle={backAnimatedStyle}
-                currentStep={currentStep}
-                onStepChange={handleStepChange}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
+        <View
+          style={{
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 20,
+            overflow: 'hidden',
+          }}
+        >
+          {!isFlipped ? (
+            <CardFront
+              item={item}
+              handleFavoritePress={handleFavoritePress}
+              onVotePress={onVotePress}
+              CARD_WIDTH={CARD_WIDTH}
+              CARD_HEIGHT={CARD_HEIGHT}
+              frontAnimatedStyle={frontAnimatedStyle}
+            />
+          ) : (
+            <CardBack
+              item={item}
+              CARD_WIDTH={CARD_WIDTH}
+              CARD_HEIGHT={CARD_HEIGHT}
+              backAnimatedStyle={backAnimatedStyle}
+              currentStep={currentStep}
+              onStepChange={handleStepChange}
+            />
+          )}
+        </View>
       </GestureDetector>
     </Animated.View>
   );
