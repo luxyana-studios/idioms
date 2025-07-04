@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 
-export const ThemeToggle = () => {
+const ThemeToggle = () => {
   const { theme, colors, toggleTheme } = useTheme();
 
   return (
@@ -24,3 +24,5 @@ export const ThemeToggle = () => {
     </TouchableOpacity>
   );
 };
+
+export default ThemeToggle;

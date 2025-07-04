@@ -6,10 +6,10 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import Card from '../components/Card';
-import { FilterBar } from '../components/FilterBar';
+import { Card } from '../components/Card';
+import FilterBar from '../components/FilterBar';
 import { useFilteredCards, FilterKey } from '../hooks/useCards';
-import { useCardActions } from '../hooks/useCardActions';
+import useCardActions from '../hooks/useCardActions';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CardData } from '../types/card';
 import { useTheme } from '../contexts/ThemeContext';

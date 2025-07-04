@@ -9,7 +9,7 @@ interface SearchBarProps {
   onFocus?: () => void;
 }
 
-export const SearchBar = ({ onSearch, onClear, onFocus }: SearchBarProps) => {
+const SearchBar = ({ onSearch, onClear, onFocus }: SearchBarProps) => {
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
   const searchAnimation = React.useRef(new Animated.Value(0)).current;
@@ -86,3 +86,5 @@ export const SearchBar = ({ onSearch, onClear, onFocus }: SearchBarProps) => {
     </Animated.View>
   );
 };
+
+export default SearchBar;

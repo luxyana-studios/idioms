@@ -22,3 +22,10 @@ export interface CardProps {
   item: CardData;
   onPress: () => void;
 }
+
+const cardTypes = {
+  CardData: {} as CardData,
+  CardProps: {} as CardProps,
+};
+
+export default cardTypes;
