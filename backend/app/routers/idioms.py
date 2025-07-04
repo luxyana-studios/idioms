@@ -24,7 +24,6 @@ async def get_categories(db: SessionDep) -> list[str]:
             "FROM idioms ORDER BY context_diversity"
         )
     )
-    # print( len([row[0] for row in result.fetchall()]) )
     return [row[0] for row in result.fetchall()]
 
 

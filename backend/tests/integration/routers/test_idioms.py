@@ -76,39 +76,16 @@ def test_get_categories_returns_all_unique_categories(test_server, idioms_test_d
     assert len(categories) > 0
 
     # Collect all expected categories from test data
-    expected_categories = set()
-    for idiom in idioms_test_data.values():
-        expected_categories.update(idiom.context_diversity)
-
-    expected_categories_sorted = sorted(expected_categories)
+    expected_categories_sorted = sorted(
+        {
+            category
+            for idiom in idioms_test_data.values()
+            for category in idiom.context_diversity
+        }
+    )
 
     # Verify categories are returned in alphabetical order
     assert categories == expected_categories_sorted
-
-    # Verify no duplicates
-    assert len(categories) == len(set(categories))
-
-
-def test_get_categories_returns_expected_categories(test_server):
-    response = test_server.get("/idioms/categories")
-    assert response.status_code == 200
-
-    categories = response.json()
-
-    # Verify some expected categories exist based on sample data
-    expected_categories = [
-        "business",
-        "daily life",
-        "relationships",
-        "military",
-        "everyday life",
-        "personal development",
-        "psychology",
-        "parenting",
-    ]
-
-    for expected_category in expected_categories:
-        assert expected_category in categories
 
 
 def test_get_idioms_filter_by_category(test_server, idioms_test_data):
@@ -131,26 +108,6 @@ def test_get_idioms_filter_by_category(test_server, idioms_test_data):
     )
 
 
-def test_get_idioms_filter_by_category_daily_life(test_server, idioms_test_data):
-    # Test filtering by "daily life" category
-    response = test_server.get("/idioms/?category=daily life")
-    assert response.status_code == 200
-
-    actual_idioms = response.json()
-
-    # Collect expected idioms that have "daily life" in their context_diversity
-    expected_idioms = [
-        idiom
-        for idiom in idioms_test_data.values()
-        if "daily life" in idiom.context_diversity
-    ]
-
-    assert_idioms(actual_idioms, expected_idioms)
-    assert len(actual_idioms) > 0, (
-        "Should find at least one idiom with 'daily life' category"
-    )
-
-
 def test_get_idioms_filter_by_category_and_text(test_server, idioms_test_data):
     # Test combining category filter with text search
     response = test_server.get("/idioms/?category=business&text=work")
@@ -166,16 +123,6 @@ def test_get_idioms_filter_by_category_and_text(test_server, idioms_test_data):
     ]
 
     assert_idioms(actual_idioms, expected_idioms)
-
-    # Verify each returned idiom meets both criteria
-    for idiom_dict in actual_idioms:
-        idiom = IdiomCreate(**idiom_dict)
-        assert "business" in idiom.context_diversity, (
-            f"Idiom '{idiom.text}' should have 'business' category"
-        )
-        assert "work" in idiom.text.lower(), (
-            f"Idiom '{idiom.text}' should contain 'work' in text"
-        )
 
 
 def test_get_idioms_filter_by_nonexistent_category(test_server):
