@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, useMemo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { View, Dimensions, GestureResponderEvent } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -218,4 +218,3 @@ export default memo(Card, (prevProps, nextProps) => {
     prevProps.visible === nextProps.visible
   );
 });
-
