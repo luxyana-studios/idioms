@@ -9,6 +9,7 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { FilterKey } from '../hooks/useCards';
+import { CategoryChips } from './CategoryChips';
 
 type FilterIcon = 'list' | 'star' | 'shuffle' | 'search';
 
@@ -29,6 +30,8 @@ interface FilterBarProps {
   onSearchFocus: () => void;
   onSearchClear: () => void;
   searchBarScale: Animated.AnimatedInterpolation<number>;
+  selectedCategory: string | null;
+  onCategoryPress: (category: string) => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -41,6 +44,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onSearchFocus,
   onSearchClear,
   searchBarScale,
+  selectedCategory,
+  onCategoryPress,
 }) => {
   const { colors } = useTheme();
 
@@ -130,6 +135,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
               )}
             </Animated.View>
           </View>
+
+          <CategoryChips
+            selectedCategory={selectedCategory}
+            onCategoryPress={onCategoryPress}
+          />
+
           <View className="px-6 pb-2 flex-row space-x-3">
             <TouchableOpacity
               onPress={() =>

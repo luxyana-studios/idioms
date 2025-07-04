@@ -19,8 +19,9 @@ const handleApiError = async (response: Response) => {
  * Fetches cards from the backend with optional search functionality
  * @param page - The page number to fetch
  * @param limit - Number of cards per page
- * @param search - Optional search term to filter cards by title
+ * @param search - Optional search term to filter cards by title, meaning, and explanation
  * @param sort - Optional sort parameter (e.g., 'frequency', '-frequency')
+ * @param category - Optional category to filter cards by category_theme
  * @returns Promise<CardData[]> - Array of card data
  */
 export const fetchCards = async (
@@ -28,6 +29,7 @@ export const fetchCards = async (
   limit: number = CARDS_PER_PAGE,
   search?: string,
   sort?: string,
+  category?: string,
 ): Promise<CardData[]> => {
   const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
   url.searchParams.append('page', page.toString());
@@ -35,6 +37,10 @@ export const fetchCards = async (
 
   if (search) {
     url.searchParams.append('text', search.trim());
+  }
+
+  if (category) {
+    url.searchParams.append('category', category.trim());
   }
 
   if (sort) {
@@ -169,13 +175,21 @@ export const updateIdiomVote = async (
   return await response.json();
 };
 
-const cardService = {
-  fetchCards,
-  fetchShuffledCards,
-  fetchFavoriteCards,
-  updateIdiom,
-  updateIdiomVote,
-  CARDS_PER_PAGE,
-};
+/**
+ * Fetches all available categories from the backend
+ * @returns Promise<string[]> - Array of category names
+ */
+export const fetchCategories = async (): Promise<string[]> => {
+  const url = new URL(`${API_ROUTES.IDIOMS}categories`, IDIOMS_BACKEND_URL);
 
-export default cardService;
+  const response = await fetch(url.toString(), {
+    headers: {
+      Accept: 'application/json',
+      'ngrok-skip-browser-warning': 'idioms',
+    },
+  });
+
+  if (!response.ok) return handleApiError(response);
+
+  return await response.json();
+};

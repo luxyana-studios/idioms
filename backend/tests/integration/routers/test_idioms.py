@@ -67,6 +67,84 @@ def test_get_idioms_sort_imagery(test_server, idioms_test_data):
     assert_idioms(actual_idioms, expected_idioms)
 
 
+def test_get_categories_returns_all_unique_categories(test_server, idioms_test_data):
+    response = test_server.get("/idioms/categories")
+    assert response.status_code == 200
+
+    categories = response.json()
+    assert isinstance(categories, list)
+    assert len(categories) > 0
+
+    # Collect all expected categories from test data
+    expected_categories_sorted = sorted(
+        {
+            category
+            for idiom in idioms_test_data.values()
+            for category in idiom.context_diversity
+        }
+    )
+
+    # Verify categories are returned in alphabetical order
+    assert categories == expected_categories_sorted
+
+
+def test_get_idioms_filter_by_category(test_server, idioms_test_data):
+    # Test filtering by "business" category
+    response = test_server.get("/idioms/?category=business")
+    assert response.status_code == 200
+
+    actual_idioms = response.json()
+
+    # Collect expected idioms that have "business" in their context_diversity
+    expected_idioms = [
+        idiom
+        for idiom in idioms_test_data.values()
+        if "business" in idiom.context_diversity
+    ]
+
+    assert_idioms(actual_idioms, expected_idioms)
+    assert len(actual_idioms) > 0, (
+        "Should find at least one idiom with 'business' category"
+    )
+
+
+def test_get_idioms_filter_by_category_and_text(test_server, idioms_test_data):
+    # Test combining category filter with text search
+    response = test_server.get("/idioms/?category=business&text=work")
+    assert response.status_code == 200
+
+    actual_idioms = response.json()
+
+    # Expected idioms should have both "business" category AND contain "work" in text
+    expected_idioms = [
+        idiom
+        for idiom in idioms_test_data.values()
+        if "business" in idiom.context_diversity and "work" in idiom.text.lower()
+    ]
+
+    assert_idioms(actual_idioms, expected_idioms)
+
+
+def test_get_idioms_filter_by_nonexistent_category(test_server):
+    # Test filtering by a category that doesn't exist
+    response = test_server.get("/idioms/?category=nonexistent_category")
+    assert response.status_code == 200
+
+    actual_idioms = response.json()
+    assert len(actual_idioms) == 0, "Should return empty list for nonexistent category"
+
+
+def test_get_idioms_filter_by_category_with_text_no_matches(test_server):
+    # Test combining category with text that has no matches
+    response = test_server.get("/idioms/?category=business&text=xyz123")
+    assert response.status_code == 200
+
+    actual_idioms = response.json()
+    assert len(actual_idioms) == 0, (
+        "Should return empty list when no idioms match both criteria"
+    )
+
+
 def assert_idioms(actual: list[dict], expected: list[IdiomCreate]) -> None:
     assert len(actual) == len(expected)
     actual = [IdiomCreate(**idiom) for idiom in actual]
