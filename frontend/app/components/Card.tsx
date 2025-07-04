@@ -224,3 +224,4 @@ export default memo(Card, (prevProps, nextProps) => {
     prevProps.visible === nextProps.visible
   );
 });
+
