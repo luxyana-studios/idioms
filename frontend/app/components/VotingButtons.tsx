@@ -15,7 +15,7 @@ interface VotingButtonsProps {
   onVote: (cardId: string, voteType: 'upvote' | 'downvote') => Promise<void>;
 }
 
-export const VotingButtons = ({
+const VotingButtons = ({
   cardId,
   upvotes,
   downvotes,
@@ -99,3 +99,5 @@ export const VotingButtons = ({
     </View>
   );
 };
+
+export default VotingButtons;

@@ -23,10 +23,11 @@ interface QueryProviderProps {
   children: React.ReactNode;
 }
 
-export const QueryProvider: React.FC<QueryProviderProps> = ({ children }) => {
+const QueryProvider: React.FC<QueryProviderProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
 
 export { queryClient };
+export default QueryProvider;

@@ -9,18 +9,15 @@ import {
 import Animated, { AnimatedStyle, Easing } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
-import { GestureResponderEvent } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import IdiomStats from './IndicatorsDisplay';
 import SmileyDisplay from './SmileyDisplay';
 import { MotiView } from 'moti';
-import { ContentStep } from './Card';
+import { ContentStep } from '../hooks/useCardFlip';
 import GradientBackground from './GradientBackground';
 
 interface CardBackProps {
   item: CardData;
   backAnimatedStyle: AnimatedStyle<ViewStyle>;
-  handleFavoritePress: (e: GestureResponderEvent) => void;
   CARD_WIDTH: number;
   CARD_HEIGHT: number;
   currentStep: ContentStep;
@@ -59,86 +56,92 @@ const MeaningContent = ({
   const [showIndicators, setShowIndicators] = useState(false);
 
   return (
-    <View style={styles.contentContainer}>
+    <View style={styles.meaningContentContainer}>
       <View style={styles.titleSection}>
         <Ionicons name="bulb-outline" size={22} color="#FFD700" />
         <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
       </View>
 
-      <MotiView
-        from={{ opacity: 0, scale: 0.85, translateY: 24 }}
-        animate={{ opacity: 1, scale: 1, translateY: 0 }}
-        transition={{
-          type: 'timing',
-          duration: 1200,
-          easing: Easing.out(Easing.exp),
-        }}
-        onDidAnimate={(key, finished) => {
-          if (key === 'opacity' && finished) {
-            setTimeout(() => setShowEmojis(true), 100);
-          }
-        }}
-      >
-        <Text style={[styles.cleanText, { color: textColor }]}>{meaning}</Text>
-      </MotiView>
-
-      {showEmojis && (
+      <View style={styles.meaningContent}>
         <MotiView
-          from={{ opacity: 0, scale: 0.85, translateY: 16 }}
+          from={{ opacity: 0, scale: 0.85, translateY: 24 }}
           animate={{ opacity: 1, scale: 1, translateY: 0 }}
           transition={{
-            type: 'spring',
-            damping: 18,
-            stiffness: 120,
-            mass: 0.8,
-            delay: 100,
+            type: 'timing',
+            duration: 1200,
+            easing: Easing.out(Easing.exp),
           }}
           onDidAnimate={(key, finished) => {
-            if (key === 'scale' && finished) {
-              setTimeout(() => setShowIndicators(true), 150);
+            if (key === 'opacity' && finished) {
+              setTimeout(() => setShowEmojis(true), 100);
             }
           }}
         >
-          <>
-            <View style={{ marginTop: 16, marginBottom: 12 }}>
-              <SmileyDisplay smileys={alternativeDepiction} />
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                marginTop: 8,
-                marginBottom: 16,
+          <Text style={[styles.cleanText, { color: textColor }]}>
+            {meaning}
+          </Text>
+        </MotiView>
+
+        <View style={styles.emojiContainer}>
+          {showEmojis ? (
+            <MotiView
+              from={{ opacity: 0, scale: 0.85, translateY: 16 }}
+              animate={{ opacity: 1, scale: 1, translateY: 0 }}
+              transition={{
+                type: 'spring',
+                damping: 18,
+                stiffness: 120,
+                mass: 0.8,
+                delay: 100,
+              }}
+              onDidAnimate={(key, finished) => {
+                if (key === 'scale' && finished) {
+                  setTimeout(() => setShowIndicators(true), 150);
+                }
               }}
             >
-              {item.category_theme &&
-                item.category_theme.map((category, idx) => (
-                  <View
-                    key={idx}
-                    style={{
-                      backgroundColor: '#FFD70022',
-                      borderRadius: 12,
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                      margin: 2,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: '#FFD700',
-                        fontWeight: 'bold',
-                        fontSize: 13,
-                      }}
-                    >
-                      {category}
-                    </Text>
-                  </View>
-                ))}
-            </View>
-          </>
-        </MotiView>
-      )}
+              <>
+                <View style={{ marginTop: 16, marginBottom: 12 }}>
+                  <SmileyDisplay smileys={alternativeDepiction} />
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    marginTop: 8,
+                    marginBottom: 16,
+                  }}
+                >
+                  {item.category_theme &&
+                    item.category_theme.map((category, idx) => (
+                      <View
+                        key={idx}
+                        style={{
+                          backgroundColor: '#FFD70022',
+                          borderRadius: 12,
+                          paddingHorizontal: 10,
+                          paddingVertical: 4,
+                          margin: 2,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: '#FFD700',
+                            fontWeight: 'bold',
+                            fontSize: 13,
+                          }}
+                        >
+                          {category}
+                        </Text>
+                      </View>
+                    ))}
+                </View>
+              </>
+            </MotiView>
+          ) : null}
+        </View>
+      </View>
 
       {showIndicators && (
         <MotiView
@@ -159,9 +162,7 @@ const MeaningContent = ({
               paddingHorizontal: 8,
               alignItems: 'flex-start',
             }}
-          >
-            <IdiomStats item={item} />
-          </View>
+          ></View>
         </MotiView>
       )}
     </View>
@@ -204,7 +205,6 @@ const ExamplesContent = ({
 }: ExamplesContentProps) => {
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
-  const { colors } = useTheme();
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
@@ -276,7 +276,10 @@ const ExamplesContent = ({
               onPress={handleShowMoreExamples}
               style={[
                 styles.showMoreButton,
-                { backgroundColor: colors.cardBackBackground },
+                {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                },
               ]}
               activeOpacity={0.8}
             >
@@ -306,7 +309,6 @@ const StepIndicators = ({ currentStep, steps }: StepIndicatorsProps) => (
 
 export const CardBack = ({
   item,
-  handleFavoritePress,
   backAnimatedStyle,
   CARD_WIDTH,
   CARD_HEIGHT,
@@ -339,7 +341,7 @@ export const CardBack = ({
         return (
           <MeaningContent
             meaning={item.meaning}
-            textColor="#FFFFFF" // White text for better contrast on gradient
+            textColor="#FFFFFF"
             alternativeDepiction={item.alternative_depiction}
             item={item}
           />
@@ -348,14 +350,14 @@ export const CardBack = ({
         return (
           <ExplanationContent
             explanation={item.explanation}
-            textColor="#FFFFFF" // White text for better contrast on gradient
+            textColor="#FFFFFF"
           />
         );
       case 'examples':
         return (
           <ExamplesContent
             examples={item.examples}
-            textSecondaryColor="#F3F4F6" // Light gray for secondary text
+            textSecondaryColor="#F3F4F6"
           />
         );
       default:
@@ -377,25 +379,19 @@ export const CardBack = ({
     >
       <GradientBackground hasMatte={true} />
 
-      {renderContent()}
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(128, 128, 128, 0.3)',
+          borderRadius: 20,
+        }}
+      />
 
-      <TouchableOpacity
-        onPress={handleFavoritePress}
-        style={[
-          styles.favoriteButton,
-          {
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
-            borderColor: 'rgba(255, 255, 255, 0.3)',
-          },
-        ]}
-        activeOpacity={0.7}
-      >
-        <Ionicons
-          name={item.favorite ? 'star' : 'star-outline'}
-          size={26}
-          color={item.favorite ? '#FFD700' : '#FFFFFF'}
-        />
-      </TouchableOpacity>
+      {renderContent()}
 
       <StepIndicators currentStep={currentStep} steps={steps} />
 
@@ -405,7 +401,7 @@ export const CardBack = ({
           style={[
             styles.nextButton,
             {
-              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
               borderColor: 'rgba(255, 255, 255, 0.3)',
             },
           ]}
@@ -421,7 +417,7 @@ export const CardBack = ({
           style={[
             styles.backButton,
             {
-              backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
               borderColor: 'rgba(255, 255, 255, 0.3)',
             },
           ]}
@@ -460,6 +456,15 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
     maxHeight: '100%',
   },
+  meaningContentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingTop: 40,
+    paddingBottom: 60,
+    maxHeight: '100%',
+  },
   titleSection: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -473,21 +478,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     flexShrink: 0,
     marginLeft: 8,
-  },
-  favoriteButton: {
-    position: 'absolute',
-    top: 24,
-    right: 24,
-    backgroundColor: 'rgba(28, 26, 45, 0.7)',
-    borderRadius: 30,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
   },
   nextButton: {
     position: 'absolute',
@@ -568,15 +558,13 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: '#FFD70040',
-    backgroundColor: 'rgba(255, 215, 0, 0.08)',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
+    borderRadius: 25,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   showMoreContent: {
     flexDirection: 'row',
@@ -589,5 +577,15 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 6,
     letterSpacing: 0.3,
+  },
+  meaningContent: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  emojiContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 120,
   },
 });

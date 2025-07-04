@@ -34,7 +34,7 @@ interface FilterBarProps {
   onCategoryPress: (category: string) => void;
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({
+const FilterBar: React.FC<FilterBarProps> = ({
   activeFilter,
   onFilterChange,
   searchInput,
@@ -218,3 +218,5 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     </>
   );
 };
+
+export default FilterBar;

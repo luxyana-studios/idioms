@@ -389,6 +389,6 @@ export const useCategories = () => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: fetchCategories,
-    staleTime: 1000 * 60 * 30, // 30 minutes - categories don't change often
+    staleTime: 1000 * 60 * 30,
   });
 };

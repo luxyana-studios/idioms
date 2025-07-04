@@ -5,13 +5,11 @@ import {
   ViewToken,
   Animated,
   Dimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
 } from 'react-native';
 import { Card } from '../components/Card';
-import { FilterBar } from '../components/FilterBar';
+import FilterBar from '../components/FilterBar';
 import { useFilteredCards, FilterKey } from '../hooks/useCards';
-import { useCardActions } from '../hooks/useCardActions';
+import useCardActions from '../hooks/useCardActions';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CardData } from '../types/card';
 import { useTheme } from '../contexts/ThemeContext';
@@ -30,12 +28,11 @@ const Home = () => {
   const [viewableIndices, setViewableIndices] = useState<Set<number>>(
     new Set(),
   );
-  // track scroll velocity
-  const scrollOffset = useRef(0);
-  const scrollTime = useRef(Date.now());
-  const [scrollDown, setScrollDown] = useState(false);
   // stable viewability config and callback refs
-  const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 5 });
+  const viewabilityConfigRef = useRef({
+    itemVisiblePercentThreshold: 25,
+    minimumViewTime: 100,
+  });
   const prevViewableRef = useRef<Set<number>>(new Set());
   const onViewableItemsChangedRef = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -119,7 +116,7 @@ const Home = () => {
   );
 
   // fixed item height for getItemLayout
-  const ITEM_HEIGHT = Dimensions.get('window').height * 0.75 + 32; // card height + vertical margins
+  const ITEM_HEIGHT = Dimensions.get('window').height * 0.75 + 30; // card height + vertical margins
   const handleFilterChange = (filter: FilterKey) => {
     setActiveFilter(filter);
 
@@ -154,44 +151,34 @@ const Home = () => {
 
       <FlatList
         // virtualization props
-        initialNumToRender={10}
-        maxToRenderPerBatch={5}
-        windowSize={10}
+        initialNumToRender={3}
+        maxToRenderPerBatch={3}
+        windowSize={5}
         removeClippedSubviews
+        updateCellsBatchingPeriod={50}
         getItemLayout={(data, index) => ({
           length: ITEM_HEIGHT,
           offset: ITEM_HEIGHT * index,
           index,
         })}
         data={cards}
-        keyExtractor={(item: CardData) => item.id}
+        keyExtractor={useCallback((item: CardData) => item.id, [])}
         contentContainerStyle={{
           alignItems: 'center',
           paddingVertical: 20,
           paddingHorizontal: 16,
-        }}
-        // measure scroll speed
-        onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => {
-          const now = Date.now();
-          const y = e.nativeEvent.contentOffset.y;
-          const dy = y - scrollOffset.current;
-          setScrollDown(dy > 0);
-          scrollOffset.current = y;
-          scrollTime.current = now;
         }}
         scrollEventThrottle={16}
         renderItem={useCallback(
           ({ item, index }: { item: CardData; index: number }) => (
             <Card
               item={item}
-              index={index}
               visible={viewableIndices.has(index)}
-              scrollDown={scrollDown}
               onFavoritePress={toggleFavorite}
               onVotePress={handleVote}
             />
           ),
-          [viewableIndices, scrollDown, toggleFavorite, handleVote],
+          [viewableIndices, toggleFavorite, handleVote],
         )}
         ListEmptyComponent={!isLoading ? renderNoResults : null}
         ListFooterComponent={isFetchingNextPage ? renderLoadingIndicator : null}
@@ -202,6 +189,9 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
         viewabilityConfig={viewabilityConfigRef.current}
         onViewableItemsChanged={onViewableItemsChangedRef.current}
+        snapToInterval={ITEM_HEIGHT}
+        decelerationRate={0.85}
+        snapToAlignment="start"
       />
     </View>
   );

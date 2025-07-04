@@ -56,7 +56,7 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('dark');
 
   const toggleTheme = () => {
@@ -79,3 +79,5 @@ export const useTheme = () => {
   }
   return context;
 };
+
+export default ThemeProvider;

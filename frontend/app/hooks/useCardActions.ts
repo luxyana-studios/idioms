@@ -6,7 +6,7 @@ interface UseCardActionsProps {
   cards: CardData[];
 }
 
-export const useCardActions = ({ cards }: UseCardActionsProps) => {
+const useCardActions = ({ cards }: UseCardActionsProps) => {
   const updateFavoriteMutation = useUpdateFavorite();
   const voteMutation = useVote();
 
@@ -35,3 +35,5 @@ export const useCardActions = ({ cards }: UseCardActionsProps) => {
     isVoting: voteMutation.isPending,
   };
 };
+
+export default useCardActions;
