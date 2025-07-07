@@ -10,6 +10,7 @@ export default function RootLayout() {
       <QueryProvider>
         <ThemeProvider>
           <Stack>
+            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
         </ThemeProvider>

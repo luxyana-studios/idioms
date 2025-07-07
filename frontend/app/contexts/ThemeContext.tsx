@@ -17,7 +17,7 @@ interface ThemeColors {
 }
 
 const lightTheme: ThemeColors = {
-  primary: '#e5e7eb',
+  primary: '#3b82f6',
   secondary: '#d1d5db',
   background: '#f8fafc',
   surface: '#f1f5f9',
@@ -31,7 +31,7 @@ const lightTheme: ThemeColors = {
 };
 
 const darkTheme: ThemeColors = {
-  primary: '#1f2937',
+  primary: '#3b82f6',
   secondary: '#374151',
   background: '#111827',
   surface: '#1f2937',
