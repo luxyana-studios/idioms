@@ -11,7 +11,6 @@ export default function RootLayout() {
         <ThemeProvider>
           <Stack>
             <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
         </ThemeProvider>
       </QueryProvider>
