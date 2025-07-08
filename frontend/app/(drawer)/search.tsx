@@ -113,9 +113,9 @@ const SearchScreen = () => {
   const getContentPadding = () => {
     let topPadding = 80;
     if (showAdvancedOptions) {
-      topPadding += 140;
-    } else if (searchSort || selectedCategory) {
       topPadding += 50;
+    } else if (searchSort || selectedCategory) {
+      topPadding += 15;
     }
     return topPadding;
   };
@@ -132,23 +132,23 @@ const SearchScreen = () => {
             borderWidth: 1,
             borderColor: colors.border,
           }}
-          className="flex-row items-center px-4 py-3 rounded-full mb-4"
+          className="flex-row items-center px-4 py-2 rounded-full mb-1"
         >
-          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <Ionicons name="search" size={18} color={colors.textSecondary} />
           <TextInput
             ref={searchInputRef}
             value={searchInput}
             onChangeText={setSearchInput}
             placeholder="Search idioms..."
             placeholderTextColor={colors.textSecondary}
-            style={{ color: colors.text }}
-            className="flex-1 ml-3 text-base"
+            style={{ color: colors.text, fontSize: 15 }}
+            className="flex-1 ml-2 text-base"
             returnKeyType="search"
             onFocus={handleSearchFocus}
           />
           {searchInput.length > 0 && (
-            <TouchableOpacity onPress={handleClear} className="ml-3">
-              <Ionicons name="close" size={20} color={colors.textSecondary} />
+            <TouchableOpacity onPress={handleClear} className="ml-2">
+              <Ionicons name="close" size={18} color={colors.textSecondary} />
             </TouchableOpacity>
           )}
         </View>

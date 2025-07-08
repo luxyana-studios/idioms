@@ -38,13 +38,13 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({
   }
 
   return (
-    <View className="px-6 pb-3">
+    <View className="px-6 pb-0">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 0,
-          gap: 6,
+          gap: 4,
         }}
       >
         {categories.map((category) => {
@@ -59,9 +59,9 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({
                   ? colors.primary + '20'
                   : colors.surface,
                 borderColor: isSelected ? colors.primary : colors.border,
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 16,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 14,
                 borderWidth: 1,
               }}
             >
@@ -69,7 +69,7 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({
                 style={{
                   color: isSelected ? colors.primary : colors.text,
                   fontWeight: isSelected ? '600' : 'normal',
-                  fontSize: 14,
+                  fontSize: 12,
                 }}
               >
                 {category}

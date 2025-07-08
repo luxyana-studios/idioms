@@ -17,7 +17,7 @@ export const SortButtons: React.FC<SortButtonsProps> = ({
     <View className="flex-row gap-2 mb-4">
       <TouchableOpacity
         onPress={() => onSortPress('frequency')}
-        className="flex-1 py-3 px-4 rounded-full border"
+        className="flex-1 py-2 px-3 rounded-full border"
         style={{
           backgroundColor:
             searchSort === 'frequency' ? colors.primary + '20' : colors.surface,
@@ -29,7 +29,7 @@ export const SortButtons: React.FC<SortButtonsProps> = ({
           style={{
             color: searchSort === 'frequency' ? colors.primary : colors.text,
           }}
-          className="text-center font-medium text-base"
+          className="text-center font-medium text-sm"
         >
           Sort by Frequency
         </Text>
@@ -37,7 +37,7 @@ export const SortButtons: React.FC<SortButtonsProps> = ({
 
       <TouchableOpacity
         onPress={() => onSortPress('imagery')}
-        className="flex-1 py-3 px-4 rounded-full border"
+        className="flex-1 py-2 px-3 rounded-full border"
         style={{
           backgroundColor:
             searchSort === 'imagery' ? colors.primary + '20' : colors.surface,
@@ -49,7 +49,7 @@ export const SortButtons: React.FC<SortButtonsProps> = ({
           style={{
             color: searchSort === 'imagery' ? colors.primary : colors.text,
           }}
-          className="text-center font-medium text-base"
+          className="text-center font-medium text-sm"
         >
           Sort by Imagery
         </Text>

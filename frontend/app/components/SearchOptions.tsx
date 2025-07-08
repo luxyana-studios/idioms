@@ -19,10 +19,12 @@ export const SearchOptions: React.FC<SearchOptionsProps> = ({
   return (
     <View>
       <SortButtons searchSort={searchSort} onSortPress={onSortPress} />
-      <CategoryChips
-        selectedCategory={selectedCategory}
-        onCategoryPress={onCategoryPress}
-      />
+      <View style={{ marginTop: -8 }}>
+        <CategoryChips
+          selectedCategory={selectedCategory}
+          onCategoryPress={onCategoryPress}
+        />
+      </View>
     </View>
   );
 };
