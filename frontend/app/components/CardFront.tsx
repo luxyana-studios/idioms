@@ -152,4 +152,7 @@ const CardFront: React.FC<CardFrontProps> = ({
 };
 
 // memoized to prevent rerenders when props unchanged
-export default memo(CardFront);
+const MemoizedCardFront = memo(CardFront);
+MemoizedCardFront.displayName = 'CardFront';
+
+export default MemoizedCardFront;

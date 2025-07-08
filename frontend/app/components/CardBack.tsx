@@ -431,7 +431,10 @@ export const CardBack = ({
 };
 
 // memoized to prevent rerenders when props unchanged
-export default memo(CardBack);
+const MemoizedCardBack = memo(CardBack);
+MemoizedCardBack.displayName = 'CardBack';
+
+export default MemoizedCardBack;
 
 const styles = StyleSheet.create({
   cardContainer: {

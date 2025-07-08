@@ -1,4 +1,3 @@
-import React from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +6,48 @@ import {
   DrawerContentScrollView,
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
+
+type DrawerItemProps = {
+  item: {
+    label: string;
+    icon: keyof typeof Ionicons.glyphMap;
+    screen: string;
+  };
+  isActive: boolean;
+  onPress: () => void;
+  colors: {
+    primary: string;
+    text: string;
+    textSecondary: string;
+  };
+};
+
+const DrawerItem: React.FC<DrawerItemProps> = ({
+  item,
+  isActive,
+  onPress,
+  colors,
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    className="flex-row items-center px-6 py-4 mx-2 rounded-lg mb-2"
+    style={{
+      backgroundColor: isActive ? colors.primary + '20' : 'transparent',
+    }}
+  >
+    <Ionicons
+      name={item.icon}
+      size={24}
+      color={isActive ? colors.primary : colors.textSecondary}
+    />
+    <Text
+      style={{ color: isActive ? colors.primary : colors.text }}
+      className="ml-4 text-lg font-medium"
+    >
+      {item.label}
+    </Text>
+  </TouchableOpacity>
+);
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { colors } = useTheme();
@@ -48,8 +89,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   return (
     <DrawerContentScrollView
       {...props}
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ paddingTop: 50 }}
+      style={{ backgroundColor: colors.background, flex: 1 }}
+      contentContainerStyle={{ paddingTop: 50, flex: 1 }}
     >
       <View
         className="px-4 pb-6"
@@ -63,83 +104,27 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         </Text>
       </View>
 
-      <View className="mt-6">
+      <View style={{ flex: 1, justifyContent: 'flex-start' }}>
         {drawerItems.map((item, index) => (
-          <TouchableOpacity
+          <DrawerItem
             key={index}
-            onPress={() => {
-              props.navigation.navigate(item.screen);
-            }}
-            className="flex-row items-center px-6 py-4 mx-2 rounded-lg mb-2"
-            style={{
-              backgroundColor:
-                props.state.routeNames[props.state.index] === item.screen
-                  ? colors.primary + '20'
-                  : 'transparent',
-            }}
-          >
-            <Ionicons
-              name={item.icon}
-              size={24}
-              color={
-                props.state.routeNames[props.state.index] === item.screen
-                  ? colors.primary
-                  : colors.textSecondary
-              }
-            />
-            <Text
-              style={{
-                color:
-                  props.state.routeNames[props.state.index] === item.screen
-                    ? colors.primary
-                    : colors.text,
-              }}
-              className="ml-4 text-lg font-medium"
-            >
-              {item.label}
-            </Text>
-          </TouchableOpacity>
+            item={item}
+            isActive={props.state.routeNames[props.state.index] === item.screen}
+            onPress={() => props.navigation.navigate(item.screen)}
+            colors={colors}
+          />
         ))}
       </View>
 
-      {/* Profile section at the bottom */}
-      <View
-        className="mt-auto mb-6 pt-6"
-        style={{ borderTopWidth: 1, borderTopColor: colors.border }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            props.navigation.navigate(profileItem.screen);
-          }}
-          className="flex-row items-center px-6 py-4 mx-2 rounded-lg"
-          style={{
-            backgroundColor:
-              props.state.routeNames[props.state.index] === profileItem.screen
-                ? colors.primary + '20'
-                : 'transparent',
-          }}
-        >
-          <Ionicons
-            name={profileItem.icon}
-            size={24}
-            color={
-              props.state.routeNames[props.state.index] === profileItem.screen
-                ? colors.primary
-                : colors.textSecondary
-            }
-          />
-          <Text
-            style={{
-              color:
-                props.state.routeNames[props.state.index] === profileItem.screen
-                  ? colors.primary
-                  : colors.text,
-            }}
-            className="ml-4 text-lg font-medium"
-          >
-            {profileItem.label}
-          </Text>
-        </TouchableOpacity>
+      <View style={{ marginBottom: 12 }}>
+        <DrawerItem
+          item={profileItem}
+          isActive={
+            props.state.routeNames[props.state.index] === profileItem.screen
+          }
+          onPress={() => props.navigation.navigate(profileItem.screen)}
+          colors={colors}
+        />
       </View>
     </DrawerContentScrollView>
   );
