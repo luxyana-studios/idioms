@@ -1,20 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  View,
-  ActivityIndicator,
-  Text,
-  ViewToken,
-  Dimensions,
-  FlatList,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import { View, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Card } from '../components/Card';
-import { CategoryChips } from '../components/CategoryChips';
+import CardList from '../components/CardList';
+import { ActiveFilterChips } from '../components/ActiveFilterChips';
+import { SearchOptions } from '../components/SearchOptions';
 import { useFilteredCards } from '../hooks/useCards';
 import useCardActions from '../hooks/useCardActions';
-import { CardData } from '../types/card';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLocalSearchParams } from 'expo-router';
 
@@ -38,30 +29,6 @@ const SearchScreen = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const searchInputRef = useRef<TextInput>(null);
-
-  const [viewableIndices, setViewableIndices] = useState<Set<number>>(
-    new Set(),
-  );
-
-  const viewabilityConfigRef = useRef({
-    itemVisiblePercentThreshold: 25,
-    minimumViewTime: 100,
-  });
-
-  const prevViewableRef = useRef<Set<number>>(new Set());
-  const onViewableItemsChangedRef = useRef(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      const newSet = new Set(viewableItems.map((v) => v.index ?? 0));
-      const prevSet = prevViewableRef.current;
-      const isEqual =
-        newSet.size === prevSet.size &&
-        [...newSet].every((i) => prevSet.has(i));
-      if (!isEqual) {
-        prevViewableRef.current = newSet;
-        setViewableIndices(newSet);
-      }
-    },
-  );
 
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedInput(searchInput), 300);
@@ -143,25 +110,6 @@ const SearchScreen = () => {
     setSelectedCategory(null);
   };
 
-  const renderLoadingIndicator = () => (
-    <View className="py-4">
-      <ActivityIndicator size="large" color={colors.text} />
-    </View>
-  );
-
-  const renderNoResults = () => (
-    <View className="py-10 px-4 items-center">
-      <Text style={{ color: colors.textSecondary }} className="text-lg">
-        {error ? 'Error loading cards' : 'No cards found'}
-      </Text>
-      <Text style={{ color: colors.textSecondary }} className="mt-2">
-        {error ? 'Pull to refresh or try again' : 'Try a different search term'}
-      </Text>
-    </View>
-  );
-
-  const ITEM_HEIGHT = Dimensions.get('window').height * 0.75 + 30;
-
   const getContentPadding = () => {
     let topPadding = 80;
     if (showAdvancedOptions) {
@@ -176,7 +124,7 @@ const SearchScreen = () => {
     <View style={{ backgroundColor: colors.background }} className="flex-1">
       <View
         style={{ backgroundColor: colors.background }}
-        className="absolute top-0 left-0 right-0 z-10 px-4 pt-4 pb-3"
+        className="absolute top-0 left-0 right-0 z-10 px-4 pt-0 pb-3"
       >
         <View
           style={{
@@ -206,151 +154,43 @@ const SearchScreen = () => {
         </View>
 
         {!showAdvancedOptions && (searchSort || selectedCategory) && (
-          <View className="flex-row flex-wrap gap-2 mb-4">
-            {searchSort && (
-              <View
-                style={{
-                  backgroundColor: colors.primary + '15',
-                  borderColor: colors.primary,
-                }}
-                className="flex-row items-center px-3 py-2 rounded-full border"
-              >
-                <Text
-                  style={{ color: colors.primary }}
-                  className="text-sm font-medium mr-2"
-                >
-                  {searchSort === 'frequency' ? 'By Frequency' : 'By Imagery'}
-                </Text>
-                <TouchableOpacity onPress={removeSort}>
-                  <Ionicons name="close" size={16} color={colors.primary} />
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {selectedCategory && (
-              <View
-                style={{
-                  backgroundColor: colors.primary + '15',
-                  borderColor: colors.primary,
-                }}
-                className="flex-row items-center px-3 py-2 rounded-full border"
-              >
-                <Text
-                  style={{ color: colors.primary }}
-                  className="text-sm font-medium mr-2 capitalize"
-                >
-                  {selectedCategory}
-                </Text>
-                <TouchableOpacity onPress={removeCategory}>
-                  <Ionicons name="close" size={16} color={colors.primary} />
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+          <ActiveFilterChips
+            searchSort={searchSort}
+            selectedCategory={selectedCategory}
+            onRemoveSort={removeSort}
+            onRemoveCategory={removeCategory}
+          />
         )}
 
         {!(searchSort || selectedCategory) && (
-          <View>
-            <View className="flex-row gap-2 mb-4">
-              <TouchableOpacity
-                onPress={() => handleSortPress('frequency')}
-                className="flex-1 py-3 px-4 rounded-full border"
-                style={{
-                  backgroundColor:
-                    searchSort === 'frequency'
-                      ? colors.primary + '20'
-                      : colors.surface,
-                  borderColor:
-                    searchSort === 'frequency' ? colors.primary : colors.border,
-                }}
-              >
-                <Text
-                  style={{
-                    color:
-                      searchSort === 'frequency' ? colors.primary : colors.text,
-                  }}
-                  className="text-center font-medium text-base"
-                >
-                  Sort by Frequency
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleSortPress('imagery')}
-                className="flex-1 py-3 px-4 rounded-full border"
-                style={{
-                  backgroundColor:
-                    searchSort === 'imagery'
-                      ? colors.primary + '20'
-                      : colors.surface,
-                  borderColor:
-                    searchSort === 'imagery' ? colors.primary : colors.border,
-                }}
-              >
-                <Text
-                  style={{
-                    color:
-                      searchSort === 'imagery' ? colors.primary : colors.text,
-                  }}
-                  className="text-center font-medium text-base"
-                >
-                  Sort by Imagery
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <CategoryChips
-              selectedCategory={selectedCategory}
-              onCategoryPress={handleCategoryPress}
-            />
-          </View>
+          <SearchOptions
+            searchSort={searchSort}
+            selectedCategory={selectedCategory}
+            onSortPress={handleSortPress}
+            onCategoryPress={handleCategoryPress}
+          />
         )}
       </View>
 
-      <FlatList
-        initialNumToRender={2}
-        maxToRenderPerBatch={2}
-        windowSize={3}
-        removeClippedSubviews={true}
-        updateCellsBatchingPeriod={100}
-        getItemLayout={(data, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-        data={cards}
-        keyExtractor={useCallback((item: CardData) => item.id, [])}
-        contentContainerStyle={{
-          alignItems: 'center',
-          paddingVertical: 20,
-          paddingHorizontal: 16,
-          paddingTop: getContentPadding(),
-        }}
-        renderItem={useCallback(
-          ({ item, index }: { item: CardData; index: number }) => (
-            <Card
-              item={item}
-              visible={viewableIndices.has(index)}
-              onFavoritePress={toggleFavorite}
-              onVotePress={handleVote}
-            />
-          ),
-          [viewableIndices, toggleFavorite, handleVote],
-        )}
-        ListEmptyComponent={!isLoading ? renderNoResults : null}
-        ListFooterComponent={isFetchingNextPage ? renderLoadingIndicator : null}
-        onRefresh={refetch}
-        refreshing={isLoading}
-        onEndReached={() => hasNextPage && fetchNextPage()}
-        onEndReachedThreshold={0.5}
-        showsVerticalScrollIndicator={false}
-        viewabilityConfig={viewabilityConfigRef.current}
-        onViewableItemsChanged={onViewableItemsChangedRef.current}
-        snapToInterval={ITEM_HEIGHT}
-        decelerationRate="fast"
-        snapToAlignment="center"
-        disableIntervalMomentum={true}
-      />
+      <View style={{ paddingTop: getContentPadding() }} className="flex-1">
+        <CardList
+          cards={cards}
+          isLoading={isLoading}
+          error={error}
+          refetch={refetch}
+          fetchNextPage={fetchNextPage}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onFavoritePress={toggleFavorite}
+          onVotePress={handleVote}
+          emptyText={error ? 'Error loading cards' : 'No cards found'}
+          emptySubtext={
+            error
+              ? 'Pull to refresh or try again'
+              : 'Try a different search term'
+          }
+        />
+      </View>
     </View>
   );
 };

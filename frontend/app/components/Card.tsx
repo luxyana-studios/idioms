@@ -14,7 +14,7 @@ import CardFront from './CardFront';
 import CardBack from './CardBack';
 
 const SCREEN_DIMENSIONS = Dimensions.get('window');
-const CARD_WIDTH = SCREEN_DIMENSIONS.width * 0.85;
+const CARD_WIDTH = SCREEN_DIMENSIONS.width * 0.88;
 const CARD_HEIGHT = SCREEN_DIMENSIONS.height * 0.75;
 
 interface CardProps {

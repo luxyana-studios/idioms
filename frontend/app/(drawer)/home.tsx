@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { router } from 'expo-router';
+import QuickAction from '../components/QuickAction';
+import { WelcomeMessage } from '../components/WelcomeMessage';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -63,63 +64,17 @@ const HomeScreen = () => {
             Quick Actions
           </Text>
           {quickActions.map((action, index) => (
-            <TouchableOpacity
+            <QuickAction
               key={index}
+              title={action.title}
+              description={action.description}
+              icon={action.icon}
               onPress={() => navigateTo(action.route)}
-              className="flex-row items-center p-4 mb-3 rounded-xl"
-              style={{
-                backgroundColor: colors.surface,
-                borderWidth: 1,
-                borderColor: colors.border,
-              }}
-            >
-              <View
-                className="w-12 h-12 rounded-full items-center justify-center mr-4"
-                style={{ backgroundColor: colors.primary + '20' }}
-              >
-                <Ionicons name={action.icon} size={24} color={colors.primary} />
-              </View>
-              <View className="flex-1">
-                <Text
-                  style={{ color: colors.text }}
-                  className="text-lg font-semibold mb-1"
-                >
-                  {action.title}
-                </Text>
-                <Text
-                  style={{ color: colors.textSecondary }}
-                  className="text-sm"
-                >
-                  {action.description}
-                </Text>
-              </View>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={colors.textSecondary}
-              />
-            </TouchableOpacity>
+            />
           ))}
         </View>
 
-        <View className="flex-1 justify-center items-center">
-          <View
-            className="w-24 h-24 rounded-full items-center justify-center mb-4"
-            style={{ backgroundColor: colors.primary + '10' }}
-          >
-            <Ionicons name="book" size={48} color={colors.primary} />
-          </View>
-          <Text
-            style={{ color: colors.textSecondary }}
-            className="text-center text-lg mb-2"
-          >
-            Use the menu (☰) to search or browse collections
-          </Text>
-          <Text
-            style={{ color: colors.textSecondary }}
-            className="text-center text-sm"
-          ></Text>
-        </View>
+        <WelcomeMessage colors={colors} />
       </View>
     </View>
   );
