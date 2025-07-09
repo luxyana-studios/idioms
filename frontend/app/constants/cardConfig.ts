@@ -5,6 +5,7 @@ const SCREEN_DIMENSIONS = Dimensions.get('window');
 export const CARD_DIMENSIONS = {
   WIDTH: SCREEN_DIMENSIONS.width * 0.85,
   HEIGHT: SCREEN_DIMENSIONS.height * 0.75,
+  ITEM_HEIGHT: SCREEN_DIMENSIONS.height * 0.75 + 30,
 } as const;
 
 export const ANIMATION_CONFIG = {

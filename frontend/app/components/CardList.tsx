@@ -4,12 +4,12 @@ import {
   ActivityIndicator,
   Text,
   ViewToken,
-  Dimensions,
   FlatList,
 } from 'react-native';
 import Card from './Card';
 import { CardData } from '../types/card';
 import { useTheme } from '../contexts/ThemeContext';
+import { CARD_DIMENSIONS } from '../constants/cardConfig';
 
 interface CardListProps {
   cards: CardData[];
@@ -24,6 +24,8 @@ interface CardListProps {
   emptyText: string;
   emptySubtext: string;
 }
+
+const ITEM_HEIGHT = CARD_DIMENSIONS.ITEM_HEIGHT;
 
 const CardList: React.FC<CardListProps> = ({
   cards,
@@ -62,8 +64,6 @@ const CardList: React.FC<CardListProps> = ({
       }
     },
   );
-
-  const ITEM_HEIGHT = Dimensions.get('window').height * 0.75 + 30;
 
   const renderLoadingIndicator = () => (
     <View className="py-4">

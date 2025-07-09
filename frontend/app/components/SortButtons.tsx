@@ -7,6 +7,40 @@ interface SortButtonsProps {
   onSortPress: (sortType: 'frequency' | 'imagery') => void;
 }
 
+interface SortButtonProps {
+  sortType: 'frequency' | 'imagery';
+  label: string;
+  isSelected: boolean;
+  onPress: () => void;
+  colors: ReturnType<typeof useTheme>['colors'];
+}
+
+const SortButton: React.FC<SortButtonProps> = ({
+  sortType,
+  label,
+  isSelected,
+  onPress,
+  colors,
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    className="flex-1 py-2 px-3 rounded-full border"
+    style={{
+      backgroundColor: isSelected ? colors.primary + '20' : colors.surface,
+      borderColor: isSelected ? colors.primary : colors.border,
+    }}
+  >
+    <Text
+      style={{
+        color: isSelected ? colors.primary : colors.text,
+      }}
+      className="text-center font-medium text-sm"
+    >
+      {label}
+    </Text>
+  </TouchableOpacity>
+);
+
 export const SortButtons: React.FC<SortButtonsProps> = ({
   searchSort,
   onSortPress,
@@ -14,46 +48,21 @@ export const SortButtons: React.FC<SortButtonsProps> = ({
   const { colors } = useTheme();
 
   return (
-    <View className="flex-row gap-2 mb-4">
-      <TouchableOpacity
+    <View className="flex-row gap-1 mb-4">
+      <SortButton
+        sortType="frequency"
+        label="Sort by Frequency"
+        isSelected={searchSort === 'frequency'}
         onPress={() => onSortPress('frequency')}
-        className="flex-1 py-2 px-3 rounded-full border"
-        style={{
-          backgroundColor:
-            searchSort === 'frequency' ? colors.primary + '20' : colors.surface,
-          borderColor:
-            searchSort === 'frequency' ? colors.primary : colors.border,
-        }}
-      >
-        <Text
-          style={{
-            color: searchSort === 'frequency' ? colors.primary : colors.text,
-          }}
-          className="text-center font-medium text-sm"
-        >
-          Sort by Frequency
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
+        colors={colors}
+      />
+      <SortButton
+        sortType="imagery"
+        label="Sort by Imagery"
+        isSelected={searchSort === 'imagery'}
         onPress={() => onSortPress('imagery')}
-        className="flex-1 py-2 px-3 rounded-full border"
-        style={{
-          backgroundColor:
-            searchSort === 'imagery' ? colors.primary + '20' : colors.surface,
-          borderColor:
-            searchSort === 'imagery' ? colors.primary : colors.border,
-        }}
-      >
-        <Text
-          style={{
-            color: searchSort === 'imagery' ? colors.primary : colors.text,
-          }}
-          className="text-center font-medium text-sm"
-        >
-          Sort by Imagery
-        </Text>
-      </TouchableOpacity>
+        colors={colors}
+      />
     </View>
   );
 };

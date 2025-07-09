@@ -1,10 +1,9 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   View,
   ActivityIndicator,
   Text,
   ViewToken,
-  Dimensions,
   FlatList,
 } from 'react-native';
 import { Card } from '../components/Card';
@@ -12,6 +11,9 @@ import { useFilteredCards, FilterKey } from '../hooks/useCards';
 import useCardActions from '../hooks/useCardActions';
 import { CardData } from '../types/card';
 import { useTheme } from '../contexts/ThemeContext';
+import { CARD_DIMENSIONS } from '../constants/cardConfig';
+
+const ITEM_HEIGHT = CARD_DIMENSIONS.ITEM_HEIGHT;
 
 const AllCardsScreen = () => {
   const { colors } = useTheme();
@@ -75,8 +77,6 @@ const AllCardsScreen = () => {
       </Text>
     </View>
   );
-
-  const ITEM_HEIGHT = Dimensions.get('window').height * 0.75 + 30;
 
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">

@@ -1,13 +1,15 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+
 import CardList from '../components/CardList';
 import { ActiveFilterChips } from '../components/ActiveFilterChips';
-import { SearchOptions } from '../components/SearchOptions';
+import { SortButtons } from '../components/SortButtons';
+import { CategoryChips } from '../components/CategoryChips';
 import { useFilteredCards } from '../hooks/useCards';
 import useCardActions from '../hooks/useCardActions';
 import { useTheme } from '../contexts/ThemeContext';
-import { useLocalSearchParams } from 'expo-router';
+import SearchBar from '../components/SearchBar';
 
 const SearchScreen = () => {
   const { colors } = useTheme();
@@ -28,18 +30,15 @@ const SearchScreen = () => {
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const searchInputRef = useRef<TextInput>(null);
-
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedInput(searchInput), 300);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
   useEffect(() => {
+    // eslint-disable-next-line no-empty
     if (params.autoFocus === 'true') {
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
+      // Intentionally left blank for future autofocus logic
     }
   }, [params.autoFocus]);
 
@@ -74,7 +73,6 @@ const SearchScreen = () => {
     setSelectedCategory(null);
     setSearchSort(undefined);
     setIsSearchFocused(false);
-    searchInputRef.current?.blur();
   };
 
   const handleSearchFocus = () => {
@@ -89,7 +87,6 @@ const SearchScreen = () => {
         return newSelectedCategory;
       });
       setIsSearchFocused(false);
-      searchInputRef.current?.blur();
     },
     [setSelectedCategory],
   );
@@ -99,7 +96,6 @@ const SearchScreen = () => {
     setSearchSort(newSearchSort);
 
     setIsSearchFocused(false);
-    searchInputRef.current?.blur();
   };
 
   const removeSort = () => {
@@ -126,32 +122,12 @@ const SearchScreen = () => {
         style={{ backgroundColor: colors.background }}
         className="absolute top-0 left-0 right-0 z-10 px-4 pt-0 pb-3"
       >
-        <View
-          style={{
-            backgroundColor: colors.surface,
-            borderWidth: 1,
-            borderColor: colors.border,
-          }}
-          className="flex-row items-center px-4 py-2 rounded-full mb-1"
-        >
-          <Ionicons name="search" size={18} color={colors.textSecondary} />
-          <TextInput
-            ref={searchInputRef}
-            value={searchInput}
-            onChangeText={setSearchInput}
-            placeholder="Search idioms..."
-            placeholderTextColor={colors.textSecondary}
-            style={{ color: colors.text, fontSize: 15 }}
-            className="flex-1 ml-2 text-base"
-            returnKeyType="search"
-            onFocus={handleSearchFocus}
-          />
-          {searchInput.length > 0 && (
-            <TouchableOpacity onPress={handleClear} className="ml-2">
-              <Ionicons name="close" size={18} color={colors.textSecondary} />
-            </TouchableOpacity>
-          )}
-        </View>
+        <SearchBar
+          value={searchInput}
+          onChangeText={setSearchInput}
+          onFocus={handleSearchFocus}
+          onClear={handleClear}
+        />
 
         {!showAdvancedOptions && (searchSort || selectedCategory) && (
           <ActiveFilterChips
@@ -163,12 +139,18 @@ const SearchScreen = () => {
         )}
 
         {!(searchSort || selectedCategory) && (
-          <SearchOptions
-            searchSort={searchSort}
-            selectedCategory={selectedCategory}
-            onSortPress={handleSortPress}
-            onCategoryPress={handleCategoryPress}
-          />
+          <View>
+            <SortButtons
+              searchSort={searchSort}
+              onSortPress={handleSortPress}
+            />
+            <View style={{ marginTop: -8 }}>
+              <CategoryChips
+                selectedCategory={selectedCategory}
+                onCategoryPress={handleCategoryPress}
+              />
+            </View>
+          </View>
         )}
       </View>
 

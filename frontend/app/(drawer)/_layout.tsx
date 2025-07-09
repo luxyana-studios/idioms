@@ -22,7 +22,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       screen: 'search',
     },
     {
-      label: 'All Cards',
+      label: 'All Idioms',
       icon: 'list' as const,
       screen: 'all',
     },
@@ -131,8 +131,8 @@ export default function DrawerLayout() {
       <Drawer.Screen
         name="all"
         options={{
-          drawerLabel: 'All Cards',
-          title: 'All Cards',
+          drawerLabel: 'All Idioms',
+          title: 'All Idioms',
         }}
       />
       <Drawer.Screen

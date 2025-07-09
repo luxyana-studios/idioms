@@ -22,7 +22,7 @@ const HomeScreen = () => {
       route: '/(drawer)/search?autoFocus=true',
     },
     {
-      title: 'Browse All Cards',
+      title: 'Browse All Idioms',
       description: 'Explore the complete collection',
       icon: 'list' as const,
       route: '/(drawer)/all',

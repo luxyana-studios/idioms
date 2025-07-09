@@ -1,89 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
+import React from 'react';
+import { View, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
-  onClear: () => void;
+  value: string;
+  onChangeText: (text: string) => void;
   onFocus?: () => void;
+  onClear?: () => void;
 }
 
-const SearchBar = ({ onSearch, onClear, onFocus }: SearchBarProps) => {
-  const [input, setInput] = useState('');
-  const [debouncedInput, setDebouncedInput] = useState('');
-  const searchAnimation = React.useRef(new Animated.Value(0)).current;
+const SearchBar: React.FC<SearchBarProps> = ({
+  value,
+  onChangeText,
+  onFocus,
+  onClear,
+}) => {
   const { colors } = useTheme();
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedInput(input);
-    }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [input]);
-
-  useEffect(() => {
-    if (debouncedInput) {
-      onSearch(debouncedInput);
-    }
-  }, [debouncedInput, onSearch]);
-
-  const handleFocus = () => {
-    Animated.timing(searchAnimation, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-    if (onFocus) onFocus();
-  };
-
-  const handleClear = () => {
-    setInput('');
-    onClear();
-    Animated.timing(searchAnimation, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const searchBarScale = searchAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 1.02],
-  });
-
   return (
-    <Animated.View
+    <View
       style={{
-        transform: [{ scale: searchBarScale }],
-        backgroundColor: colors.searchBackground,
+        backgroundColor: colors.surface,
+        borderWidth: 1,
         borderColor: colors.border,
       }}
-      className="flex-row items-center rounded-2xl overflow-hidden border shadow-lg"
+      className="flex-row items-center px-4 py-2 rounded-full mb-1"
     >
-      <View className="pl-4">
-        <Ionicons name="search" size={20} color={colors.textSecondary} />
-      </View>
-
+      <Ionicons name="search" size={18} color={colors.textSecondary} />
       <TextInput
-        className="flex-1 py-4 px-3 text-lg font-medium"
-        style={{ color: colors.text }}
-        placeholder="Search idioms"
-        value={input}
-        onChangeText={setInput}
-        onFocus={handleFocus}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder="Search idioms..."
         placeholderTextColor={colors.textSecondary}
+        style={{ color: colors.text, fontSize: 15 }}
+        className="flex-1 ml-2 text-base"
+        returnKeyType="search"
+        onFocus={onFocus}
       />
-
-      {input !== '' && (
-        <TouchableOpacity onPress={handleClear} className="pr-5">
-          <Ionicons name="close" size={20} color={colors.textSecondary} />
+      {value.length > 0 && onClear && (
+        <TouchableOpacity onPress={onClear} className="ml-2">
+          <Ionicons name="close" size={18} color={colors.textSecondary} />
         </TouchableOpacity>
       )}
-    </Animated.View>
+    </View>
   );
 };
 
