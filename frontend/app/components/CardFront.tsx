@@ -77,7 +77,7 @@ const CardFront: React.FC<CardFrontProps> = ({
           right: 0,
           top: 0,
           bottom: 0,
-          backgroundColor: 'rgba(128, 128, 128, 0.5)',
+          backgroundColor: 'rgba(128, 128, 128, 0.6)',
           borderRadius: 20,
         }}
       />
@@ -152,4 +152,7 @@ const CardFront: React.FC<CardFrontProps> = ({
 };
 
 // memoized to prevent rerenders when props unchanged
-export default memo(CardFront);
+const MemoizedCardFront = memo(CardFront);
+MemoizedCardFront.displayName = 'CardFront';
+
+export default MemoizedCardFront;

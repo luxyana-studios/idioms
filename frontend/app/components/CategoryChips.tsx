@@ -22,11 +22,7 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({
   const { data: categories, isLoading, error } = useCategories();
 
   const handleCategoryPress = (category: string) => {
-    if (selectedCategory === category) {
-      onCategoryPress('');
-    } else {
-      onCategoryPress(category);
-    }
+    onCategoryPress(category);
   };
 
   if (isLoading) {
@@ -42,13 +38,13 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({
   }
 
   return (
-    <View className="px-6 pb-3">
+    <View className="px-6 pb-0">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 0,
-          gap: 8,
+          gap: 4,
         }}
       >
         {categories.map((category) => {
@@ -60,28 +56,20 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({
               onPress={() => handleCategoryPress(category)}
               style={{
                 backgroundColor: isSelected
-                  ? colors.text
-                  : colors.searchBackground,
-                borderColor: colors.border,
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                borderRadius: 20,
+                  ? colors.primary + '20'
+                  : colors.surface,
+                borderColor: isSelected ? colors.primary : colors.border,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 14,
                 borderWidth: 1,
-                shadowColor: colors.text,
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.1,
-                shadowRadius: 3,
-                elevation: 3,
               }}
             >
               <Text
                 style={{
-                  color: isSelected ? colors.background : colors.text,
-                  fontWeight: isSelected ? 'bold' : 'normal',
-                  fontSize: 14,
+                  color: isSelected ? colors.primary : colors.text,
+                  fontWeight: isSelected ? '600' : 'normal',
+                  fontSize: 12,
                 }}
               >
                 {category}

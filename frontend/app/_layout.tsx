@@ -3,14 +3,16 @@ import './globals.css';
 import ThemeProvider from './contexts/ThemeContext';
 import QueryProvider from './contexts/QueryProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StatusBar } from 'expo-status-bar';
 
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar hidden />
       <QueryProvider>
         <ThemeProvider>
           <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
           </Stack>
         </ThemeProvider>
       </QueryProvider>

@@ -46,6 +46,8 @@ interface StepIndicatorsProps {
   steps: ContentStep[];
 }
 
+const PRIMARY_ACCENT_COLOR = '#AEEA00';
+
 const MeaningContent = ({
   meaning,
   textColor,
@@ -58,8 +60,10 @@ const MeaningContent = ({
   return (
     <View style={styles.meaningContentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="bulb-outline" size={22} color="#FFD700" />
-        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Meaning</Text>
+        <Ionicons name="bulb-outline" size={22} color={PRIMARY_ACCENT_COLOR} />
+        <Text style={[styles.stepTitle, { color: PRIMARY_ACCENT_COLOR }]}>
+          Meaning
+        </Text>
       </View>
 
       <View style={styles.meaningContent}>
@@ -118,7 +122,7 @@ const MeaningContent = ({
                       <View
                         key={idx}
                         style={{
-                          backgroundColor: '#FFD70022',
+                          backgroundColor: PRIMARY_ACCENT_COLOR + '22',
                           borderRadius: 12,
                           paddingHorizontal: 10,
                           paddingVertical: 4,
@@ -127,7 +131,7 @@ const MeaningContent = ({
                       >
                         <Text
                           style={{
-                            color: '#FFD700',
+                            color: PRIMARY_ACCENT_COLOR,
                             fontWeight: 'bold',
                             fontSize: 13,
                           }}
@@ -176,8 +180,8 @@ const ExplanationContent = ({
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="book-outline" size={22} color="#FFD700" />
-        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>
+        <Ionicons name="book-outline" size={22} color={PRIMARY_ACCENT_COLOR} />
+        <Text style={[styles.stepTitle, { color: PRIMARY_ACCENT_COLOR }]}>
           Explanation
         </Text>
       </View>
@@ -215,8 +219,10 @@ const ExamplesContent = ({
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="list-outline" size={22} color="#FFD700" />
-        <Text style={[styles.stepTitle, { color: '#FFD700' }]}>Examples</Text>
+        <Ionicons name="list-outline" size={22} color={PRIMARY_ACCENT_COLOR} />
+        <Text style={[styles.stepTitle, { color: PRIMARY_ACCENT_COLOR }]}>
+          Examples
+        </Text>
       </View>
 
       <View style={{ width: '100%' }}>
@@ -284,9 +290,17 @@ const ExamplesContent = ({
               activeOpacity={0.8}
             >
               <View style={styles.showMoreContent}>
-                <Ionicons name="add-circle-outline" size={20} color="#FFD700" />
+                <Ionicons
+                  name="add-circle-outline"
+                  size={20}
+                  color={PRIMARY_ACCENT_COLOR}
+                />
                 <Text style={styles.showMoreText}>Show more examples</Text>
-                <Ionicons name="chevron-down" size={16} color="#FFD700" />
+                <Ionicons
+                  name="chevron-down"
+                  size={16}
+                  color={PRIMARY_ACCENT_COLOR}
+                />
               </View>
             </TouchableOpacity>
           </MotiView>
@@ -386,7 +400,7 @@ export const CardBack = ({
           right: 0,
           top: 0,
           bottom: 0,
-          backgroundColor: 'rgba(128, 128, 128, 0.3)',
+          backgroundColor: 'rgba(128, 128, 128, 0.7)',
           borderRadius: 20,
         }}
       />
@@ -431,7 +445,10 @@ export const CardBack = ({
 };
 
 // memoized to prevent rerenders when props unchanged
-export default memo(CardBack);
+const MemoizedCardBack = memo(CardBack);
+MemoizedCardBack.displayName = 'CardBack';
+
+export default MemoizedCardBack;
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -474,7 +491,7 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FFD700',
+    color: PRIMARY_ACCENT_COLOR,
     letterSpacing: 0.5,
     flexShrink: 0,
     marginLeft: 8,
@@ -533,7 +550,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   activeDot: {
-    backgroundColor: '#FFD700',
+    backgroundColor: PRIMARY_ACCENT_COLOR,
     width: 10,
     height: 10,
     borderRadius: 5,
@@ -571,7 +588,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   showMoreText: {
-    color: '#FFD700',
+    color: PRIMARY_ACCENT_COLOR,
     fontWeight: '600',
     fontSize: 15,
     marginLeft: 8,
