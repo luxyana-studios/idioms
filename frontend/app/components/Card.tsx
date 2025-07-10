@@ -223,4 +223,3 @@ MemoizedCard.displayName = 'Card';
 
 export { MemoizedCard as Card };
 export default MemoizedCard;
-
