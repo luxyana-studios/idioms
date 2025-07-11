@@ -1,74 +1,84 @@
 # 🌐 Expo Web Setup
 
-## ⚡ Quick Start para Web
+## ⚡ Quick Start for Web
 
-### 🎯 Opciones para ejecutar en Web
+### 🎯 Options to Run on Web
 
-#### Opción 1: Comando completo (recomendado) 🚀
+#### Option 1: Complete command (recommended) 🚀
 
 ```bash
 npm run web-auto
 ```
 
-- ✅ Build + servidor + abre navegador automáticamente
-- ✅ Equivalente a presionar 'w' en Expo pero sin errores
+- ✅ Build + server + opens browser automatically
+- ✅ Equivalent to pressing 'w' in Expo but without errors
 
-#### Opción 2: Script bash automatizado
+#### Option 2: Automated bash script
 
 ```bash
 ./start-web-production.sh
 ```
 
-- ✅ Build + servidor + abre navegador automáticamente
+- ✅ Build + server + opens browser automatically
 
-#### Opción 3: Paso a paso
+#### Option 3: Step by step
 
 ```bash
-npm run web        # Build la aplicación
-npm run web-serve  # Servir + abrir navegador automáticamente
+npm run web        # Build the application
+npm run web-serve  # Serve + open browser automatically
 ```
 
-#### Opción 4: Manual
+#### Option 4: Manual
 
 ```bash
 npx expo export -p web
 cd dist && python3 -m http.server 3000
-# Luego abrir manualmente: http://localhost:3000
+# Then open manually: http://localhost:3000
 ```
 
-### 🚨 Problema Conocido con `expo start --web`
+### 🚨 Known Issue with `expo start --web`
 
-**❌ NO uses:** `expo start` y luego presionar 'w'
+**❌ DON'T use:** `expo start` and then press 'w'
 
-**🐛 Problema:** Causa error `Cannot read properties of undefined (reading 'default')` en HMRClient.ts debido a incompatibilidad de tslib con HMR en web.
+**🐛 Problem:** Causes error `Cannot read properties of undefined (reading 'default')` in HMRClient.ts due to tslib incompatibility with HMR on web.
 
-**✅ Solución:** Usa los comandos de arriba que generan un build de producción sin HMR.
+**✅ Solution:** Use the commands above that generate a production build without HMR.
 
-## 🔧 Archivos Modificados
+## 🔧 Modified Files
 
-### `metro.config.js`
+### `metro.config.cjs`
 
-- Alias para tslib que redirige a `tslib-simple.js`
-- Configuración optimizada para web
+- Tslib aliases that redirect to `tslib-simple.js`
+- Web-optimized configuration
 
 ### `tslib-simple.js`
 
-- Polyfill personalizado que resuelve problemas de compatibilidad de tslib en web
-- Exporta todas las funciones de tslib como default export
+- Custom polyfill that resolves tslib compatibility issues on web
+- Exports all tslib functions as default export
 
 ### `package.json`
 
-- Script `web`: Solo build de producción (`expo export -p web`)
-- Script `web-serve`: Solo servidor HTTP (sirve dist en puerto 3000)
+- Script `web`: Production build only (`expo export -p web`)
+- Script `web-serve`: HTTP server only (serves dist on port 3000)
+- Script `web-auto`: Complete workflow (build + serve + auto-open)
 
-## 🌟 Resultado
+## 🌟 Result
 
-✅ App funciona sin errores de tslib
-✅ No hay errores de HMR
-✅ Carga completa (no se queda en 99.9%)
-✅ Modo producción optimizado
-✅ Compatible con todas las funcionalidades de la app
+✅ App works without tslib errors
+✅ No HMR errors
+✅ Loads completely (doesn't freeze at 99.9%)
+✅ Optimized production mode
+✅ Compatible with all app features
+✅ Browser opens automatically
 
-## 📱 Acceso
+## 📱 Access
 
-Una vez iniciado, abre: **http://localhost:3000**
+Once started, open: **http://localhost:3000**
+
+### 🌐 Access from Other Devices
+
+The server runs on `0.0.0.0:3000`, making it accessible from any device on the same network:
+
+- Find your local IP: `ip addr show | grep "inet 192"`
+- Access from other devices: `http://[your-ip]:3000`
+- Example: `http://192.168.1.100:3000`
