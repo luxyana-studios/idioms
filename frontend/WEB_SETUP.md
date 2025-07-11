@@ -2,18 +2,38 @@
 
 ## ⚡ Quick Start para Web
 
-### 🎯 Opción Recomendada (Sin errores de HMR/tslib)
+### 🎯 Opciones para ejecutar en Web
+
+#### Opción 1: Comando completo (recomendado) 🚀
 
 ```bash
-# Método 1: Script automatizado
+npm run web-auto
+```
+
+- ✅ Build + servidor + abre navegador automáticamente
+- ✅ Equivalente a presionar 'w' en Expo pero sin errores
+
+#### Opción 2: Script bash automatizado
+
+```bash
 ./start-web-production.sh
+```
 
-# Método 2: NPM script
-npm run web
+- ✅ Build + servidor + abre navegador automáticamente
 
-# Método 3: Manual
+#### Opción 3: Paso a paso
+
+```bash
+npm run web        # Build la aplicación
+npm run web-serve  # Servir + abrir navegador automáticamente
+```
+
+#### Opción 4: Manual
+
+```bash
 npx expo export -p web
 cd dist && python3 -m http.server 3000
+# Luego abrir manualmente: http://localhost:3000
 ```
 
 ### 🚨 Problema Conocido con `expo start --web`
@@ -38,8 +58,8 @@ cd dist && python3 -m http.server 3000
 
 ### `package.json`
 
-- Script `web`: Build de producción + servidor HTTP
-- Script `web-dev`: Alias para modo producción (sin desarrollo real)
+- Script `web`: Solo build de producción (`expo export -p web`)
+- Script `web-serve`: Solo servidor HTTP (sirve dist en puerto 3000)
 
 ## 🌟 Resultado
 
