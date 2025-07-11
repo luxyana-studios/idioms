@@ -2,83 +2,91 @@
 
 ## ⚡ Quick Start for Web
 
-### 🎯 Options to Run on Web
+### 🎯 Commands to Run on Web
 
-#### Option 1: Complete command (recommended) 🚀
-
-```bash
-npm run web-auto
-```
-
-- ✅ Build + server + opens browser automatically
-- ✅ Equivalent to pressing 'w' in Expo but without errors
-
-#### Option 2: Automated bash script
+**Recommended (Production mode - stable):**
 
 ```bash
-./start-web-production.sh
+npm run web
 ```
 
-- ✅ Build + server + opens browser automatically
-
-#### Option 3: Step by step
+**Development mode (with HMR):**
 
 ```bash
-npm run web        # Build the application
-npm run web-serve  # Serve + open browser automatically
+npm run web-dev
 ```
 
-#### Option 4: Manual
+### 🚨 Common Mistakes
+
+❌ **DON'T use:**
 
 ```bash
-npx expo export -p web
-cd dist && python3 -m http.server 3000
-# Then open manually: http://localhost:3000
+npm expo start --web --no-dev  # Wrong: "npm expo" doesn't exist
 ```
 
-### 🚨 Known Issue with `expo start --web`
+✅ **DO use:**
 
-**❌ DON'T use:** `expo start` and then press 'w'
+```bash
+npm run web                    # Recommended: Uses package.json script
+npx expo start --web --no-dev  # Direct command with npx
+```
 
-**🐛 Problem:** Causes error `Cannot read properties of undefined (reading 'default')` in HMRClient.ts due to tslib incompatibility with HMR on web.
+## � Configuration Files
 
-**✅ Solution:** Use the commands above that generate a production build without HMR.
+### Required Files:
 
-## 🔧 Modified Files
+- ✅ `metro.config.cjs` - Metro bundler + NativeWind
+- ✅ `babel.config.cjs` - Babel configuration
+- ✅ `tsconfig.json` - TypeScript configuration
+- ✅ `index.js` - Entry point
+- ✅ `package.json` - Dependencies and scripts
 
-### `metro.config.cjs`
+### Files Removed:
 
-- Tslib aliases that redirect to `tslib-simple.js`
-- Web-optimized configuration
+- ❌ `webpack.config.js` - Not needed (Expo 53 uses Metro)
+- ❌ `tslib-simple.js` - Not needed (simplified solution)
+- ❌ Custom build scripts - Not needed
 
-### `tslib-simple.js`
+## 🔧 How It Works
 
-- Custom polyfill that resolves tslib compatibility issues on web
-- Exports all tslib functions as default export
+The solution uses `--no-dev` flag to disable HMR (Hot Module Replacement) which was causing conflicts with animation libraries like Moti.
 
-### `package.json`
+- Multiple tslib dependencies cause conflicts during hot reloads
 
-- Script `web`: Production build only (`expo export -p web`)
-- Script `web-serve`: HTTP server only (serves dist on port 3000)
-- Script `web-auto`: Complete workflow (build + serve + auto-open)
+**Simple Fix:**
+
+- Use `--no-dev` flag to disable HMR for web development
+- This runs in production mode but still allows development
+
+## 🔧 Current Configuration
+
+### `package.json` scripts:
+
+- `web`: `expo start --web --no-dev` (recommended)
+- `web-dev`: `expo start --web` (development mode with HMR)
+
+### `metro.config.cjs`:
+
+- Clean, minimal configuration
+- Only essential web platform support
+- No custom tslib aliases needed
 
 ## 🌟 Result
 
-✅ App works without tslib errors
-✅ No HMR errors
-✅ Loads completely (doesn't freeze at 99.9%)
-✅ Optimized production mode
-✅ Compatible with all app features
-✅ Browser opens automatically
+✅ Much simpler setup
+✅ No custom files needed
+✅ No complex build process
+✅ Works with all app features
+✅ Faster than previous solution
 
 ## 📱 Access
 
-Once started, open: **http://localhost:3000**
+Once started, open: **http://localhost:8082**
 
 ### 🌐 Access from Other Devices
 
-The server runs on `0.0.0.0:3000`, making it accessible from any device on the same network:
+The server runs on your local network, making it accessible from other devices:
 
 - Find your local IP: `ip addr show | grep "inet 192"`
-- Access from other devices: `http://[your-ip]:3000`
-- Example: `http://192.168.1.100:3000`
+- Access from other devices: `http://[your-ip]:8082`
+- Example: `http://192.168.1.100:8082`
