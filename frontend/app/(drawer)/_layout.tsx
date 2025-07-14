@@ -1,11 +1,11 @@
 import { Drawer } from 'expo-router/drawer';
 import { View, Text } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import {
   DrawerContentScrollView,
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
-import { DrawerItem } from '../components/DrawerItem';
+import { DrawerItem } from '../../src/components/DrawerItem';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { colors } = useTheme();

@@ -6,12 +6,12 @@ import {
   ViewToken,
   FlatList,
 } from 'react-native';
-import { Card } from '../components/Card';
-import { useFilteredCards, FilterKey } from '../hooks/useCards';
-import useCardActions from '../hooks/useCardActions';
-import { CardData } from '../types/card';
-import { useTheme } from '../contexts/ThemeContext';
-import { CARD_DIMENSIONS } from '../constants/cardConfig';
+import { Card } from '../../src/components/Card';
+import { useFilteredCards, FilterKey } from '../../src/hooks/useCards';
+import useCardActions from '../../src/hooks/useCardActions';
+import { CardData } from '../../src/types/card';
+import { useTheme } from '../../src/contexts/ThemeContext';
+import { CARD_DIMENSIONS } from '../../src/constants/cardConfig';
 
 const ITEM_HEIGHT = CARD_DIMENSIONS.ITEM_HEIGHT;
 

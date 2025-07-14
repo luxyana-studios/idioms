@@ -46,7 +46,7 @@ export default [
     },
   },
   {
-    files: ['metro.config.js', 'tailwind.config.js'],
+    files: ['metro.config.cjs', 'tailwind.config.cjs'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
     },

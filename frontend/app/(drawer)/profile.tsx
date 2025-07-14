@@ -1,9 +1,9 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import { MotiView } from 'moti';
-import ReportModal from '../components/ReportModal';
+import ReportModal from '../../src/components/ReportModal';
 
 const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
