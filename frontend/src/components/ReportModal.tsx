@@ -1,11 +1,17 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../contexts/ThemeContext';
 import { MotiView } from 'moti';
+import { useState } from 'react';
+import { ModalContainer } from './ModalContainer';
+import { FormField } from './FormField';
+import { ActionButtons } from './ActionButtons';
+import { validateText } from '../utils/formValidation';
+import { createModalStyles } from '../styles/modalStyles';
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
-interface ReportOption {
+export interface ReportOption {
   id: string;
   title: string;
   icon: IoniconsName;
@@ -15,44 +21,102 @@ interface ReportModalProps {
   isVisible: boolean;
   onClose: () => void;
   onReportSelected: (reportType: string) => void;
+  onDetailedReportSelected: (reportOption: ReportOption) => void;
 }
 
 const ReportModal = ({
   isVisible,
   onClose,
   onReportSelected,
+  onDetailedReportSelected,
 }: ReportModalProps) => {
   const { colors } = useTheme();
+  const styles = createModalStyles(colors);
+  const [showTextInput, setShowTextInput] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<ReportOption | null>(
+    null,
+  );
+  const [inputText, setInputText] = useState('');
+
+  const detailedReportTypes = ['translation-issue', 'app-issue'];
+
+  const simpleTextTypes = ['feature-request', 'other'];
+
+  const resetState = () => {
+    setShowTextInput(false);
+    setSelectedOption(null);
+    setInputText('');
+  };
+
+  const handleOptionPress = (option: ReportOption) => {
+    if (detailedReportTypes.includes(option.id)) {
+      onDetailedReportSelected(option);
+    } else if (simpleTextTypes.includes(option.id)) {
+      setSelectedOption(option);
+      setShowTextInput(true);
+    } else {
+      onReportSelected(option.title);
+    }
+  };
+
+  const handleTextInputSubmit = () => {
+    if (!validateText(inputText)) {
+      return;
+    }
+
+    const reportWithText = `${selectedOption?.title}: ${inputText.trim()}`;
+    onReportSelected(reportWithText);
+    resetState();
+  };
+
+  const handleClose = () => {
+    resetState();
+    onClose();
+  };
+
+  const handleTextInputCancel = () => {
+    resetState();
+  };
 
   const reportOptions: ReportOption[] = [
     {
       id: 'translation-issue',
-      title: 'Translation issue',
+      title: 'Translation Error',
       icon: 'language-outline',
     },
     {
-      id: 'content-error',
-      title: 'Content error',
-      icon: 'document-outline',
-    },
-    {
       id: 'app-issue',
-      title: 'App not working properly',
+      title: 'App Bug/Crash',
       icon: 'bug-outline',
     },
     {
+      id: 'content-error',
+      title: 'Grammar/Spelling Error',
+      icon: 'document-text-outline',
+    },
+    {
+      id: 'ui-issue',
+      title: 'Display Problem',
+      icon: 'phone-portrait-outline',
+    },
+    {
+      id: 'performance',
+      title: 'App is Slow',
+      icon: 'speedometer-outline',
+    },
+    {
+      id: 'data-sync',
+      title: 'Data Not Saving',
+      icon: 'cloud-offline-outline',
+    },
+    {
       id: 'feature-request',
-      title: 'Feature request',
+      title: 'Suggest a Feature',
       icon: 'bulb-outline',
     },
     {
-      id: 'general-feedback',
-      title: 'General feedback',
-      icon: 'chatbubble-outline',
-    },
-    {
       id: 'other',
-      title: 'Other issue',
+      title: 'Other Issue',
       icon: 'help-circle-outline',
     },
   ];
@@ -60,72 +124,23 @@ const ReportModal = ({
   if (!isVisible) return null;
 
   return (
-    <View
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 10000,
+    <ModalContainer
+      isVisible={isVisible}
+      onClose={handleClose}
+      zIndex={10000}
+      keyboardAdjustment={{
+        translateY: -150,
+        maxHeight: '60%',
       }}
     >
-      <TouchableOpacity
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-        activeOpacity={1}
-        onPress={onClose}
-      />
-
-      <MotiView
-        from={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-        style={{
-          backgroundColor: colors.surface,
-          borderRadius: 16,
-          padding: 20,
-          minWidth: 280,
-          maxWidth: 320,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.4,
-          shadowRadius: 20,
-          elevation: 20,
-          borderWidth: 1,
-          borderColor: colors.border,
-          marginHorizontal: 20,
-        }}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ flexGrow: 1 }}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.border,
-            paddingBottom: 8,
-          }}
-        >
-          <Text
-            style={{
-              color: colors.text,
-              fontSize: 18,
-              fontWeight: '600',
-            }}
-          >
-            Report Issue
-          </Text>
-          <TouchableOpacity onPress={onClose} style={{ padding: 4 }}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Report App Issue</Text>
+          <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
             <Ionicons name="close" size={20} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
@@ -133,7 +148,7 @@ const ReportModal = ({
         {reportOptions.map((option, index) => (
           <TouchableOpacity
             key={option.id}
-            onPress={() => onReportSelected(option.title)}
+            onPress={() => handleOptionPress(option)}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -151,20 +166,111 @@ const ReportModal = ({
               color={colors.text}
               style={{ marginRight: 16 }}
             />
-            <Text
-              style={{
-                color: colors.text,
-                fontSize: 16,
-                fontWeight: '500',
-                flex: 1,
-              }}
-            >
-              {option.title}
-            </Text>
+            <View style={{ flex: 1 }}>
+              <Text
+                style={{
+                  color: colors.text,
+                  fontSize: 16,
+                  fontWeight: '500',
+                }}
+              >
+                {option.title}
+              </Text>
+              {detailedReportTypes.includes(option.id) && (
+                <Text
+                  style={{
+                    color: colors.textSecondary,
+                    fontSize: 12,
+                    marginTop: 2,
+                  }}
+                >
+                  Requires details
+                </Text>
+              )}
+              {simpleTextTypes.includes(option.id) && (
+                <Text
+                  style={{
+                    color: colors.textSecondary,
+                    fontSize: 12,
+                    marginTop: 2,
+                  }}
+                >
+                  Add description
+                </Text>
+              )}
+            </View>
+            {(detailedReportTypes.includes(option.id) ||
+              simpleTextTypes.includes(option.id)) && (
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color={colors.textSecondary}
+              />
+            )}
           </TouchableOpacity>
         ))}
-      </MotiView>
-    </View>
+
+        {showTextInput && selectedOption && (
+          <MotiView
+            from={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            transition={{ type: 'timing', duration: 300 }}
+            style={{
+              marginTop: 16,
+              paddingTop: 16,
+              borderTopWidth: 1,
+              borderTopColor: colors.border,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <Ionicons
+                name={selectedOption.icon}
+                size={20}
+                color={colors.text}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                style={{
+                  color: colors.text,
+                  fontSize: 16,
+                  fontWeight: '500',
+                  flex: 1,
+                }}
+              >
+                {selectedOption.title}
+              </Text>
+            </View>
+
+            <FormField
+              label=""
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder={
+                selectedOption.id === 'feature-request'
+                  ? 'Describe the feature you would like to see...'
+                  : 'Describe your issue or feedback...'
+              }
+              multiline
+              autoFocus
+              style={{ marginBottom: 12 }}
+            />
+
+            <ActionButtons
+              onCancel={handleTextInputCancel}
+              onSubmit={handleTextInputSubmit}
+              cancelText="Cancel"
+              submitText="Send"
+            />
+          </MotiView>
+        )}
+      </ScrollView>
+    </ModalContainer>
   );
 };
 

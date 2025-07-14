@@ -3,27 +3,54 @@ import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { MotiView } from 'moti';
-import ReportModal from '../../src/components/ReportModal';
+import ReportModal, { ReportOption } from '../../src/components/ReportModal';
+import ReportForm from '../../src/components/ReportForm';
 
 const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
   const [showTechnicalReport, setShowTechnicalReport] = useState(false);
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [selectedReportType, setSelectedReportType] =
+    useState<ReportOption | null>(null);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
 
   const showSuccessNotification = (message: string) => {
     setNotificationMessage(message);
     setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 2000);
+    setTimeout(() => setShowNotification(false), 3000);
   };
 
   const handleTechnicalReportPress = () => {
     setShowTechnicalReport(true);
   };
 
-  const handleTechnicalReportOption = (reportType: string) => {
+  const handleSimpleReportOption = (reportType: string) => {
     setShowTechnicalReport(false);
-    showSuccessNotification(`${reportType} reported`);
+    showSuccessNotification(
+      `✅ Report sent! Thanks for helping improve the app.`,
+    );
+  };
+
+  const handleDetailedReportOption = (reportOption: ReportOption) => {
+    setSelectedReportType(reportOption);
+    setShowTechnicalReport(false);
+    setShowReportForm(true);
+  };
+
+  const handleReportFormSubmit = (reportData: any) => {
+    setShowReportForm(false);
+    setSelectedReportType(null);
+
+    // Here you would typically send the report to your backend
+    console.log('Report submitted:', reportData);
+
+    showSuccessNotification(`✅ Report sent! We'll look into it soon.`);
+  };
+
+  const handleReportFormClose = () => {
+    setShowReportForm(false);
+    setSelectedReportType(null);
   };
 
   const SettingItem = ({
@@ -132,12 +159,12 @@ const Profile = () => {
           </Text>
 
           <SettingItem
-            title="Report Technical Issue"
-            description="Report bugs, crashes, or app problems"
+            title="Report App Issue"
+            description="Report bugs, performance issues, or app problems"
             onPress={handleTechnicalReportPress}
             rightComponent={
               <Ionicons
-                name="bug-outline"
+                name="flag-outline"
                 size={24}
                 color={colors.textSecondary}
               />
@@ -170,44 +197,61 @@ const Profile = () => {
       <ReportModal
         isVisible={showTechnicalReport}
         onClose={() => setShowTechnicalReport(false)}
-        onReportSelected={handleTechnicalReportOption}
+        onReportSelected={handleSimpleReportOption}
+        onDetailedReportSelected={handleDetailedReportOption}
+      />
+
+      <ReportForm
+        isVisible={showReportForm}
+        onClose={handleReportFormClose}
+        onSubmit={handleReportFormSubmit}
+        reportType={selectedReportType}
       />
 
       {showNotification && (
         <MotiView
-          from={{ opacity: 0, translateY: -20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          exit={{ opacity: 0, translateY: -20 }}
-          transition={{ type: 'timing', duration: 200 }}
+          from={{ opacity: 0, translateY: -20, scale: 0.9 }}
+          animate={{ opacity: 1, translateY: 0, scale: 1 }}
+          exit={{ opacity: 0, translateY: -20, scale: 0.9 }}
+          transition={{ type: 'spring', damping: 20, stiffness: 300 }}
           style={{
             position: 'absolute',
             top: 100,
             left: 20,
             right: 20,
             backgroundColor: colors.surface,
-            borderRadius: 12,
-            padding: 16,
+            borderRadius: 16,
+            padding: 20,
             borderWidth: 1,
             borderColor: colors.border,
             zIndex: 10001,
             shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
+            shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 8,
+            shadowRadius: 8,
+            elevation: 12,
             alignItems: 'center',
           }}
         >
-          <Text
-            style={{
-              color: colors.text,
-              fontSize: 14,
-              fontWeight: '500',
-              textAlign: 'center',
-            }}
-          >
-            {notificationMessage}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons
+              name="checkmark-circle"
+              size={24}
+              color="#4ADE80"
+              style={{ marginRight: 12 }}
+            />
+            <Text
+              style={{
+                color: colors.text,
+                fontSize: 16,
+                fontWeight: '500',
+                textAlign: 'center',
+                flex: 1,
+              }}
+            >
+              {notificationMessage}
+            </Text>
+          </View>
         </MotiView>
       )}
     </View>
