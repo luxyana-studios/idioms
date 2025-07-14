@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import CardList from '../components/CardList';
-import { useFilteredCards, FilterKey } from '../hooks/useCards';
-import useCardActions from '../hooks/useCardActions';
+import CardList from '../../src/components/CardList';
+import { useFilteredCards, FilterKey } from '../../src/hooks/useCards';
+import useCardActions from '../../src/hooks/useCardActions';
 import { useFocusEffect } from '@react-navigation/native';
 
 const ShuffleScreen = () => {

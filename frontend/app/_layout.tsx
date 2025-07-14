@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import './globals.css';
-import ThemeProvider from './contexts/ThemeContext';
-import QueryProvider from './contexts/QueryProvider';
+import ThemeProvider from '../src/contexts/ThemeContext';
+import QueryProvider from '../src/contexts/QueryProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 

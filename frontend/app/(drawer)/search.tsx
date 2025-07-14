@@ -2,14 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 
-import CardList from '../components/CardList';
-import { ActiveFilterChips } from '../components/ActiveFilterChips';
-import { SortButtons } from '../components/SortButtons';
-import { CategoryChips } from '../components/CategoryChips';
-import { useFilteredCards } from '../hooks/useCards';
-import useCardActions from '../hooks/useCardActions';
-import { useTheme } from '../contexts/ThemeContext';
-import SearchBar from '../components/SearchBar';
+import CardList from '../../src/components/CardList';
+import { ActiveFilterChips } from '../../src/components/ActiveFilterChips';
+import { SortButtons } from '../../src/components/SortButtons';
+import { CategoryChips } from '../../src/components/CategoryChips';
+import { useFilteredCards } from '../../src/hooks/useCards';
+import useCardActions from '../../src/hooks/useCardActions';
+import { useTheme } from '../../src/contexts/ThemeContext';
+import SearchBar from '../../src/components/SearchBar';
 
 const SearchScreen = () => {
   const { colors } = useTheme();

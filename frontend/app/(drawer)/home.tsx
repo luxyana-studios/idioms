@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import { router } from 'expo-router';
-import QuickAction from '../components/QuickAction';
-import { WelcomeMessage } from '../components/WelcomeMessage';
+import QuickAction from '../../src/components/QuickAction';
+import { WelcomeMessage } from '../../src/components/WelcomeMessage';
 
 const HomeScreen = () => {
   const { colors } = useTheme();

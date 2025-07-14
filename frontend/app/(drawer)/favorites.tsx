@@ -1,8 +1,8 @@
 import { View } from 'react-native';
-import { useFilteredCards, FilterKey } from '../hooks/useCards';
-import useCardActions from '../hooks/useCardActions';
-import CardListComponent from '../components/CardList';
-import { useTheme } from '../contexts/ThemeContext';
+import { useFilteredCards, FilterKey } from '../../src/hooks/useCards';
+import useCardActions from '../../src/hooks/useCardActions';
+import CardListComponent from '../../src/components/CardList';
+import { useTheme } from '../../src/contexts/ThemeContext';
 
 const FavoritesScreen = () => {
   const { colors } = useTheme();
