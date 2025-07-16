@@ -1,17 +1,18 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Linking,
+  Alert,
+} from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { MotiView } from 'moti';
-import ReportModal, { ReportOption } from '../../src/components/ReportModal';
-import ReportForm from '../../src/components/ReportForm';
 
 const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
-  const [showTechnicalReport, setShowTechnicalReport] = useState(false);
-  const [showReportForm, setShowReportForm] = useState(false);
-  const [selectedReportType, setSelectedReportType] =
-    useState<ReportOption | null>(null);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
 
@@ -21,36 +22,21 @@ const Profile = () => {
     setTimeout(() => setShowNotification(false), 3000);
   };
 
-  const handleTechnicalReportPress = () => {
-    setShowTechnicalReport(true);
-  };
+  const handleFeedbackPress = () => {
+    const email = 'feedback@idioms-app.com'; // Replace with your actual email
+    const subject = 'Idioms App Feedback';
+    const body =
+      'Hi! I wanted to share some feedback about the Idioms app:\n\n[Please describe your feedback, bug report, or feature request here]\n\nThanks!';
 
-  const handleSimpleReportOption = (reportType: string) => {
-    setShowTechnicalReport(false);
-    showSuccessNotification(
-      `✅ Report sent! Thanks for helping improve the app.`,
-    );
-  };
+    const emailUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  const handleDetailedReportOption = (reportOption: ReportOption) => {
-    setSelectedReportType(reportOption);
-    setShowTechnicalReport(false);
-    setShowReportForm(true);
-  };
-
-  const handleReportFormSubmit = (reportData: any) => {
-    setShowReportForm(false);
-    setSelectedReportType(null);
-
-    // Here you would typically send the report to your backend
-    console.log('Report submitted:', reportData);
-
-    showSuccessNotification(`✅ Report sent! We'll look into it soon.`);
-  };
-
-  const handleReportFormClose = () => {
-    setShowReportForm(false);
-    setSelectedReportType(null);
+    Linking.openURL(emailUrl).catch(() => {
+      Alert.alert(
+        'Email Not Available',
+        'Please send your feedback to: feedback@idioms-app.com',
+        [{ text: 'OK' }],
+      );
+    });
   };
 
   const SettingItem = ({
@@ -159,12 +145,12 @@ const Profile = () => {
           </Text>
 
           <SettingItem
-            title="Report App Issue"
-            description="Report bugs, performance issues, or app problems"
-            onPress={handleTechnicalReportPress}
+            title="Send Feedback"
+            description="Share feedback, report bugs, or suggest features"
+            onPress={handleFeedbackPress}
             rightComponent={
               <Ionicons
-                name="flag-outline"
+                name="mail-outline"
                 size={24}
                 color={colors.textSecondary}
               />
@@ -193,20 +179,6 @@ const Profile = () => {
           />
         </View>
       </ScrollView>
-
-      <ReportModal
-        isVisible={showTechnicalReport}
-        onClose={() => setShowTechnicalReport(false)}
-        onReportSelected={handleSimpleReportOption}
-        onDetailedReportSelected={handleDetailedReportOption}
-      />
-
-      <ReportForm
-        isVisible={showReportForm}
-        onClose={handleReportFormClose}
-        onSubmit={handleReportFormSubmit}
-        reportType={selectedReportType}
-      />
 
       {showNotification && (
         <MotiView
