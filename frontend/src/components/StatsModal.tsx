@@ -33,17 +33,17 @@ const StatsModal: React.FC<StatsModalProps> = ({
         top: CARD_HEIGHT * 0.1,
         left: CARD_WIDTH * 0.05,
         right: CARD_WIDTH * 0.05,
-        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+        backgroundColor: 'rgba(31, 41, 55, 0.95)',
         borderRadius: 16,
         padding: 20,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.3)',
+        borderColor: 'rgba(255, 255, 255, 0.2)',
         zIndex: 1000,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.4,
+        shadowRadius: 20,
+        elevation: 20,
       }}
     >
       <View
@@ -53,7 +53,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
           alignItems: 'center',
           marginBottom: 12,
           borderBottomWidth: 1,
-          borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+          borderBottomColor: 'rgba(255, 255, 255, 0.1)',
           paddingBottom: 8,
         }}
       >
