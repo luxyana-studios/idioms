@@ -1,12 +1,13 @@
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
-  Linking,
   Alert,
+  Platform,
 } from 'react-native';
-import { useState } from 'react';
+import FeedbackModal from '../../src/components/FeedbackModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { MotiView } from 'moti';
@@ -15,6 +16,12 @@ const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackForm, setFeedbackForm] = useState({
+    subject: '',
+    description: '',
+    email: '',
+  });
 
   const showSuccessNotification = (message: string) => {
     setNotificationMessage(message);
@@ -22,22 +29,48 @@ const Profile = () => {
     setTimeout(() => setShowNotification(false), 3000);
   };
 
-  const handleFeedbackPress = () => {
-    const email = 'feedback@idioms-app.com'; // Replace with your actual email
-    const subject = 'Idioms App Feedback';
-    const body =
-      'Hi! I wanted to share some feedback about the Idioms app:\n\n[Please describe your feedback, bug report, or feature request here]\n\nThanks!';
+  const handleFeedbackPress = useCallback(() => {
+    setShowFeedbackModal(true);
+  }, []);
 
-    const emailUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    Linking.openURL(emailUrl).catch(() => {
+  const handleSendFeedback = useCallback(() => {
+    if (!feedbackForm.subject.trim() || !feedbackForm.description.trim()) {
       Alert.alert(
-        'Email Not Available',
-        'Please send your feedback to: feedback@idioms-app.com',
+        'Required Fields',
+        'Please complete the subject and description.',
         [{ text: 'OK' }],
       );
+      return;
+    }
+    setShowFeedbackModal(false);
+    setFeedbackForm({
+      subject: '',
+      description: '',
+      email: '',
     });
-  };
+    showSuccessNotification('Feedback sent! Thank you.');
+  }, [feedbackForm, showSuccessNotification]);
+
+  const handleSubjectChange = useCallback((text: string) => {
+    setFeedbackForm((prev) => ({ ...prev, subject: text }));
+  }, []);
+
+  const handleDescriptionChange = useCallback((text: string) => {
+    setFeedbackForm((prev) => ({ ...prev, description: text }));
+  }, []);
+
+  const handleEmailChange = useCallback((text: string) => {
+    setFeedbackForm((prev) => ({ ...prev, email: text }));
+  }, []);
+
+  const resetFeedbackForm = useCallback(() => {
+    setFeedbackForm({
+      subject: '',
+      description: '',
+      email: '',
+    });
+    setShowFeedbackModal(false);
+  }, []);
 
   const SettingItem = ({
     title,
@@ -141,16 +174,15 @@ const Profile = () => {
             style={{ color: colors.text }}
             className="text-xl font-semibold mb-4"
           >
-            Support
+            Feedback
           </Text>
-
           <SettingItem
             title="Send Feedback"
-            description="Share feedback, report bugs, or suggest features"
+            description="Let us know your thoughts or report an issue."
             onPress={handleFeedbackPress}
             rightComponent={
               <Ionicons
-                name="mail-outline"
+                name="chatbox-ellipses-outline"
                 size={24}
                 color={colors.textSecondary}
               />
@@ -226,6 +258,18 @@ const Profile = () => {
           </View>
         </MotiView>
       )}
+
+      <FeedbackModal
+        visible={showFeedbackModal}
+        onClose={resetFeedbackForm}
+        feedbackForm={feedbackForm}
+        onSubjectChange={handleSubjectChange}
+        onDescriptionChange={handleDescriptionChange}
+        onEmailChange={handleEmailChange}
+        onSendFeedback={handleSendFeedback}
+        colors={colors}
+        theme={theme}
+      />
     </View>
   );
 };
