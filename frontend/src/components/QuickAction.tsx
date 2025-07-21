@@ -8,6 +8,7 @@ interface QuickActionProps {
   description: string;
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
+  compact?: boolean;
 }
 
 const QuickAction: React.FC<QuickActionProps> = ({
@@ -15,37 +16,65 @@ const QuickAction: React.FC<QuickActionProps> = ({
   description,
   icon,
   onPress,
+  compact = false,
 }) => {
   const { colors } = useTheme();
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="flex-row items-center p-4 mb-3 rounded-xl"
+      className={
+        compact
+          ? 'flex-col items-center p-3 rounded-xl'
+          : 'flex-row items-center p-4 mb-3 rounded-xl'
+      }
       style={{
-        backgroundColor: colors.surface,
+        backgroundColor: compact ? colors.surface + '90' : colors.surface,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.border + '70',
+        minHeight: compact ? 135 : undefined,
       }}
     >
       <View
-        className="w-12 h-12 rounded-full items-center justify-center mr-4"
-        style={{ backgroundColor: colors.primary + '20' }}
+        className={
+          compact
+            ? 'w-12 h-12 rounded-full items-center justify-center mb-2'
+            : 'w-12 h-12 rounded-full items-center justify-center mr-4'
+        }
+        style={{
+          backgroundColor: compact
+            ? colors.primary + '15'
+            : colors.primary + '20',
+        }}
       >
-        <Ionicons name={icon} size={24} color={colors.primary} />
+        <Ionicons name={icon} size={compact ? 24 : 24} color={colors.primary} />
       </View>
-      <View className="flex-1">
+      <View className={compact ? 'flex-1 items-center' : 'flex-1'}>
         <Text
           style={{ color: colors.text }}
-          className="text-lg font-semibold mb-1"
+          className={
+            compact
+              ? 'text-base font-semibold mb-1 text-center'
+              : 'text-lg font-semibold mb-1'
+          }
         >
           {title}
         </Text>
-        <Text style={{ color: colors.textSecondary }} className="text-sm">
+        <Text
+          style={{ color: colors.textSecondary }}
+          className={compact ? 'text-sm text-center' : 'text-sm'}
+          numberOfLines={compact ? 2 : undefined}
+        >
           {description}
         </Text>
       </View>
-      <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+      {!compact && (
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={colors.textSecondary}
+        />
+      )}
     </TouchableOpacity>
   );
 };
