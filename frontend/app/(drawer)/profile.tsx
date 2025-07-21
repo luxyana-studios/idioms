@@ -1,30 +1,76 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  Platform,
+} from 'react-native';
+import FeedbackModal from '../../src/components/FeedbackModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { MotiView } from 'moti';
-import ReportModal from '../../src/components/ReportModal';
 
 const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
-  const [showTechnicalReport, setShowTechnicalReport] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackForm, setFeedbackForm] = useState({
+    subject: '',
+    description: '',
+    email: '',
+  });
 
   const showSuccessNotification = (message: string) => {
     setNotificationMessage(message);
     setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 2000);
+    setTimeout(() => setShowNotification(false), 3000);
   };
 
-  const handleTechnicalReportPress = () => {
-    setShowTechnicalReport(true);
-  };
+  const handleFeedbackPress = useCallback(() => {
+    setShowFeedbackModal(true);
+  }, []);
 
-  const handleTechnicalReportOption = (reportType: string) => {
-    setShowTechnicalReport(false);
-    showSuccessNotification(`${reportType} reported`);
-  };
+  const handleSendFeedback = useCallback(() => {
+    if (!feedbackForm.subject.trim() || !feedbackForm.description.trim()) {
+      Alert.alert(
+        'Required Fields',
+        'Please complete the subject and description.',
+        [{ text: 'OK' }],
+      );
+      return;
+    }
+    setShowFeedbackModal(false);
+    setFeedbackForm({
+      subject: '',
+      description: '',
+      email: '',
+    });
+    showSuccessNotification('Feedback sent! Thank you.');
+  }, [feedbackForm, showSuccessNotification]);
+
+  const handleSubjectChange = useCallback((text: string) => {
+    setFeedbackForm((prev) => ({ ...prev, subject: text }));
+  }, []);
+
+  const handleDescriptionChange = useCallback((text: string) => {
+    setFeedbackForm((prev) => ({ ...prev, description: text }));
+  }, []);
+
+  const handleEmailChange = useCallback((text: string) => {
+    setFeedbackForm((prev) => ({ ...prev, email: text }));
+  }, []);
+
+  const resetFeedbackForm = useCallback(() => {
+    setFeedbackForm({
+      subject: '',
+      description: '',
+      email: '',
+    });
+    setShowFeedbackModal(false);
+  }, []);
 
   const SettingItem = ({
     title,
@@ -128,16 +174,15 @@ const Profile = () => {
             style={{ color: colors.text }}
             className="text-xl font-semibold mb-4"
           >
-            Support
+            Feedback
           </Text>
-
           <SettingItem
-            title="Report Technical Issue"
-            description="Report bugs, crashes, or app problems"
-            onPress={handleTechnicalReportPress}
+            title="Send Feedback"
+            description="Let us know your thoughts or report an issue."
+            onPress={handleFeedbackPress}
             rightComponent={
               <Ionicons
-                name="bug-outline"
+                name="chatbox-ellipses-outline"
                 size={24}
                 color={colors.textSecondary}
               />
@@ -167,49 +212,64 @@ const Profile = () => {
         </View>
       </ScrollView>
 
-      <ReportModal
-        isVisible={showTechnicalReport}
-        onClose={() => setShowTechnicalReport(false)}
-        onReportSelected={handleTechnicalReportOption}
-      />
-
       {showNotification && (
         <MotiView
-          from={{ opacity: 0, translateY: -20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          exit={{ opacity: 0, translateY: -20 }}
-          transition={{ type: 'timing', duration: 200 }}
+          from={{ opacity: 0, translateY: -20, scale: 0.9 }}
+          animate={{ opacity: 1, translateY: 0, scale: 1 }}
+          exit={{ opacity: 0, translateY: -20, scale: 0.9 }}
+          transition={{ type: 'spring', damping: 20, stiffness: 300 }}
           style={{
             position: 'absolute',
             top: 100,
             left: 20,
             right: 20,
             backgroundColor: colors.surface,
-            borderRadius: 12,
-            padding: 16,
+            borderRadius: 16,
+            padding: 20,
             borderWidth: 1,
             borderColor: colors.border,
             zIndex: 10001,
             shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
+            shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 8,
+            shadowRadius: 8,
+            elevation: 12,
             alignItems: 'center',
           }}
         >
-          <Text
-            style={{
-              color: colors.text,
-              fontSize: 14,
-              fontWeight: '500',
-              textAlign: 'center',
-            }}
-          >
-            {notificationMessage}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons
+              name="checkmark-circle"
+              size={24}
+              color="#4ADE80"
+              style={{ marginRight: 12 }}
+            />
+            <Text
+              style={{
+                color: colors.text,
+                fontSize: 16,
+                fontWeight: '500',
+                textAlign: 'center',
+                flex: 1,
+              }}
+            >
+              {notificationMessage}
+            </Text>
+          </View>
         </MotiView>
       )}
+
+      <FeedbackModal
+        visible={showFeedbackModal}
+        onClose={resetFeedbackForm}
+        feedbackForm={feedbackForm}
+        onSubjectChange={handleSubjectChange}
+        onDescriptionChange={handleDescriptionChange}
+        onEmailChange={handleEmailChange}
+        onSendFeedback={handleSendFeedback}
+        colors={colors}
+        theme={theme}
+      />
     </View>
   );
 };
