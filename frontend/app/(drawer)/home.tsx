@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { router } from 'expo-router';
-import QuickAction from '../../src/components/QuickAction';
-import { WelcomeMessage } from '../../src/components/WelcomeMessage';
+import HeroSection from '../../src/components/HeroSection';
+import QuickActionsGrid from '../../src/components/QuickActionsGrid';
+import ModernPandaAnimation from '../../src/components/ModernPandaAnimation';
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -43,38 +45,26 @@ const HomeScreen = () => {
 
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
-      <View className="flex-1 px-6 pt-12">
-        <View className="mb-8">
-          <Text
-            style={{ color: colors.text }}
-            className="text-4xl font-bold mb-2"
-          >
-            Welcome to Idioms
-          </Text>
-          <Text style={{ color: colors.textSecondary }} className="text-lg">
-            Master the art of idiomatic expressions
-          </Text>
-        </View>
+      <ModernPandaAnimation
+        width={510}
+        height={510}
+        style={{
+          position: 'absolute',
+          top: screenHeight / 2 - 255,
+          left: screenWidth / 2 - 255,
+          zIndex: 0,
+          opacity: 0.7,
+        }}
+      />
 
-        <View className="mb-8">
-          <Text
-            style={{ color: colors.text }}
-            className="text-xl font-semibold mb-4"
-          >
-            Quick Actions
-          </Text>
-          {quickActions.map((action, index) => (
-            <QuickAction
-              key={index}
-              title={action.title}
-              description={action.description}
-              icon={action.icon}
-              onPress={() => navigateTo(action.route)}
-            />
-          ))}
-        </View>
+      <View className="flex-1 px-6 pt-12" style={{ zIndex: 1 }}>
+        <HeroSection colors={colors} />
 
-        <WelcomeMessage colors={colors} />
+        <QuickActionsGrid
+          colors={colors}
+          quickActions={quickActions}
+          navigateTo={navigateTo}
+        />
       </View>
     </View>
   );
