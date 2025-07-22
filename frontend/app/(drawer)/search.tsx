@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View } from 'react-native';
+import { View, Animated } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-
 import CardList from '../../src/components/CardList';
 import { ActiveFilterChips } from '../../src/components/ActiveFilterChips';
 import { SortButtons } from '../../src/components/SortButtons';
@@ -29,6 +28,8 @@ const SearchScreen = () => {
   );
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showHeader, setShowHeader] = useState(true);
+  const headerAnim = React.useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedInput(searchInput), 300);
@@ -116,11 +117,56 @@ const SearchScreen = () => {
     return topPadding;
   };
 
+  const handleScroll = useCallback(
+    (event: any) => {
+      const y = event.nativeEvent.contentOffset.y;
+      if (y > 20) {
+        if (showHeader) {
+          setShowHeader(false);
+          Animated.timing(headerAnim, {
+            toValue: 0,
+            duration: 250,
+            useNativeDriver: true,
+          }).start();
+        }
+      } else {
+        if (!showHeader) {
+          setShowHeader(true);
+          Animated.timing(headerAnim, {
+            toValue: 1,
+            duration: 250,
+            useNativeDriver: true,
+          }).start();
+        }
+      }
+    },
+    [showHeader, headerAnim],
+  );
+
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
-      <View
-        style={{ backgroundColor: colors.background }}
-        className="absolute top-0 left-0 right-0 z-10 px-4 pt-0 pb-3"
+      <Animated.View
+        style={{
+          backgroundColor: colors.background,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingTop: 0,
+          paddingBottom: 12,
+          opacity: headerAnim,
+          transform: [
+            {
+              translateY: headerAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-80, 0],
+              }),
+            },
+          ],
+        }}
       >
         <SearchBar
           value={searchInput}
@@ -153,7 +199,7 @@ const SearchScreen = () => {
             </View>
           </View>
         )}
-      </View>
+      </Animated.View>
 
       <View style={{ paddingTop: getContentPadding() }} className="flex-1">
         <CardList
@@ -172,6 +218,8 @@ const SearchScreen = () => {
               ? 'Pull to refresh or try again'
               : 'Try a different search term'
           }
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         />
       </View>
     </View>
