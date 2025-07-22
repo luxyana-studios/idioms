@@ -24,8 +24,8 @@ const SearchScreen = () => {
   const [searchSort, setSearchSort] = useState<
     'frequency' | 'imagery' | undefined
   >((params.sort as 'frequency' | 'imagery') || undefined);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    (params.category as string) || null,
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    params.category ? [params.category as string] : [],
   );
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -63,14 +63,15 @@ const SearchScreen = () => {
     debouncedSearchInput: debouncedInput,
     searchSort,
     shuffleSeed: undefined,
-    selectedCategory,
+    selectedCategory:
+      selectedCategories.length > 0 ? selectedCategories.join(',') : null,
   });
 
   const { toggleFavorite, handleVote } = useCardActions({ cards });
 
   const handleClear = () => {
     setSearchInput('');
-    setSelectedCategory(null);
+    setSelectedCategories([]);
     setSearchSort(undefined);
     setIsSearchFocused(false);
   };
@@ -79,17 +80,16 @@ const SearchScreen = () => {
     setIsSearchFocused(true);
   };
 
-  const handleCategoryPress = useCallback(
-    (category: string) => {
-      setSelectedCategory((currentCategory) => {
-        const newSelectedCategory =
-          category === currentCategory ? null : category;
-        return newSelectedCategory;
-      });
-      setIsSearchFocused(false);
-    },
-    [setSelectedCategory],
-  );
+  const handleCategoryPress = useCallback((category: string) => {
+    setSelectedCategories((currentCategories) => {
+      if (currentCategories.includes(category)) {
+        return currentCategories.filter((cat) => cat !== category);
+      } else {
+        return [...currentCategories, category];
+      }
+    });
+    setIsSearchFocused(false);
+  }, []);
 
   const handleSortPress = (sortType: 'frequency' | 'imagery') => {
     const newSearchSort = searchSort === sortType ? undefined : sortType;
@@ -102,15 +102,15 @@ const SearchScreen = () => {
     setSearchSort(undefined);
   };
 
-  const removeCategory = () => {
-    setSelectedCategory(null);
+  const removeCategory = (category: string) => {
+    setSelectedCategories((prev) => prev.filter((cat) => cat !== category));
   };
 
   const getContentPadding = () => {
     let topPadding = 80;
     if (showAdvancedOptions) {
       topPadding += 50;
-    } else if (searchSort || selectedCategory) {
+    } else if (searchSort || selectedCategories.length > 0) {
       topPadding += 15;
     }
     return topPadding;
@@ -129,16 +129,17 @@ const SearchScreen = () => {
           onClear={handleClear}
         />
 
-        {!showAdvancedOptions && (searchSort || selectedCategory) && (
-          <ActiveFilterChips
-            searchSort={searchSort}
-            selectedCategory={selectedCategory}
-            onRemoveSort={removeSort}
-            onRemoveCategory={removeCategory}
-          />
-        )}
+        {!showAdvancedOptions &&
+          (searchSort || selectedCategories.length > 0) && (
+            <ActiveFilterChips
+              searchSort={searchSort}
+              selectedCategories={selectedCategories}
+              onRemoveSort={removeSort}
+              onRemoveCategory={removeCategory}
+            />
+          )}
 
-        {!(searchSort || selectedCategory) && (
+        {!showAdvancedOptions && (
           <View>
             <SortButtons
               searchSort={searchSort}
@@ -146,7 +147,7 @@ const SearchScreen = () => {
             />
             <View style={{ marginTop: -8 }}>
               <CategoryChips
-                selectedCategory={selectedCategory}
+                selectedCategories={selectedCategories}
                 onCategoryPress={handleCategoryPress}
               />
             </View>
