@@ -2,7 +2,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy import text as sql_text
 from sqlalchemy.orm import Session
 
@@ -44,7 +44,12 @@ async def get_idioms(
     if text:
         query = query.filter(IdiomModel.text.ilike(f"%{text}%"))
     if category:
-        query = query.filter(IdiomModel.context_diversity.any(category))
+        categories = [cat.strip() for cat in category.split(",") if cat.strip()]
+        if categories:
+            category_filters = [
+                IdiomModel.context_diversity.any(cat) for cat in categories
+            ]
+            query = query.filter(or_(*category_filters))
 
     match sort:
         case "frequency":
