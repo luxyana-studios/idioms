@@ -2,11 +2,9 @@ import React from 'react';
 import { View, Dimensions } from 'react-native';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { router } from 'expo-router';
-import { WelcomeMessage } from '../../src/components/WelcomeMessage';
 import HeroSection from '../../src/components/HeroSection';
 import QuickActionsGrid from '../../src/components/QuickActionsGrid';
 import ModernPandaAnimation from '../../src/components/ModernPandaAnimation';
-
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const HomeScreen = () => {
@@ -67,10 +65,6 @@ const HomeScreen = () => {
           quickActions={quickActions}
           navigateTo={navigateTo}
         />
-
-        <View style={{ zIndex: 1 }}>
-          <WelcomeMessage colors={colors} />
-        </View>
       </View>
     </View>
   );
