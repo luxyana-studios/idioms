@@ -44,7 +44,12 @@ async def get_idioms(
     if text:
         query = query.filter(IdiomModel.text.ilike(f"%{text}%"))
     if category:
-        query = query.filter(IdiomModel.context_diversity.any(category))
+        categories = [cat.strip() for cat in category.split(",") if cat.strip()]
+        if categories:
+            from sqlalchemy import or_
+
+            filters = [IdiomModel.context_diversity.any(cat) for cat in categories]
+            query = query.filter(or_(*filters))
 
     match sort:
         case "frequency":
