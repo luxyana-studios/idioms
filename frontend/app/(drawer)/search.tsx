@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Animated } from 'react-native';
+import { View, Animated, Dimensions } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import CardList from '../../src/components/CardList';
 import { ActiveFilterChips } from '../../src/components/ActiveFilterChips';
@@ -13,6 +13,7 @@ import SearchBar from '../../src/components/SearchBar';
 const SearchScreen = () => {
   const { colors } = useTheme();
   const params = useLocalSearchParams();
+  const SCROLL_HEADER_HIDE_THRESHOLD = Dimensions.get('window').height * 0.025;
 
   const [searchInput, setSearchInput] = useState(
     (params.query as string) || '',
@@ -120,7 +121,7 @@ const SearchScreen = () => {
   const handleScroll = useCallback(
     (event: any) => {
       const y = event.nativeEvent.contentOffset.y;
-      if (y > 20) {
+      if (y > SCROLL_HEADER_HIDE_THRESHOLD) {
         if (showHeader) {
           setShowHeader(false);
           Animated.timing(headerAnim, {
