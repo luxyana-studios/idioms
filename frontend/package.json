@@ -32,6 +32,7 @@
     "expo-haptics": "~13.0.1",
     "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
+    "expo-notifications": "^0.31.4",
     "expo-router": "~4.0.21",
     "expo-splash-screen": "~0.29.13",
     "expo-status-bar": "~2.0.0",
