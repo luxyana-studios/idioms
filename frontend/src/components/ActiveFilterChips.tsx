@@ -39,18 +39,18 @@ const FilterChip: React.FC<FilterChipProps> = ({
 
 interface ActiveFilterChipsProps {
   searchSort?: 'frequency' | 'imagery';
-  selectedCategory?: string | null;
+  selectedCategories: string[];
   onRemoveSort: () => void;
-  onRemoveCategory: () => void;
+  onRemoveCategory: (category: string) => void;
 }
 
 export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
   searchSort,
-  selectedCategory,
+  selectedCategories,
   onRemoveSort,
   onRemoveCategory,
 }) => {
-  if (!searchSort && !selectedCategory) {
+  if (!searchSort && selectedCategories.length === 0) {
     return null;
   }
 
@@ -63,13 +63,14 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
         />
       )}
 
-      {selectedCategory && (
+      {selectedCategories.map((category) => (
         <FilterChip
-          text={selectedCategory}
-          onRemove={onRemoveCategory}
+          key={category}
+          text={category}
+          onRemove={() => onRemoveCategory(category)}
           capitalize={true}
         />
-      )}
+      ))}
     </View>
   );
 };

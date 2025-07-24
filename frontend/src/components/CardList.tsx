@@ -23,6 +23,8 @@ interface CardListProps {
   onVotePress: (id: string, voteType: 'upvote' | 'downvote') => Promise<void>;
   emptyText: string;
   emptySubtext: string;
+  onScroll?: (event: { nativeEvent: { contentOffset: { y: number } } }) => void;
+  scrollEventThrottle?: number;
 }
 
 const ITEM_HEIGHT = CARD_DIMENSIONS.ITEM_HEIGHT;
@@ -39,6 +41,8 @@ const CardList: React.FC<CardListProps> = ({
   onVotePress,
   emptyText,
   emptySubtext,
+  onScroll,
+  scrollEventThrottle,
 }) => {
   const { colors } = useTheme();
   const [viewableIndices, setViewableIndices] = useState<Set<number>>(
@@ -102,7 +106,8 @@ const CardList: React.FC<CardListProps> = ({
           paddingVertical: 20,
           paddingHorizontal: 16,
         }}
-        scrollEventThrottle={16}
+        scrollEventThrottle={scrollEventThrottle ?? 16}
+        onScroll={onScroll}
         renderItem={useCallback(
           ({ item, index }: { item: CardData; index: number }) => (
             <Card

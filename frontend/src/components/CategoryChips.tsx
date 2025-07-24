@@ -10,12 +10,12 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useCategories } from '../hooks/useCards';
 
 interface CategoryChipsProps {
-  selectedCategory: string | null;
+  selectedCategories: string[];
   onCategoryPress: (category: string) => void;
 }
 
 export const CategoryChips: React.FC<CategoryChipsProps> = ({
-  selectedCategory,
+  selectedCategories,
   onCategoryPress,
 }) => {
   const { colors } = useTheme();
@@ -48,7 +48,7 @@ export const CategoryChips: React.FC<CategoryChipsProps> = ({
         }}
       >
         {categories.map((category) => {
-          const isSelected = selectedCategory === category;
+          const isSelected = selectedCategories.includes(category);
 
           return (
             <TouchableOpacity
