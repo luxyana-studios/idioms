@@ -48,7 +48,7 @@ export function useDailyNotification() {
           data: idiom ? { idiomId: idiom.id } : undefined,
         },
         trigger: {
-          hour: 15,
+          hour: 17,
           minute: 0,
           repeats: true,
         } as any,
