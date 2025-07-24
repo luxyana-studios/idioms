@@ -47,7 +47,11 @@ export function useDailyNotification() {
           body,
           data: idiom ? { idiomId: idiom.id } : undefined,
         },
-        trigger: { seconds: 10 } as any, // para que llegue en 10 segundos
+        trigger: {
+          hour: 15,
+          minute: 0,
+          repeats: true,
+        } as any,
       });
     }
 
