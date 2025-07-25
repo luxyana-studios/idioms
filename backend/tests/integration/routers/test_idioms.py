@@ -108,6 +108,29 @@ def test_get_idioms_filter_by_category(test_server, idioms_test_data):
     )
 
 
+def test_get_idioms_filter_by_categories(test_server, idioms_test_data):
+    # Test filtering by "business" or "daily life" category
+    response = test_server.get("/idioms/?category=business,daily life")
+    assert response.status_code == 200
+
+    actual_idioms = response.json()
+
+    # Collect expected idioms that have "business" OR "daily life" in context_diversity
+    expected_idioms = [
+        idiom
+        for idiom in idioms_test_data.values()
+        if (
+            "business" in idiom.context_diversity
+            or "daily life" in idiom.context_diversity
+        )
+    ]
+
+    assert_idioms(actual_idioms, expected_idioms)
+    assert len(actual_idioms) > 0, (
+        "Should find at least one idiom with 'business' or 'daily life' category"
+    )
+
+
 def test_get_idioms_filter_by_category_and_text(test_server, idioms_test_data):
     # Test combining category filter with text search
     response = test_server.get("/idioms/?category=business&text=work")
