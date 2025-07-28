@@ -1,11 +1,14 @@
 import React from 'react';
-import { View, Dimensions } from 'react-native';
+import { View, Dimensions, Text } from 'react-native';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { router } from 'expo-router';
 import HeroSection from '../../src/components/HeroSection';
 import QuickActionsGrid from '../../src/components/QuickActionsGrid';
 import ModernPandaAnimation from '../../src/components/ModernPandaAnimation';
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+import Constants from 'expo-constants';
+
+const apiUrl = Constants.expoConfig?.extra?.API_URL ?? 'API URL not found';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -58,8 +61,10 @@ const HomeScreen = () => {
       />
 
       <View className="flex-1 px-6 pt-12" style={{ zIndex: 1 }}>
+        <Text className="text-4xl font-bold mb-2 text-center">
+          {`mi apiUrl ${apiUrl}`}
+        </Text>
         <HeroSection colors={colors} />
-
         <QuickActionsGrid
           colors={colors}
           quickActions={quickActions}
