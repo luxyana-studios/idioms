@@ -41,3 +41,10 @@ app-example
 .env
 .env.local
 .env.*.local
+
+# Build outputs
+*.apk
+*.aab
+*.apks
+app.apks/
+apks_output/
