@@ -61,9 +61,6 @@ const HomeScreen = () => {
       />
 
       <View className="flex-1 px-6 pt-12" style={{ zIndex: 1 }}>
-        <Text className="text-4xl font-bold mb-2 text-center">
-          {`mi apiUrl ${apiUrl}`}
-        </Text>
         <HeroSection colors={colors} />
         <QuickActionsGrid
           colors={colors}

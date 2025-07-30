@@ -27,7 +27,15 @@ interface CardListProps {
 
 const ITEM_HEIGHT = CARD_DIMENSIONS.ITEM_HEIGHT;
 
-const CardList = forwardRef<any, CardListProps>(
+/**
+ * CardList component uses forwardRef to expose the underlying FlatList methods to parent components.
+ * This allows parent components to call methods like scrollToIndex directly on the FlatList.
+ *
+ * @type {FlatList<CardData>} - The ref type is specifically a FlatList of CardData items
+ * @param {CardListProps} props - Component props including cards data and callback functions
+ * @param {React.Ref<FlatList<CardData>>} ref - Reference to the FlatList component
+ */
+const CardList = forwardRef<FlatList<CardData>, CardListProps>(
   (
     {
       cards,
