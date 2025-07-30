@@ -48,3 +48,4 @@ app-example
 *.apks
 app.apks/
 apks_output/
+bundletool.jar
