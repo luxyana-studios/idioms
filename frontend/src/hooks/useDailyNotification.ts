@@ -4,11 +4,8 @@ import {
   cancelAllScheduledNotificationsAsync,
   scheduleNotificationAsync,
 } from 'expo-notifications';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import { fetchShuffledCards } from '../services/cardService';
+import { useCallback } from 'react';
 
-// Configure notification behavior when the app is in the foreground
 setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -20,41 +17,21 @@ setNotificationHandler({
 });
 
 export function useDailyNotification() {
-  useEffect(() => {
-    async function scheduleDailyNotification() {
-      const { status } = await requestPermissionsAsync();
-      if (status !== 'granted') return;
+  const sendTestNotification = useCallback(async () => {
+    const { status } = await requestPermissionsAsync();
+    if (status !== 'granted') return;
 
-      await cancelAllScheduledNotificationsAsync();
+    await cancelAllScheduledNotificationsAsync();
 
-      let idiom = null;
-      try {
-        const shuffled = await fetchShuffledCards(1, 1);
-        idiom = shuffled[0];
-      } catch (e) {
-        idiom = null;
-      }
-      const title = idiom
-        ? `Idiom of the day: ${idiom.text} ${idiom.depiction?.join(' ') || ''}`
-        : 'Time to learn a new idiom!';
-      const body = idiom
-        ? 'Tap to see the meaning and examples.'
-        : "Open the app and discover today's idiom.";
-
-      await scheduleNotificationAsync({
-        content: {
-          title,
-          body,
-          data: idiom ? { idiomId: idiom.id } : undefined,
-        },
-        trigger: {
-          hour: 17,
-          minute: 0,
-          repeats: true,
-        } as any,
-      });
-    }
-
-    scheduleDailyNotification();
+    await scheduleNotificationAsync({
+      content: {
+        title: 'Idiom Daily - Test',
+        body: 'This is a test notification from the frontend.',
+        data: { source: 'frontend-test' },
+      },
+      trigger: null as any,
+    });
   }, []);
+
+  return { sendTestNotification };
 }
