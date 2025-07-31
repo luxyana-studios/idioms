@@ -1,11 +1,25 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import './globals.css';
 import ThemeProvider from '../src/contexts/ThemeContext';
 import QueryProvider from '../src/contexts/QueryProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
+import { addNotificationResponseReceivedListener } from 'expo-notifications';
+import { useEffect } from 'react';
 
 export default function RootLayout() {
+  useEffect(() => {
+    const subscription = addNotificationResponseReceivedListener((response) => {
+      console.log('Notification tapped:', response);
+      const idiomId = response.notification.request.content.data?.idiomId;
+      console.log('idiomId from notification:', idiomId);
+      if (typeof idiomId === 'string' && idiomId.length > 0) {
+        router.push(`/(drawer)/shuffle?idiomId=${encodeURIComponent(idiomId)}`);
+      }
+    });
+    return () => subscription.remove();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar hidden />

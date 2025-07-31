@@ -1,7 +1,8 @@
 import { CardData } from '../types/card';
+import Constants from 'expo-constants';
 
 export const CARDS_PER_PAGE = 20;
-const IDIOMS_BACKEND_URL = process.env.EXPO_PUBLIC_IDIOMS_BACKEND_URL;
+const IDIOMS_BACKEND_URL = Constants.expoConfig?.extra?.API_URL;
 
 const API_ROUTES = {
   IDIOMS: 'idioms/',
