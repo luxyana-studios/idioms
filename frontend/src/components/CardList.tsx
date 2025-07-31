@@ -5,13 +5,11 @@ import {
   Text,
   ViewToken,
   FlatList,
-  Pressable,
 } from 'react-native';
 import Card from './Card';
 import { CardData } from '../types/card';
 import { useTheme } from '../contexts/ThemeContext';
 import { CARD_DIMENSIONS } from '../constants/cardConfig';
-import { useDailyNotification } from '../hooks/useDailyNotification';
 
 interface CardListProps {
   cards: CardData[];
@@ -96,22 +94,6 @@ const CardList = forwardRef<FlatList<CardData>, CardListProps>(
       </View>
     );
 
-    const { sendTestNotification } = useDailyNotification();
-
-    const TestNotificationHeader = () => (
-      <View className="w-full px-2 mb-3">
-        <Pressable
-          onPress={sendTestNotification}
-          className="w-full items-center justify-center rounded-lg"
-          style={{ backgroundColor: colors.primary, paddingVertical: 12 }}
-        >
-          <Text style={{ color: colors.text, fontWeight: '600' }}>
-            Probar notificación
-          </Text>
-        </Pressable>
-      </View>
-    );
-
     return (
       <View style={{ backgroundColor: colors.background }} className="flex-1">
         <FlatList
@@ -133,7 +115,6 @@ const CardList = forwardRef<FlatList<CardData>, CardListProps>(
             paddingVertical: 20,
             paddingHorizontal: 16,
           }}
-          ListHeaderComponent={<TestNotificationHeader />}
           scrollEventThrottle={16}
           renderItem={useCallback(
             ({ item, index }: { item: CardData; index: number }) => (
