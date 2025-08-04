@@ -61,7 +61,9 @@ const QuickAction: React.FC<QuickActionProps> = ({
           {title}
         </Text>
         <Text
-          style={{ color: colors.textSecondary }}
+          style={{
+            color: (colors.text ?? '#1f2937') + 'BF',
+          }}
           className={compact ? 'text-sm text-center' : 'text-sm'}
           numberOfLines={compact ? 2 : undefined}
         >

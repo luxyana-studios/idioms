@@ -14,7 +14,14 @@ const pandaBackground = require('../../assets/background/fondo-panda.webp');
 const apiUrl = Constants.expoConfig?.extra?.API_URL ?? 'API URL not found';
 
 const HomeScreen = () => {
-  const { colors } = useTheme();
+  const { colors, setPalette, theme } = useTheme() as unknown as {
+    colors: import('../../src/contexts/ThemeContext').ThemeColors;
+    setPalette: (
+      palette: Partial<import('../../src/contexts/ThemeContext').ThemeColors>,
+      mode?: 'light' | 'dark' | 'both',
+    ) => void;
+    theme: 'light' | 'dark';
+  };
 
   // Navigation function with type assertion
   const navigateTo = (route: string) => {
@@ -48,6 +55,22 @@ const HomeScreen = () => {
       route: '/(drawer)/shuffle',
     },
   ];
+
+  const preset = {
+    dominant: '#6fae4a' as const,
+    accent: '#e6d36b' as const,
+    background: undefined,
+    textLight: '#1a1a1a' as const,
+    textDark: '#ffffff' as const,
+  };
+
+  React.useEffect(() => {
+    const { buildPalettesFromPreset } =
+      require('../../src/utils/palette') as typeof import('../../src/utils/palette');
+    const patches = buildPalettesFromPreset(preset);
+    setPalette(patches.light, 'light');
+    setPalette(patches.dark, 'dark');
+  }, []);
 
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">

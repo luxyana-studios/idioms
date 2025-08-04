@@ -1,8 +1,14 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+} from 'react';
 
 export type Theme = 'light' | 'dark';
 
-interface ThemeColors {
+export interface ThemeColors {
   primary: string;
   secondary: string;
   background: string;
@@ -16,7 +22,7 @@ interface ThemeColors {
   shadowColor: string;
 }
 
-const lightTheme: ThemeColors = {
+const defaultLight: ThemeColors = {
   primary: '#3b82f6',
   secondary: '#d1d5db',
   background: '#f8fafc',
@@ -30,7 +36,7 @@ const lightTheme: ThemeColors = {
   shadowColor: '#64748b',
 };
 
-const darkTheme: ThemeColors = {
+const defaultDark: ThemeColors = {
   primary: '#3b82f6',
   secondary: '#374151',
   background: '#111827',
@@ -48,6 +54,10 @@ interface ThemeContextType {
   theme: Theme;
   colors: ThemeColors;
   toggleTheme: () => void;
+  setPalette: (
+    palette: Partial<ThemeColors>,
+    mode?: 'light' | 'dark' | 'both',
+  ) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -56,17 +66,37 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+const mergeColors = (
+  base: ThemeColors,
+  patch?: Partial<ThemeColors>,
+): ThemeColors => ({ ...base, ...(patch ?? {}) });
+
 const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('dark');
+  const [lightPalette, setLightPalette] = useState<ThemeColors>(defaultLight);
+  const [darkPalette, setDarkPalette] = useState<ThemeColors>(defaultDark);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
+  }, []);
 
-  const colors = theme === 'light' ? lightTheme : darkTheme;
+  const setPalette = useCallback(
+    (
+      palette: Partial<ThemeColors>,
+      mode: 'light' | 'dark' | 'both' = 'both',
+    ) => {
+      if (mode === 'light' || mode === 'both')
+        setLightPalette((c) => mergeColors(c, palette));
+      if (mode === 'dark' || mode === 'both')
+        setDarkPalette((c) => mergeColors(c, palette));
+    },
+    [],
+  );
+
+  const colors = theme === 'light' ? lightPalette : darkPalette;
 
   return (
-    <ThemeContext.Provider value={{ theme, colors, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, colors, toggleTheme, setPalette }}>
       {children}
     </ThemeContext.Provider>
   );
