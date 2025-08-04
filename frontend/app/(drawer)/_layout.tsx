@@ -99,12 +99,14 @@ export default function DrawerLayout() {
           backgroundColor: colors.background,
           width: 280,
         },
+        headerTransparent: false,
         headerStyle: {
           backgroundColor: colors.background,
         },
         headerTintColor: colors.text,
         headerTitleStyle: {
           fontWeight: 'bold',
+          color: colors.text,
         },
         drawerActiveTintColor: colors.primary,
         drawerInactiveTintColor: colors.textSecondary,
@@ -119,6 +121,11 @@ export default function DrawerLayout() {
         options={{
           drawerLabel: 'Home',
           title: 'Idioms',
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'transparent' },
+          headerTitleStyle: { color: colors.text },
+          headerTintColor: colors.text,
+          headerShown: true,
         }}
       />
       <Drawer.Screen
