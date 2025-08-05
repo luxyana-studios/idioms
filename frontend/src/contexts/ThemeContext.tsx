@@ -58,6 +58,7 @@ interface ThemeContextType {
     palette: Partial<ThemeColors>,
     mode?: 'light' | 'dark' | 'both',
   ) => void;
+  setPreset: (preset: import('../utils/palette').PalettePreset) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -95,8 +96,21 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const colors = theme === 'light' ? lightPalette : darkPalette;
 
+  const setPreset = useCallback(
+    (preset: import('../utils/palette').PalettePreset) => {
+      const { buildPalettesFromPreset } =
+        require('../utils/palette') as typeof import('../utils/palette');
+      const patches = buildPalettesFromPreset(preset);
+      setPalette(patches.light, 'light');
+      setPalette(patches.dark, 'dark');
+    },
+    [setPalette],
+  );
+
   return (
-    <ThemeContext.Provider value={{ theme, colors, toggleTheme, setPalette }}>
+    <ThemeContext.Provider
+      value={{ theme, colors, toggleTheme, setPalette, setPreset }}
+    >
       {children}
     </ThemeContext.Provider>
   );

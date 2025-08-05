@@ -14,7 +14,7 @@ const pandaBackground = require('../../assets/background/fondo-panda.webp');
 const apiUrl = Constants.expoConfig?.extra?.API_URL ?? 'API URL not found';
 
 const HomeScreen = () => {
-  const { colors, setPalette, theme } = useTheme();
+  const { colors, setPalette, theme, setPreset } = useTheme();
 
   // Navigation function with type assertion
   const navigateTo = (route: string) => {
@@ -49,20 +49,16 @@ const HomeScreen = () => {
     },
   ];
 
-  const preset = {
-    dominant: '#6fae4a' as const,
-    accent: '#e6d36b' as const,
+  const preset: import('../../src/utils/palette').PalettePreset = {
+    dominant: '#6fae4a',
+    accent: '#e6d36b',
     background: undefined,
-    textLight: '#1a1a1a' as const,
-    textDark: '#ffffff' as const,
+    textLight: '#1a1a1a',
+    textDark: '#ffffff',
   };
 
   React.useEffect(() => {
-    const { buildPalettesFromPreset } =
-      require('../../src/utils/palette') as typeof import('../../src/utils/palette');
-    const patches = buildPalettesFromPreset(preset);
-    setPalette(patches.light, 'light');
-    setPalette(patches.dark, 'dark');
+    setPreset(preset);
   }, []);
 
   return (
