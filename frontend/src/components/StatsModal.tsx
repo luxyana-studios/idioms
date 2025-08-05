@@ -45,15 +45,15 @@ const StatsModal: React.FC<StatsModalProps> = ({
 
   return (
     <MotiView
-      from={{ opacity: 0, translateY: -20, scale: 0.9 }}
+      from={{ opacity: 0, translateY: -12, scale: 0.96 }}
       animate={{ opacity: 1, translateY: 0, scale: 1 }}
-      exit={{ opacity: 0, translateY: -20, scale: 0.9 }}
-      transition={{ type: 'timing', duration: 300 }}
+      exit={{ opacity: 0, translateY: -12, scale: 0.96 }}
+      transition={{ type: 'timing', duration: 250 }}
       style={{
         position: 'absolute',
-        top: CARD_HEIGHT * 0.1,
-        left: CARD_WIDTH * 0.05,
-        right: CARD_WIDTH * 0.05,
+        top: CARD_HEIGHT * 0.18,
+        left: CARD_WIDTH * 0.08,
+        right: CARD_WIDTH * 0.08,
         backgroundColor: modalBg,
         borderRadius: 16,
         padding: 20,
