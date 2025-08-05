@@ -31,7 +31,7 @@ const CardFront: React.FC<CardFrontProps> = ({
   CARD_WIDTH,
   CARD_HEIGHT,
 }) => {
-  const { colors } = useTheme();
+  const { colors, computed } = useTheme();
   const [showStats, setShowStats] = useState(false);
 
   const handleStatsToggle = () => {
@@ -94,9 +94,9 @@ const CardFront: React.FC<CardFrontProps> = ({
         <Text
           style={{
             color: colors.text,
-            textShadowColor: (colors.background ?? '#000') + '33',
-            textShadowOffset: { width: 1, height: 1 },
-            textShadowRadius: 2,
+            textShadowColor: computed.textShadowColor,
+            textShadowOffset: computed.textShadowOffset,
+            textShadowRadius: computed.textShadowRadius,
           }}
           className="text-3xl font-extrabold text-center mb-6"
         >
@@ -113,10 +113,10 @@ const CardFront: React.FC<CardFrontProps> = ({
           bottom: CARD_HEIGHT * 0.05,
           right: CARD_WIDTH * 0.05,
           padding: 10,
-          backgroundColor: (colors.surface ?? '#2e3a25') + '19',
+          backgroundColor: computed.softBackground,
           borderRadius: 999,
           borderWidth: 1,
-          borderColor: (colors.text ?? '#ffffff') + '2A',
+          borderColor: computed.subtleBorder,
         }}
       >
         <Ionicons

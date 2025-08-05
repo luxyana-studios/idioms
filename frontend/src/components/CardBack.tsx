@@ -57,11 +57,8 @@ const MeaningContent = ({
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
 
-  const { theme, colors } = useTheme();
-  const headerColor =
-    theme === 'light'
-      ? colors.primary || '#5ba20f'
-      : colors.primary || '#AEEA00';
+  const { theme, colors, computed } = useTheme();
+  const headerColor = computed.headerColor;
 
   return (
     <View style={styles.meaningContentContainer}>
@@ -72,15 +69,9 @@ const MeaningContent = ({
             styles.stepTitle,
             {
               color: headerColor,
-              textShadowColor:
-                theme === 'light'
-                  ? 'transparent'
-                  : (colors.background ?? '#000') + '66',
-              textShadowOffset:
-                theme === 'light'
-                  ? { width: 0, height: 0 }
-                  : { width: 0, height: 1 },
-              textShadowRadius: theme === 'light' ? 2 : 2,
+              textShadowColor: computed.textShadowColor,
+              textShadowOffset: computed.textShadowOffset,
+              textShadowRadius: computed.textShadowRadius,
             },
           ]}
         >
@@ -210,11 +201,8 @@ const ExplanationContent = ({
   explanation,
   textColor,
 }: ExplanationContentProps) => {
-  const { theme, colors } = useTheme();
-  const headerColor =
-    theme === 'light'
-      ? colors.primary || '#5ba20f'
-      : colors.primary || '#AEEA00';
+  const { theme, colors, computed } = useTheme();
+  const headerColor = computed.headerColor;
 
   return (
     <View style={styles.contentContainer}>
@@ -225,15 +213,9 @@ const ExplanationContent = ({
             styles.stepTitle,
             {
               color: headerColor,
-              textShadowColor:
-                theme === 'light'
-                  ? 'transparent'
-                  : (colors.background ?? '#000') + '66',
-              textShadowOffset:
-                theme === 'light'
-                  ? { width: 0, height: 0 }
-                  : { width: 0, height: 1 },
-              textShadowRadius: theme === 'light' ? 2 : 2,
+              textShadowColor: computed.textShadowColor,
+              textShadowOffset: computed.textShadowOffset,
+              textShadowRadius: computed.textShadowRadius,
             },
           ]}
         >
@@ -265,19 +247,10 @@ const ExamplesContent = ({
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
-  const { theme, colors } = useTheme();
-  const headerColor =
-    theme === 'light'
-      ? colors.primary || '#5ba20f'
-      : colors.primary || '#AEEA00';
-  const localAccentSoftBg =
-    theme === 'light'
-      ? (colors.text ?? '#111111') + '0F'
-      : (colors.surface ?? '#000000') + '33';
-  const localSubtleBorder =
-    theme === 'light'
-      ? (colors.border ?? '#cbd5e1') + '80'
-      : (colors.text ?? '#ffffff') + '30';
+  const { theme, colors, computed } = useTheme();
+  const headerColor = computed.headerColor;
+  const localAccentSoftBg = computed.softBackground;
+  const localSubtleBorder = computed.subtleBorder;
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
@@ -378,15 +351,14 @@ const ExamplesContent = ({
                 <Ionicons
                   name="add-circle-outline"
                   size={20}
-                  color={colors.primary || '#AEEA00'}
+                  color={computed.accent}
                 />
                 <Text
                   style={[
                     styles.showMoreText,
                     {
-                      color: colors.primary || '#AEEA00',
-                      textShadowColor:
-                        theme === 'light' ? 'transparent' : '#00000033',
+                      color: computed.accent,
+                      textShadowColor: computed.textShadowColor,
                     },
                   ]}
                 >
@@ -395,7 +367,7 @@ const ExamplesContent = ({
                 <Ionicons
                   name="chevron-down"
                   size={16}
-                  color={colors.primary || '#AEEA00'}
+                  color={computed.accent}
                 />
               </View>
             </TouchableOpacity>
@@ -414,37 +386,13 @@ export const CardBack = ({
   currentStep,
   onStepChange,
 }: CardBackProps) => {
-  const themeCtx = useTheme() as any;
-  const colors = themeCtx.colors;
-  const theme: 'light' | 'dark' =
-    themeCtx.theme ??
-    (colors?.background &&
-    typeof colors.background === 'string' &&
-    colors.background.toLowerCase() === '#ffffff'
-      ? 'light'
-      : 'dark');
-
-  const accent =
-    theme === 'light'
-      ? colors.primary || '#5ba20f'
-      : colors.primary || PRIMARY_ACCENT_COLOR;
-
-  const accentSoftBg =
-    theme === 'light'
-      ? (colors.text ?? '#111111') + '0F'
-      : (colors.surface ?? '#000000') + '33';
-
-  const subtleBorder =
-    theme === 'light'
-      ? (colors.border ?? '#cbd5e1') + '80'
-      : (colors.text ?? '#ffffff') + '30';
-
-  const iconTint = theme === 'light' ? accent : (colors.text ?? '#ffffff');
-
-  const stepDotBg =
-    theme === 'light'
-      ? (colors.text ?? '#111111') + '26'
-      : 'rgba(255, 255, 255, 0.35)';
+  const { theme, colors, computed } = useTheme();
+  const accent = computed.accent;
+  const accentSoftBg = computed.softBackground;
+  const subtleBorder = computed.subtleBorder;
+  const iconTint =
+    theme === 'light' ? computed.accent : (colors.text ?? '#ffffff');
+  const stepDotBg = computed.stepDotBackground;
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
 
@@ -557,14 +505,8 @@ export const CardBack = ({
       <View style={styles.stepIndicators}>
         {steps.map((step) => {
           const isActive = currentStep === step;
-          const baseDotBg =
-            theme === 'light'
-              ? (colors.text ?? '#111111') + '26'
-              : 'rgba(255,255,255,0.35)';
-          const activeBg =
-            theme === 'light'
-              ? colors.primary || '#5ba20f'
-              : colors.primary || '#AEEA00';
+          const baseDotBg = computed.stepDotBackground;
+          const activeBg = computed.accent;
           return (
             <View
               key={step}

@@ -23,8 +23,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
 }) => {
   if (!isVisible) return null;
 
-  const { theme, colors } = useTheme();
-  const primary = colors.primary || '#AEEA00';
+  const { theme, colors, computed } = useTheme();
+  const primary = computed.accent;
   const labelColor =
     theme === 'light'
       ? (colors.text ?? '#111111')
@@ -34,14 +34,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
     theme === 'light'
       ? (colors.surface ?? '#ffffff') + 'F2'
       : 'rgba(31, 41, 55, 0.95)';
-  const border =
-    theme === 'light'
-      ? (colors.border ?? '#cbd5e1') + '99'
-      : 'rgba(255,255,255,0.2)';
-  const divider =
-    theme === 'light'
-      ? (colors.border ?? '#cbd5e1') + '99'
-      : 'rgba(255,255,255,0.1)';
+  const border = computed.subtleBorder;
+  const divider = computed.subtleBorder;
 
   return (
     <MotiView
