@@ -14,14 +14,7 @@ const pandaBackground = require('../../assets/background/fondo-panda.webp');
 const apiUrl = Constants.expoConfig?.extra?.API_URL ?? 'API URL not found';
 
 const HomeScreen = () => {
-  const { colors, setPalette, theme } = useTheme() as unknown as {
-    colors: import('../../src/contexts/ThemeContext').ThemeColors;
-    setPalette: (
-      palette: Partial<import('../../src/contexts/ThemeContext').ThemeColors>,
-      mode?: 'light' | 'dark' | 'both',
-    ) => void;
-    theme: 'light' | 'dark';
-  };
+  const { colors, setPalette, theme } = useTheme();
 
   // Navigation function with type assertion
   const navigateTo = (route: string) => {
