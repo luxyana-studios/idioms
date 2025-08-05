@@ -4,17 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import Slider from '@react-native-community/slider';
 import Tooltip from 'react-native-walkthrough-tooltip';
-
 interface IndicatorsDisplayProps {
   item: CardData;
 }
-
 const getFrequencyIndicator = (frequency: number) => {
   const percentage = frequency * 10;
-
   let color = '#8B5CF6';
   let bgColor = 'rgba(139, 92, 246, 0.2)';
-
   if (frequency >= 7) {
     color = '#10B981';
     bgColor = 'rgba(16, 185, 129, 0.2)';
@@ -22,7 +18,6 @@ const getFrequencyIndicator = (frequency: number) => {
     color = '#F59E0B';
     bgColor = 'rgba(245, 158, 11, 0.2)';
   }
-
   return {
     percentage,
     color,
@@ -30,10 +25,8 @@ const getFrequencyIndicator = (frequency: number) => {
     frequency,
   };
 };
-
 const getSentimentIndicator = (sentiment: string[]) => {
   const primarySentiment = sentiment[0];
-
   switch (primarySentiment) {
     case 'positive':
       return {
@@ -52,13 +45,10 @@ const getSentimentIndicator = (sentiment: string[]) => {
       };
   }
 };
-
 const getLiteralTransparencyIndicator = (transparency: number) => {
   const percentage = transparency * 10;
-
   let color = '#8B5CF6';
   let bgColor = 'rgba(139, 92, 246, 0.2)';
-
   if (transparency >= 7) {
     color = '#10B981';
     bgColor = 'rgba(16, 185, 129, 0.2)';
@@ -66,7 +56,6 @@ const getLiteralTransparencyIndicator = (transparency: number) => {
     color = '#F59E0B';
     bgColor = 'rgba(245, 158, 11, 0.2)';
   }
-
   return {
     percentage,
     color,
@@ -74,13 +63,10 @@ const getLiteralTransparencyIndicator = (transparency: number) => {
     value: transparency,
   };
 };
-
 const getTranslationDifficultyIndicator = (difficulty: number) => {
   const percentage = difficulty * 10;
-
   let color = '#10B981';
   let bgColor = 'rgba(16, 185, 129, 0.2)';
-
   if (difficulty >= 7) {
     color = '#8B5CF6';
     bgColor = 'rgba(139, 92, 246, 0.2)';
@@ -88,7 +74,6 @@ const getTranslationDifficultyIndicator = (difficulty: number) => {
     color = '#F59E0B';
     bgColor = 'rgba(245, 158, 11, 0.2)';
   }
-
   return {
     percentage,
     color,
@@ -96,7 +81,6 @@ const getTranslationDifficultyIndicator = (difficulty: number) => {
     value: difficulty,
   };
 };
-
 const StatTooltip = ({ text }: { text: string }) => {
   const [visible, setVisible] = useState(false);
   return (
@@ -114,7 +98,7 @@ const StatTooltip = ({ text }: { text: string }) => {
           {text}
         </Text>
       }
-      placement="left"
+      placement="top"
       onClose={() => setVisible(false)}
       backgroundColor="rgba(30,30,30,0.7)"
       contentStyle={{
@@ -123,6 +107,9 @@ const StatTooltip = ({ text }: { text: string }) => {
         padding: 12,
         maxWidth: 250,
       }}
+      topAdjustment={0}
+      showChildInTooltip={false}
+      useReactNativeModal={true}
     >
       <Pressable onPress={() => setVisible(true)} style={styles.tooltipButton}>
         <Ionicons name="information-circle-outline" size={16} color="#888" />
@@ -130,7 +117,6 @@ const StatTooltip = ({ text }: { text: string }) => {
     </Tooltip>
   );
 };
-
 const IdiomsStats: React.FC<IndicatorsDisplayProps> = ({ item }) => {
   const frequencyIndicator = getFrequencyIndicator(item.frequency_of_use);
   const sentimentIndicator = getSentimentIndicator(item.sentiment);
@@ -140,7 +126,6 @@ const IdiomsStats: React.FC<IndicatorsDisplayProps> = ({ item }) => {
   const translationDifficultyIndicator = getTranslationDifficultyIndicator(
     item.translation_difficulty,
   );
-
   return (
     <View style={styles.indicatorsContainer}>
       <View style={styles.indicatorRowWrapper}>
@@ -154,7 +139,6 @@ const IdiomsStats: React.FC<IndicatorsDisplayProps> = ({ item }) => {
         </View>
         <StatTooltip text="General sentiment associated with the idiom." />
       </View>
-
       <View style={styles.indicatorRowWrapper}>
         <View
           style={[
@@ -190,7 +174,6 @@ const IdiomsStats: React.FC<IndicatorsDisplayProps> = ({ item }) => {
         </View>
         <StatTooltip text="How frequently the idiom is used in the language." />
       </View>
-
       <View style={styles.indicatorRowWrapper}>
         <View
           style={[
@@ -229,7 +212,6 @@ const IdiomsStats: React.FC<IndicatorsDisplayProps> = ({ item }) => {
         </View>
         <StatTooltip text="How transparent the literal meaning of the idiom is." />
       </View>
-
       <View style={styles.indicatorRowWrapper}>
         <View
           style={[
@@ -271,7 +253,6 @@ const IdiomsStats: React.FC<IndicatorsDisplayProps> = ({ item }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   indicatorsContainer: {
     marginTop: 8,
@@ -344,5 +325,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
 export default IdiomsStats;
