@@ -6,6 +6,7 @@ import HeroSection from '../../src/components/HeroSection';
 import QuickActionsGrid from '../../src/components/QuickActionsGrid';
 import ModernPandaAnimation from '../../src/components/ModernPandaAnimation';
 import Constants from 'expo-constants';
+import type { PalettePreset } from '../../src/utils/palette';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -49,7 +50,7 @@ const HomeScreen = () => {
     },
   ];
 
-  const preset: import('../../src/utils/palette').PalettePreset = {
+  const preset: PalettePreset = {
     dominant: '#6fae4a',
     accent: '#e6d36b',
     background: undefined,

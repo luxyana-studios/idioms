@@ -58,17 +58,16 @@ const MeaningContent = ({
   const [showIndicators, setShowIndicators] = useState(false);
 
   const { theme, colors, computed } = useTheme();
-  const headerColor = computed.headerColor;
 
   return (
     <View style={styles.meaningContentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="bulb-outline" size={22} color={headerColor} />
+        <Ionicons name="bulb-outline" size={22} color={computed.headerColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: headerColor,
+              color: computed.headerColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -135,27 +134,18 @@ const MeaningContent = ({
                       <View
                         key={idx}
                         style={{
-                          backgroundColor:
-                            theme === 'light'
-                              ? (colors.text ?? '#111111') + '0A'
-                              : (colors.text ?? '#ffffff') + '14',
+                          backgroundColor: computed.softBackground,
                           borderRadius: 12,
                           paddingHorizontal: 10,
                           paddingVertical: 4,
                           margin: 2,
                           borderWidth: 1,
-                          borderColor:
-                            theme === 'light'
-                              ? (colors.border ?? '#cbd5e1')
-                              : (colors.text ?? '#ffffff') + '22',
+                          borderColor: computed.subtleBorder,
                         }}
                       >
                         <Text
                           style={{
-                            color:
-                              theme === 'light'
-                                ? (colors.textSecondary ?? '#64748b')
-                                : (colors.textSecondary ?? '#d1d5db'),
+                            color: colors.textSecondary,
                             fontWeight: '700',
                             fontSize: 13,
                           }}
@@ -202,17 +192,16 @@ const ExplanationContent = ({
   textColor,
 }: ExplanationContentProps) => {
   const { theme, colors, computed } = useTheme();
-  const headerColor = computed.headerColor;
 
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="book-outline" size={22} color={headerColor} />
+        <Ionicons name="book-outline" size={22} color={computed.headerColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: headerColor,
+              color: computed.headerColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -248,9 +237,6 @@ const ExamplesContent = ({
   const [showButton, setShowButton] = useState(false);
 
   const { theme, colors, computed } = useTheme();
-  const headerColor = computed.headerColor;
-  const localAccentSoftBg = computed.softBackground;
-  const localSubtleBorder = computed.subtleBorder;
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
@@ -261,21 +247,15 @@ const ExamplesContent = ({
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="list-outline" size={22} color={headerColor} />
+        <Ionicons name="list-outline" size={22} color={computed.headerColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: headerColor,
-              textShadowColor:
-                theme === 'light'
-                  ? 'transparent'
-                  : (colors.background ?? '#000') + '66',
-              textShadowOffset:
-                theme === 'light'
-                  ? { width: 0, height: 0 }
-                  : { width: 0, height: 1 },
-              textShadowRadius: theme === 'light' ? 2 : 2,
+              color: computed.headerColor,
+              textShadowColor: computed.textShadowColor,
+              textShadowOffset: computed.textShadowOffset,
+              textShadowRadius: computed.textShadowRadius,
             },
           ]}
         >
@@ -341,8 +321,8 @@ const ExamplesContent = ({
               style={[
                 styles.showMoreButton,
                 {
-                  backgroundColor: localAccentSoftBg,
-                  borderColor: localSubtleBorder,
+                  backgroundColor: computed.softBackground,
+                  borderColor: computed.subtleBorder,
                 },
               ]}
               activeOpacity={0.8}
@@ -387,12 +367,6 @@ export const CardBack = ({
   onStepChange,
 }: CardBackProps) => {
   const { theme, colors, computed } = useTheme();
-  const accent = computed.accent;
-  const accentSoftBg = computed.softBackground;
-  const subtleBorder = computed.subtleBorder;
-  const iconTint =
-    theme === 'light' ? computed.accent : (colors.text ?? '#ffffff');
-  const stepDotBg = computed.stepDotBackground;
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
 
@@ -463,19 +437,15 @@ export const CardBack = ({
       ]}
     >
       <LinearGradient
-        colors={
-          theme === 'light'
-            ? [
-                colors.cardBackBackground ?? colors.cardBackground ?? '#eef5ea',
-                colors.surface ?? '#e3ece0',
-                colors.secondary ?? colors.surface ?? '#d6e3d2',
-              ]
-            : [
-                colors.cardBackBackground ?? colors.cardBackground ?? '#1f2a1f',
-                colors.secondary ?? colors.surface ?? '#172017',
-                colors.surface ?? '#111611',
-              ]
-        }
+        colors={[
+          colors.cardBackBackground ??
+            colors.cardBackground ??
+            (theme === 'light' ? '#eef5ea' : '#1f2a1f'),
+          colors.surface ?? (theme === 'light' ? '#e3ece0' : '#111611'),
+          colors.secondary ??
+            colors.surface ??
+            (theme === 'light' ? '#d6e3d2' : '#172017'),
+        ]}
         locations={[0, 0.55, 1]}
         start={{ x: 0.12, y: 0.05 }}
         end={{ x: 0.88, y: 0.95 }}
@@ -493,10 +463,7 @@ export const CardBack = ({
           position: 'absolute',
           inset: 0,
           borderRadius: 20,
-          backgroundColor:
-            theme === 'light'
-              ? (colors.text ?? '#000000') + '08'
-              : (colors.surface ?? '#000000') + '1A',
+          backgroundColor: computed.softBackground,
         }}
       />
 
@@ -517,10 +484,7 @@ export const CardBack = ({
                   styles.activeDot,
                   {
                     backgroundColor: activeBg,
-                    borderColor:
-                      theme === 'light'
-                        ? (colors.border ?? '#cbd5e1')
-                        : '#00000033',
+                    borderColor: computed.subtleBorder,
                   },
                 ],
               ]}
@@ -535,8 +499,8 @@ export const CardBack = ({
           style={[
             styles.nextButton,
             {
-              backgroundColor: accentSoftBg,
-              borderColor: subtleBorder,
+              backgroundColor: computed.softBackground,
+              borderColor: computed.subtleBorder,
             },
           ]}
           activeOpacity={0.7}
@@ -544,11 +508,7 @@ export const CardBack = ({
           <Ionicons
             name="chevron-forward"
             size={24}
-            color={
-              theme === 'light'
-                ? (colors.textSecondary ?? '#64748b')
-                : colors.text
-            }
+            color={colors.textSecondary}
           />
         </TouchableOpacity>
       )}
@@ -559,8 +519,8 @@ export const CardBack = ({
           style={[
             styles.backButton,
             {
-              backgroundColor: accentSoftBg,
-              borderColor: subtleBorder,
+              backgroundColor: computed.softBackground,
+              borderColor: computed.subtleBorder,
             },
           ]}
           activeOpacity={0.7}
@@ -568,11 +528,7 @@ export const CardBack = ({
           <Ionicons
             name="chevron-back"
             size={24}
-            color={
-              theme === 'light'
-                ? (colors.textSecondary ?? '#64748b')
-                : colors.text
-            }
+            color={colors.textSecondary}
           />
         </TouchableOpacity>
       )}
