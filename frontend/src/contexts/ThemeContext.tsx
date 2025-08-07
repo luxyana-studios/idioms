@@ -71,6 +71,9 @@ interface ComputedTheme {
   triggerIconShadowColor: string;
   iconColor: string;
   labelColor: string;
+
+  menuShadowOpacity: number;
+  menuShadowRadius: number;
 }
 
 interface ThemeContextType {
@@ -131,62 +134,56 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     [setPalette],
   );
 
-  const computed: ComputedTheme = {
-    accent:
-      theme === 'light'
-        ? colors.primary || '#5ba20f'
-        : colors.primary || '#AEEA00',
-    headerColor:
-      theme === 'light'
-        ? colors.primary || '#5ba20f'
-        : colors.primary || '#AEEA00',
-
-    softBackground:
-      theme === 'light'
-        ? (colors.text ?? '#111111') + '0F'
-        : (colors.surface ?? '#000000') + '33',
-    subtleBorder:
-      theme === 'light'
-        ? (colors.border ?? '#cbd5e1') + '80'
-        : (colors.text ?? '#ffffff') + '30',
-    iconTint:
-      theme === 'light'
-        ? colors.primary || '#5ba20f'
-        : (colors.text ?? '#ffffff'),
-    stepDotBackground:
-      theme === 'light'
-        ? (colors.text ?? '#111111') + '26'
-        : 'rgba(255, 255, 255, 0.35)',
-
-    textShadowColor:
-      theme === 'light' ? 'transparent' : (colors.background ?? '#000') + '66',
-    textShadowOffset:
-      theme === 'light' ? { width: 0, height: 0 } : { width: 0, height: 1 },
-    textShadowRadius: theme === 'light' ? 2 : 2,
-
-    overlayBg:
-      theme === 'light'
-        ? (colors.text ?? '#111111') + '33'
-        : 'rgba(0, 0, 0, 0.6)',
-    menuBg:
-      theme === 'light'
-        ? (colors.surface ?? '#ffffff') + 'F2'
-        : 'rgba(31, 41, 55, 0.95)',
-    menuBorder:
-      theme === 'light'
-        ? (colors.border ?? '#cbd5e1') + '99'
-        : 'rgba(255, 255, 255, 0.2)',
-    divider:
-      theme === 'light'
-        ? (colors.border ?? '#cbd5e1') + '99'
-        : 'rgba(255, 255, 255, 0.1)',
+  const LIGHT_COMPUTED: ComputedTheme = {
+    accent: colors.primary || '#2563eb',
+    headerColor: colors.primary || '#2563eb',
+    softBackground: (colors.text ?? '#111111') + '0F',
+    subtleBorder: (colors.border ?? '#cbd5e1') + '80',
+    iconTint: colors.primary || '#2563eb',
+    stepDotBackground: (colors.text ?? '#111111') + '26',
+    textShadowColor: 'transparent',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+    overlayBg: (colors.text ?? '#111111') + '33',
+    menuBg: (colors.surface ?? '#ffffff') + 'F2',
+    menuBorder: (colors.border ?? '#cbd5e1') + '99',
+    divider: (colors.border ?? '#cbd5e1') + '99',
     triggerBg: 'rgba(0, 0, 0, 0.2)',
     triggerBorder: 'rgba(255, 255, 255, 0.3)',
     triggerIconColor: '#FFFFFF',
-    triggerIconShadowColor: theme === 'light' ? '#00000055' : 'transparent',
-    iconColor: theme === 'light' ? (colors.text ?? '#1f2937') : '#FFFFFF',
-    labelColor: theme === 'light' ? (colors.text ?? '#1f2937') : '#FFFFFF',
+    triggerIconShadowColor: '#00000055',
+    iconColor: colors.text ?? '#1f2937',
+    labelColor: colors.text ?? '#1f2937',
+    menuShadowOpacity: 0.2,
+    menuShadowRadius: 12,
   };
+
+  const DARK_COMPUTED: ComputedTheme = {
+    accent: colors.primary || '#AEEA00',
+    headerColor: colors.primary || '#AEEA00',
+    softBackground: (colors.surface ?? '#000000') + '33',
+    subtleBorder: (colors.text ?? '#ffffff') + '30',
+    iconTint: colors.text ?? '#ffffff',
+    stepDotBackground: 'rgba(255, 255, 255, 0.35)',
+    textShadowColor: (colors.background ?? '#000') + '66',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    overlayBg: 'rgba(0, 0, 0, 0.6)',
+    menuBg: 'rgba(31, 41, 55, 0.95)',
+    menuBorder: 'rgba(255, 255, 255, 0.2)',
+    divider: 'rgba(255, 255, 255, 0.1)',
+    triggerBg: 'rgba(0, 0, 0, 0.2)',
+    triggerBorder: 'rgba(255, 255, 255, 0.3)',
+    triggerIconColor: '#FFFFFF',
+    triggerIconShadowColor: 'transparent',
+    iconColor: '#FFFFFF',
+    labelColor: '#FFFFFF',
+    menuShadowOpacity: 0.35,
+    menuShadowRadius: 16,
+  };
+
+  const computed: ComputedTheme =
+    theme === 'light' ? LIGHT_COMPUTED : DARK_COMPUTED;
 
   return (
     <ThemeContext.Provider

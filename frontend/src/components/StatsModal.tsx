@@ -25,15 +25,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
 
   const { theme, colors, computed } = useTheme();
   const primary = computed.accent;
-  const labelColor =
-    theme === 'light'
-      ? (colors.text ?? '#111111')
-      : (colors.textSecondary ?? '#d1d5db');
-
-  const modalBg =
-    theme === 'light'
-      ? (colors.surface ?? '#ffffff') + 'F2'
-      : 'rgba(31, 41, 55, 0.95)';
+  const labelColor = computed.labelColor;
+  const modalBg = computed.menuBg;
   const border = computed.subtleBorder;
   const divider = computed.subtleBorder;
 
@@ -56,8 +49,8 @@ const StatsModal: React.FC<StatsModalProps> = ({
         zIndex: 1000,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: theme === 'light' ? 0.2 : 0.35,
-        shadowRadius: theme === 'light' ? 12 : 16,
+        shadowOpacity: computed.menuShadowOpacity,
+        shadowRadius: computed.menuShadowRadius,
         elevation: 20,
       }}
     >
