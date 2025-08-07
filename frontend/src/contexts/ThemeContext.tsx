@@ -60,6 +60,17 @@ interface ComputedTheme {
   textShadowColor: string;
   textShadowOffset: { width: number; height: number };
   textShadowRadius: number;
+
+  overlayBg: string;
+  menuBg: string;
+  menuBorder: string;
+  divider: string;
+  triggerBg: string;
+  triggerBorder: string;
+  triggerIconColor: string;
+  triggerIconShadowColor: string;
+  iconColor: string;
+  labelColor: string;
 }
 
 interface ThemeContextType {
@@ -129,6 +140,7 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       theme === 'light'
         ? colors.primary || '#5ba20f'
         : colors.primary || '#AEEA00',
+
     softBackground:
       theme === 'light'
         ? (colors.text ?? '#111111') + '0F'
@@ -145,11 +157,35 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       theme === 'light'
         ? (colors.text ?? '#111111') + '26'
         : 'rgba(255, 255, 255, 0.35)',
+
     textShadowColor:
       theme === 'light' ? 'transparent' : (colors.background ?? '#000') + '66',
     textShadowOffset:
       theme === 'light' ? { width: 0, height: 0 } : { width: 0, height: 1 },
     textShadowRadius: theme === 'light' ? 2 : 2,
+
+    overlayBg:
+      theme === 'light'
+        ? (colors.text ?? '#111111') + '33'
+        : 'rgba(0, 0, 0, 0.6)',
+    menuBg:
+      theme === 'light'
+        ? (colors.surface ?? '#ffffff') + 'F2'
+        : 'rgba(31, 41, 55, 0.95)',
+    menuBorder:
+      theme === 'light'
+        ? (colors.border ?? '#cbd5e1') + '99'
+        : 'rgba(255, 255, 255, 0.2)',
+    divider:
+      theme === 'light'
+        ? (colors.border ?? '#cbd5e1') + '99'
+        : 'rgba(255, 255, 255, 0.1)',
+    triggerBg: 'rgba(0, 0, 0, 0.2)',
+    triggerBorder: 'rgba(255, 255, 255, 0.3)',
+    triggerIconColor: '#FFFFFF',
+    triggerIconShadowColor: theme === 'light' ? '#00000055' : 'transparent',
+    iconColor: theme === 'light' ? (colors.text ?? '#1f2937') : '#FFFFFF',
+    labelColor: theme === 'light' ? (colors.text ?? '#1f2937') : '#FFFFFF',
   };
 
   return (

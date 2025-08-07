@@ -33,31 +33,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
 
-  const { theme, colors } = useTheme();
-  const overlayBg =
-    theme === 'light'
-      ? (colors.text ?? '#111111') + '33'
-      : 'rgba(0, 0, 0, 0.6)';
-  const menuBg =
-    theme === 'light'
-      ? (colors.surface ?? '#ffffff') + 'F2'
-      : 'rgba(31, 41, 55, 0.95)';
-  const menuBorder =
-    theme === 'light'
-      ? (colors.border ?? '#cbd5e1') + '99'
-      : 'rgba(255, 255, 255, 0.2)';
-  const divider =
-    theme === 'light'
-      ? (colors.border ?? '#cbd5e1') + '99'
-      : 'rgba(255, 255, 255, 0.1)';
-
-  const triggerBg = 'rgba(0, 0, 0, 0.2)';
-  const triggerBorder = 'rgba(255, 255, 255, 0.3)';
-  const iconColor = theme === 'light' ? (colors.text ?? '#1f2937') : '#FFFFFF';
-  const labelColor = theme === 'light' ? (colors.text ?? '#1f2937') : '#FFFFFF';
-  const triggerIconColor = '#FFFFFF';
-  const triggerIconShadowColor =
-    theme === 'light' ? '#00000055' : 'transparent';
+  const { theme, colors, computed } = useTheme();
 
   const showSuccessNotification = (message: string) => {
     setNotificationMessage(message);
@@ -166,19 +142,19 @@ const DotMenu: React.FC<DotMenuProps> = ({
           top: CARD_HEIGHT * 0.05,
           right: CARD_WIDTH * 0.05,
           padding: 10,
-          backgroundColor: triggerBg,
+          backgroundColor: computed.triggerBg,
           borderRadius: 999,
           borderWidth: 1,
-          borderColor: triggerBorder,
+          borderColor: computed.triggerBorder,
           zIndex: 1000,
         }}
       >
         <Ionicons
           name="ellipsis-vertical"
           size={24}
-          color={triggerIconColor}
+          color={computed.triggerIconColor}
           style={{
-            textShadowColor: triggerIconShadowColor,
+            textShadowColor: computed.triggerIconShadowColor,
             textShadowOffset: { width: 0, height: 1 },
             textShadowRadius: 1.2,
           }}
@@ -193,7 +169,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: overlayBg,
+            backgroundColor: computed.overlayBg,
             borderRadius: 20,
             justifyContent: 'flex-start',
             alignItems: 'flex-end',
@@ -217,7 +193,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
 
           <View
             style={{
-              backgroundColor: menuBg,
+              backgroundColor: computed.menuBg,
               borderRadius: 16,
               padding: 16,
               minWidth: 200,
@@ -228,7 +204,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
               shadowRadius: theme === 'light' ? 12 : 16,
               elevation: 20,
               borderWidth: 1,
-              borderColor: menuBorder,
+              borderColor: computed.menuBorder,
               zIndex: 10000,
             }}
           >
@@ -242,19 +218,19 @@ const DotMenu: React.FC<DotMenuProps> = ({
                   paddingVertical: 14,
                   paddingHorizontal: 12,
                   borderBottomWidth: index < menuOptions.length - 1 ? 1 : 0,
-                  borderBottomColor: divider,
+                  borderBottomColor: computed.divider,
                 }}
                 activeOpacity={0.7}
               >
                 <Ionicons
                   name={option.icon}
                   size={22}
-                  color={iconColor}
+                  color={computed.iconColor}
                   style={{ marginRight: 16 }}
                 />
                 <Text
                   style={{
-                    color: labelColor,
+                    color: computed.labelColor,
                     fontSize: 16,
                     fontWeight: '500',
                     flex: 1,
@@ -276,7 +252,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: overlayBg,
+            backgroundColor: computed.overlayBg,
             borderRadius: 20,
             justifyContent: 'flex-start',
             alignItems: 'flex-end',
@@ -303,7 +279,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             style={{
-              backgroundColor: menuBg,
+              backgroundColor: computed.menuBg,
               borderRadius: 16,
               padding: 20,
               minWidth: 200,
@@ -314,7 +290,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
               shadowRadius: theme === 'light' ? 12 : 16,
               elevation: 20,
               borderWidth: 1,
-              borderColor: menuBorder,
+              borderColor: computed.menuBorder,
             }}
           >
             <View
@@ -324,13 +300,13 @@ const DotMenu: React.FC<DotMenuProps> = ({
                 alignItems: 'center',
                 marginBottom: 16,
                 borderBottomWidth: 1,
-                borderBottomColor: divider,
+                borderBottomColor: computed.divider,
                 paddingBottom: 8,
               }}
             >
               <Text
                 style={{
-                  color: labelColor,
+                  color: computed.labelColor,
                   fontSize: 16,
                   fontWeight: '700',
                 }}
@@ -341,7 +317,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
                 onPress={() => setShowReportMenu(false)}
                 style={{ padding: 4 }}
               >
-                <Ionicons name="close" size={18} color={iconColor} />
+                <Ionicons name="close" size={18} color={computed.iconColor} />
               </TouchableOpacity>
             </View>
 
@@ -355,19 +331,19 @@ const DotMenu: React.FC<DotMenuProps> = ({
                   paddingVertical: 12,
                   paddingHorizontal: 8,
                   borderBottomWidth: index < reportOptions.length - 1 ? 1 : 0,
-                  borderBottomColor: divider,
+                  borderBottomColor: computed.divider,
                 }}
                 activeOpacity={0.7}
               >
                 <Ionicons
                   name={option.icon}
                   size={20}
-                  color={iconColor}
+                  color={computed.iconColor}
                   style={{ marginRight: 12 }}
                 />
                 <Text
                   style={{
-                    color: labelColor,
+                    color: computed.labelColor,
                     fontSize: 14,
                     fontWeight: '500',
                     flex: 1,
@@ -392,11 +368,11 @@ const DotMenu: React.FC<DotMenuProps> = ({
             top: CARD_HEIGHT * 0.12,
             left: CARD_WIDTH * 0.15,
             right: CARD_WIDTH * 0.15,
-            backgroundColor: menuBg,
+            backgroundColor: computed.menuBg,
             borderRadius: 12,
             padding: 12,
             borderWidth: 1,
-            borderColor: menuBorder,
+            borderColor: computed.menuBorder,
             zIndex: 10001,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
@@ -408,7 +384,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
         >
           <Text
             style={{
-              color: labelColor,
+              color: computed.labelColor,
               fontSize: 14,
               fontWeight: '600',
               textAlign: 'center',
