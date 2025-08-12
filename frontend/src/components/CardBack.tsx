@@ -13,7 +13,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import SmileyDisplay from './SmileyDisplay';
 import { MotiView } from 'moti';
 import { ContentStep } from '../hooks/useCardFlip';
-import GradientBackground from './GradientBackground';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface CardBackProps {
   item: CardData;
@@ -57,11 +57,23 @@ const MeaningContent = ({
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
 
+  const { theme, colors, computed } = useTheme();
+
   return (
     <View style={styles.meaningContentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="bulb-outline" size={22} color={PRIMARY_ACCENT_COLOR} />
-        <Text style={[styles.stepTitle, { color: PRIMARY_ACCENT_COLOR }]}>
+        <Ionicons name="bulb-outline" size={22} color={computed.headerColor} />
+        <Text
+          style={[
+            styles.stepTitle,
+            {
+              color: computed.headerColor,
+              textShadowColor: computed.textShadowColor,
+              textShadowOffset: computed.textShadowOffset,
+              textShadowRadius: computed.textShadowRadius,
+            },
+          ]}
+        >
           Meaning
         </Text>
       </View>
@@ -122,17 +134,19 @@ const MeaningContent = ({
                       <View
                         key={idx}
                         style={{
-                          backgroundColor: PRIMARY_ACCENT_COLOR + '22',
+                          backgroundColor: computed.softBackground,
                           borderRadius: 12,
                           paddingHorizontal: 10,
                           paddingVertical: 4,
                           margin: 2,
+                          borderWidth: 1,
+                          borderColor: computed.subtleBorder,
                         }}
                       >
                         <Text
                           style={{
-                            color: PRIMARY_ACCENT_COLOR,
-                            fontWeight: 'bold',
+                            color: colors.textSecondary,
+                            fontWeight: '700',
                             fontSize: 13,
                           }}
                         >
@@ -177,11 +191,23 @@ const ExplanationContent = ({
   explanation,
   textColor,
 }: ExplanationContentProps) => {
+  const { theme, colors, computed } = useTheme();
+
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="book-outline" size={22} color={PRIMARY_ACCENT_COLOR} />
-        <Text style={[styles.stepTitle, { color: PRIMARY_ACCENT_COLOR }]}>
+        <Ionicons name="book-outline" size={22} color={computed.headerColor} />
+        <Text
+          style={[
+            styles.stepTitle,
+            {
+              color: computed.headerColor,
+              textShadowColor: computed.textShadowColor,
+              textShadowOffset: computed.textShadowOffset,
+              textShadowRadius: computed.textShadowRadius,
+            },
+          ]}
+        >
           Explanation
         </Text>
       </View>
@@ -210,6 +236,8 @@ const ExamplesContent = ({
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
+  const { theme, colors, computed } = useTheme();
+
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
   };
@@ -219,8 +247,18 @@ const ExamplesContent = ({
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="list-outline" size={22} color={PRIMARY_ACCENT_COLOR} />
-        <Text style={[styles.stepTitle, { color: PRIMARY_ACCENT_COLOR }]}>
+        <Ionicons name="list-outline" size={22} color={computed.headerColor} />
+        <Text
+          style={[
+            styles.stepTitle,
+            {
+              color: computed.headerColor,
+              textShadowColor: computed.textShadowColor,
+              textShadowOffset: computed.textShadowOffset,
+              textShadowRadius: computed.textShadowRadius,
+            },
+          ]}
+        >
           Examples
         </Text>
       </View>
@@ -283,8 +321,8 @@ const ExamplesContent = ({
               style={[
                 styles.showMoreButton,
                 {
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  backgroundColor: computed.softBackground,
+                  borderColor: computed.subtleBorder,
                 },
               ]}
               activeOpacity={0.8}
@@ -293,13 +331,23 @@ const ExamplesContent = ({
                 <Ionicons
                   name="add-circle-outline"
                   size={20}
-                  color={PRIMARY_ACCENT_COLOR}
+                  color={computed.accent}
                 />
-                <Text style={styles.showMoreText}>Show more examples</Text>
+                <Text
+                  style={[
+                    styles.showMoreText,
+                    {
+                      color: computed.accent,
+                      textShadowColor: computed.textShadowColor,
+                    },
+                  ]}
+                >
+                  Show more examples
+                </Text>
                 <Ionicons
                   name="chevron-down"
                   size={16}
-                  color={PRIMARY_ACCENT_COLOR}
+                  color={computed.accent}
                 />
               </View>
             </TouchableOpacity>
@@ -310,17 +358,6 @@ const ExamplesContent = ({
   );
 };
 
-const StepIndicators = ({ currentStep, steps }: StepIndicatorsProps) => (
-  <View style={styles.stepIndicators}>
-    {steps.map((step) => (
-      <View
-        key={step}
-        style={[styles.dot, currentStep === step && styles.activeDot]}
-      />
-    ))}
-  </View>
-);
-
 export const CardBack = ({
   item,
   backAnimatedStyle,
@@ -329,7 +366,7 @@ export const CardBack = ({
   currentStep,
   onStepChange,
 }: CardBackProps) => {
-  const { colors } = useTheme();
+  const { theme, colors, computed } = useTheme();
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
 
@@ -355,7 +392,9 @@ export const CardBack = ({
         return (
           <MeaningContent
             meaning={item.meaning}
-            textColor="#FFFFFF"
+            textColor={
+              theme === 'light' ? (colors.text ?? '#1F2937') : '#FFFFFF'
+            }
             alternativeDepiction={item.alternative_depiction}
             item={item}
           />
@@ -364,14 +403,20 @@ export const CardBack = ({
         return (
           <ExplanationContent
             explanation={item.explanation}
-            textColor="#FFFFFF"
+            textColor={
+              theme === 'light' ? (colors.text ?? '#1F2937') : '#FFFFFF'
+            }
           />
         );
       case 'examples':
         return (
           <ExamplesContent
             examples={item.examples}
-            textSecondaryColor="#F3F4F6"
+            textSecondaryColor={
+              theme === 'light'
+                ? (colors.textSecondary ?? '#374151')
+                : '#F3F4F6'
+            }
           />
         );
       default:
@@ -391,23 +436,62 @@ export const CardBack = ({
         backAnimatedStyle,
       ]}
     >
-      <GradientBackground hasMatte={true} />
-
-      <View
+      <LinearGradient
+        colors={[
+          colors.cardBackBackground ??
+            colors.cardBackground ??
+            (theme === 'light' ? '#eef5ea' : '#1f2a1f'),
+          colors.surface ?? (theme === 'light' ? '#e3ece0' : '#111611'),
+          colors.secondary ??
+            colors.surface ??
+            (theme === 'light' ? '#d6e3d2' : '#172017'),
+        ]}
+        locations={[0, 0.55, 1]}
+        start={{ x: 0.12, y: 0.05 }}
+        end={{ x: 0.88, y: 0.95 }}
         style={{
           position: 'absolute',
           left: 0,
           right: 0,
           top: 0,
           bottom: 0,
-          backgroundColor: 'rgba(128, 128, 128, 0.7)',
           borderRadius: 20,
+        }}
+      />
+      <View
+        style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: 20,
+          backgroundColor: computed.softBackground,
         }}
       />
 
       {renderContent()}
 
-      <StepIndicators currentStep={currentStep} steps={steps} />
+      <View style={styles.stepIndicators}>
+        {steps.map((step) => {
+          const isActive = currentStep === step;
+          const baseDotBg = computed.stepDotBackground;
+          const activeBg = computed.accent;
+          return (
+            <View
+              key={step}
+              style={[
+                styles.dot,
+                { backgroundColor: baseDotBg },
+                isActive && [
+                  styles.activeDot,
+                  {
+                    backgroundColor: activeBg,
+                    borderColor: computed.subtleBorder,
+                  },
+                ],
+              ]}
+            />
+          );
+        })}
+      </View>
 
       {currentStep !== 'examples' && (
         <TouchableOpacity
@@ -415,13 +499,17 @@ export const CardBack = ({
           style={[
             styles.nextButton,
             {
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              borderColor: 'rgba(255, 255, 255, 0.3)',
+              backgroundColor: computed.softBackground,
+              borderColor: computed.subtleBorder,
             },
           ]}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
+          <Ionicons
+            name="chevron-forward"
+            size={24}
+            color={colors.textSecondary}
+          />
         </TouchableOpacity>
       )}
 
@@ -431,13 +519,17 @@ export const CardBack = ({
           style={[
             styles.backButton,
             {
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              borderColor: 'rgba(255, 255, 255, 0.3)',
+              backgroundColor: computed.softBackground,
+              borderColor: computed.subtleBorder,
             },
           ]}
           activeOpacity={0.7}
         >
-          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color={colors.textSecondary}
+          />
         </TouchableOpacity>
       )}
     </Animated.View>
@@ -490,16 +582,23 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    color: PRIMARY_ACCENT_COLOR,
+    fontWeight: '800',
     letterSpacing: 0.5,
     flexShrink: 0,
     marginLeft: 8,
+  },
+  showMoreText: {
+    fontWeight: '800',
+    fontSize: 15,
+    marginLeft: 8,
+    marginRight: 6,
+    letterSpacing: 0.3,
   },
   nextButton: {
     position: 'absolute',
     bottom: 20,
     right: 24,
+    zIndex: 3,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 25,
     paddingVertical: 12,
@@ -518,6 +617,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     left: 24,
+    zIndex: 3,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 25,
     paddingVertical: 12,
@@ -541,12 +641,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 6,
+    zIndex: 2,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(255, 255, 255, 0.35)',
     marginHorizontal: 4,
   },
   activeDot: {
@@ -554,6 +655,12 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: '#00000014',
   },
   mainText: {
     fontSize: 20,
@@ -587,13 +694,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  showMoreText: {
+  showMoreTextEnhanced: {
     color: PRIMARY_ACCENT_COLOR,
-    fontWeight: '600',
+    fontWeight: '800',
     fontSize: 15,
     marginLeft: 8,
     marginRight: 6,
     letterSpacing: 0.3,
+    textShadowColor: '#00000033',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   meaningContent: {
     width: '100%',

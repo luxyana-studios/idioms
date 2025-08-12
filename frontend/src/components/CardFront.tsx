@@ -6,7 +6,6 @@ import { CardData } from '../types/card';
 import { ViewStyle, GestureResponderEvent } from 'react-native';
 import SmileyDisplay from './SmileyDisplay';
 import VotingButtons from './VotingButtons';
-import GradientBackground from './GradientBackground';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../contexts/ThemeContext';
 import DotMenu from './DotMenu';
@@ -32,7 +31,7 @@ const CardFront: React.FC<CardFrontProps> = ({
   CARD_WIDTH,
   CARD_HEIGHT,
 }) => {
-  const { colors } = useTheme();
+  const { colors, computed } = useTheme();
   const [showStats, setShowStats] = useState(false);
 
   const handleStatsToggle = () => {
@@ -63,23 +62,25 @@ const CardFront: React.FC<CardFrontProps> = ({
 
   return (
     <Animated.View style={[containerStyle, frontAnimatedStyle]}>
-      <GradientBackground hasMatte={true} />
       <LinearGradient
-        colors={['rgba(0,0,0,0.2)', 'transparent', 'rgba(0,0,0,0.2)']}
-        locations={[0, 0.1, 1]}
-        style={StyleSheet.absoluteFill}
+        colors={[
+          colors.cardBackground ?? '#e7f2e1',
+          colors.secondary ?? colors.surface ?? '#cfe0c5',
+          colors.surface ?? '#dbe7d4',
+        ]}
+        locations={[0, 0.55, 1]}
+        start={{ x: 0.08, y: 0 }}
+        end={{ x: 0.92, y: 1 }}
+        style={[StyleSheet.absoluteFill, { borderRadius: 20 }]}
       />
-
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(128, 128, 128, 0.6)',
-          borderRadius: 20,
-        }}
+      <LinearGradient
+        colors={[
+          (colors.text ?? '#000000') + '12',
+          'transparent',
+          (colors.text ?? '#000000') + '1F',
+        ]}
+        locations={[0, 0.3, 1]}
+        style={StyleSheet.absoluteFill}
       />
 
       <DotMenu
@@ -92,10 +93,10 @@ const CardFront: React.FC<CardFrontProps> = ({
       <View className="flex-1 justify-center items-center w-full">
         <Text
           style={{
-            color: '#FFFFFF',
-            textShadowColor: 'rgba(0, 0, 0, 0.3)',
-            textShadowOffset: { width: 1, height: 1 },
-            textShadowRadius: 2,
+            color: colors.text,
+            textShadowColor: computed.textShadowColor,
+            textShadowOffset: computed.textShadowOffset,
+            textShadowRadius: computed.textShadowRadius,
           }}
           className="text-3xl font-extrabold text-center mb-6"
         >
@@ -112,16 +113,16 @@ const CardFront: React.FC<CardFrontProps> = ({
           bottom: CARD_HEIGHT * 0.05,
           right: CARD_WIDTH * 0.05,
           padding: 10,
-          backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          backgroundColor: computed.softBackground,
           borderRadius: 999,
           borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.3)',
+          borderColor: computed.subtleBorder,
         }}
       >
         <Ionicons
           name={item.favorite ? 'star' : 'star-outline'}
           size={28}
-          color={item.favorite ? '#FFD700' : '#FFFFFF'}
+          color={item.favorite ? '#E8D04D' : colors.text}
         />
       </TouchableOpacity>
 

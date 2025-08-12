@@ -1,8 +1,14 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+} from 'react';
 
 export type Theme = 'light' | 'dark';
 
-interface ThemeColors {
+export interface ThemeColors {
   primary: string;
   secondary: string;
   background: string;
@@ -16,7 +22,7 @@ interface ThemeColors {
   shadowColor: string;
 }
 
-const lightTheme: ThemeColors = {
+const defaultLight: ThemeColors = {
   primary: '#3b82f6',
   secondary: '#d1d5db',
   background: '#f8fafc',
@@ -30,7 +36,7 @@ const lightTheme: ThemeColors = {
   shadowColor: '#64748b',
 };
 
-const darkTheme: ThemeColors = {
+const defaultDark: ThemeColors = {
   primary: '#3b82f6',
   secondary: '#374151',
   background: '#111827',
@@ -44,10 +50,42 @@ const darkTheme: ThemeColors = {
   shadowColor: '#000',
 };
 
+interface ComputedTheme {
+  accent: string;
+  headerColor: string;
+  softBackground: string;
+  subtleBorder: string;
+  iconTint: string;
+  stepDotBackground: string;
+  textShadowColor: string;
+  textShadowOffset: { width: number; height: number };
+  textShadowRadius: number;
+
+  overlayBg: string;
+  menuBg: string;
+  menuBorder: string;
+  divider: string;
+  triggerBg: string;
+  triggerBorder: string;
+  triggerIconColor: string;
+  triggerIconShadowColor: string;
+  iconColor: string;
+  labelColor: string;
+
+  menuShadowOpacity: number;
+  menuShadowRadius: number;
+}
+
 interface ThemeContextType {
   theme: Theme;
   colors: ThemeColors;
+  computed: ComputedTheme;
   toggleTheme: () => void;
+  setPalette: (
+    palette: Partial<ThemeColors>,
+    mode?: 'light' | 'dark' | 'both',
+  ) => void;
+  setPreset: (preset: import('../utils/palette').PalettePreset) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -56,17 +94,101 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+const mergeColors = (
+  base: ThemeColors,
+  patch?: Partial<ThemeColors>,
+): ThemeColors => ({ ...base, ...(patch ?? {}) });
+
 const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('dark');
+  const [lightPalette, setLightPalette] = useState<ThemeColors>(defaultLight);
+  const [darkPalette, setDarkPalette] = useState<ThemeColors>(defaultDark);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  }, []);
+
+  const setPalette = useCallback(
+    (
+      palette: Partial<ThemeColors>,
+      mode: 'light' | 'dark' | 'both' = 'both',
+    ) => {
+      if (mode === 'light' || mode === 'both')
+        setLightPalette((c) => mergeColors(c, palette));
+      if (mode === 'dark' || mode === 'both')
+        setDarkPalette((c) => mergeColors(c, palette));
+    },
+    [],
+  );
+
+  const colors = theme === 'light' ? lightPalette : darkPalette;
+
+  const setPreset = useCallback(
+    (preset: import('../utils/palette').PalettePreset) => {
+      const { buildPalettesFromPreset } =
+        require('../utils/palette') as typeof import('../utils/palette');
+      const patches = buildPalettesFromPreset(preset);
+      setPalette(patches.light, 'light');
+      setPalette(patches.dark, 'dark');
+    },
+    [setPalette],
+  );
+
+  const LIGHT_COMPUTED: ComputedTheme = {
+    accent: colors.primary || '#2563eb',
+    headerColor: colors.primary || '#2563eb',
+    softBackground: (colors.text ?? '#111111') + '0F',
+    subtleBorder: (colors.border ?? '#cbd5e1') + '80',
+    iconTint: colors.primary || '#2563eb',
+    stepDotBackground: (colors.text ?? '#111111') + '26',
+    textShadowColor: 'transparent',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+    overlayBg: (colors.text ?? '#111111') + '33',
+    menuBg: (colors.surface ?? '#ffffff') + 'F2',
+    menuBorder: (colors.border ?? '#cbd5e1') + '99',
+    divider: (colors.border ?? '#cbd5e1') + '99',
+    triggerBg: 'rgba(0, 0, 0, 0.2)',
+    triggerBorder: 'rgba(255, 255, 255, 0.3)',
+    triggerIconColor: '#FFFFFF',
+    triggerIconShadowColor: '#00000055',
+    iconColor: colors.text ?? '#1f2937',
+    labelColor: colors.text ?? '#1f2937',
+    menuShadowOpacity: 0.2,
+    menuShadowRadius: 12,
   };
 
-  const colors = theme === 'light' ? lightTheme : darkTheme;
+  const DARK_COMPUTED: ComputedTheme = {
+    accent: colors.primary || '#AEEA00',
+    headerColor: colors.primary || '#AEEA00',
+    softBackground: (colors.surface ?? '#000000') + '33',
+    subtleBorder: (colors.text ?? '#ffffff') + '30',
+    iconTint: colors.text ?? '#ffffff',
+    stepDotBackground: 'rgba(255, 255, 255, 0.35)',
+    textShadowColor: (colors.background ?? '#000') + '66',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    overlayBg: 'rgba(0, 0, 0, 0.6)',
+    menuBg: 'rgba(31, 41, 55, 0.95)',
+    menuBorder: 'rgba(255, 255, 255, 0.2)',
+    divider: 'rgba(255, 255, 255, 0.1)',
+    triggerBg: 'rgba(0, 0, 0, 0.2)',
+    triggerBorder: 'rgba(255, 255, 255, 0.3)',
+    triggerIconColor: '#FFFFFF',
+    triggerIconShadowColor: 'transparent',
+    iconColor: '#FFFFFF',
+    labelColor: '#FFFFFF',
+    menuShadowOpacity: 0.35,
+    menuShadowRadius: 16,
+  };
+
+  const computed: ComputedTheme =
+    theme === 'light' ? LIGHT_COMPUTED : DARK_COMPUTED;
 
   return (
-    <ThemeContext.Provider value={{ theme, colors, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{ theme, colors, computed, toggleTheme, setPalette, setPreset }}
+    >
       {children}
     </ThemeContext.Provider>
   );
