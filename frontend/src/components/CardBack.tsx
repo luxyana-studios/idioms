@@ -392,9 +392,7 @@ export const CardBack = ({
         return (
           <MeaningContent
             meaning={item.meaning}
-            textColor={
-              theme === 'light' ? (colors.text ?? '#1F2937') : '#FFFFFF'
-            }
+            textColor={computed.cardTextColor}
             alternativeDepiction={item.alternative_depiction}
             item={item}
           />
@@ -403,20 +401,14 @@ export const CardBack = ({
         return (
           <ExplanationContent
             explanation={item.explanation}
-            textColor={
-              theme === 'light' ? (colors.text ?? '#1F2937') : '#FFFFFF'
-            }
+            textColor={computed.cardTextColor}
           />
         );
       case 'examples':
         return (
           <ExamplesContent
             examples={item.examples}
-            textSecondaryColor={
-              theme === 'light'
-                ? (colors.textSecondary ?? '#374151')
-                : '#F3F4F6'
-            }
+            textSecondaryColor={computed.cardTextSecondaryColor}
           />
         );
       default:

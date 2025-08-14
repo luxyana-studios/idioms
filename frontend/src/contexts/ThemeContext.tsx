@@ -61,6 +61,13 @@ interface ComputedTheme {
   textShadowOffset: { width: number; height: number };
   textShadowRadius: number;
 
+  cardTextColorLight: string;
+  cardTextColorDark: string;
+  cardTextSecondaryColorLight: string;
+  cardTextSecondaryColorDark: string;
+  cardTextColor: string;
+  cardTextSecondaryColor: string;
+
   overlayBg: string;
   menuBg: string;
   menuBorder: string;
@@ -144,6 +151,13 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     textShadowColor: 'transparent',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 2,
+
+    cardTextColorLight: '#1F2937',
+    cardTextColorDark: '#FFFFFF',
+    cardTextSecondaryColorLight: '#374151',
+    cardTextSecondaryColorDark: '#F3F4F6',
+    cardTextColor: '#1F2937',
+    cardTextSecondaryColor: '#374151',
     overlayBg: (colors.text ?? '#111111') + '33',
     menuBg: (colors.surface ?? '#ffffff') + 'F2',
     menuBorder: (colors.border ?? '#cbd5e1') + '99',
@@ -168,6 +182,13 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     textShadowColor: (colors.background ?? '#000') + '66',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+
+    cardTextColorLight: '#1F2937',
+    cardTextColorDark: '#FFFFFF',
+    cardTextSecondaryColorLight: '#374151',
+    cardTextSecondaryColorDark: '#F3F4F6',
+    cardTextColor: '#FFFFFF',
+    cardTextSecondaryColor: '#F3F4F6',
     overlayBg: 'rgba(0, 0, 0, 0.6)',
     menuBg: 'rgba(31, 41, 55, 0.95)',
     menuBorder: 'rgba(255, 255, 255, 0.2)',
@@ -182,8 +203,17 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     menuShadowRadius: 16,
   };
 
-  const computed: ComputedTheme =
-    theme === 'light' ? LIGHT_COMPUTED : DARK_COMPUTED;
+  const computed: ComputedTheme = {
+    ...(theme === 'light' ? LIGHT_COMPUTED : DARK_COMPUTED),
+    cardTextColor:
+      theme === 'light'
+        ? LIGHT_COMPUTED.cardTextColorLight
+        : DARK_COMPUTED.cardTextColorDark,
+    cardTextSecondaryColor:
+      theme === 'light'
+        ? LIGHT_COMPUTED.cardTextSecondaryColorLight
+        : DARK_COMPUTED.cardTextSecondaryColorDark,
+  };
 
   return (
     <ThemeContext.Provider
