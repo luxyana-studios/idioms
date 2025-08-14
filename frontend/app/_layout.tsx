@@ -26,6 +26,7 @@ export default function RootLayout() {
       <QueryProvider>
         <ThemeProvider>
           <Stack>
+            <Stack.Screen name="welcome" options={{ headerShown: false }} />
             <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
           </Stack>
         </ThemeProvider>
