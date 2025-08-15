@@ -264,7 +264,11 @@ const WelcomeScreen = () => {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           scrollEnabled={false}
-          contentContainerStyle={{ alignItems: 'center' }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
           style={{ width: '100%' }}
           getItemLayout={(_, index) => ({
             length: screenWidth - 40,
