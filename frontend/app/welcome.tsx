@@ -76,11 +76,6 @@ const WelcomeScreen = () => {
   const slideAnim = useRef(new Animated.Value(50)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const flatListRef = useRef<any>(null);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     Animated.parallel([
@@ -107,18 +102,10 @@ const WelcomeScreen = () => {
     if (currentStep < welcomeSteps.length - 1) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
-      const itemWidth = screenWidth - 40;
-      if (flatListRef.current?.scrollToOffset) {
-        flatListRef.current.scrollToOffset({
-          offset: nextStep * itemWidth,
-          animated: true,
-        });
-      } else {
-        flatListRef.current?.scrollToIndex?.({
-          index: nextStep,
-          animated: true,
-        });
-      }
+      flatListRef.current?.scrollToIndex({
+        index: nextStep,
+        animated: true,
+      });
     } else {
       handleNavigate();
     }
@@ -128,18 +115,10 @@ const WelcomeScreen = () => {
     if (currentStep > 0) {
       const prevStep = currentStep - 1;
       setCurrentStep(prevStep);
-      const itemWidth = screenWidth - 40;
-      if (flatListRef.current?.scrollToOffset) {
-        flatListRef.current.scrollToOffset({
-          offset: prevStep * itemWidth,
-          animated: true,
-        });
-      } else {
-        flatListRef.current?.scrollToIndex?.({
-          index: prevStep,
-          animated: true,
-        });
-      }
+      flatListRef.current?.scrollToIndex({
+        index: prevStep,
+        animated: true,
+      });
     }
   };
 
@@ -197,11 +176,9 @@ const WelcomeScreen = () => {
       >
         <Text style={styles.emoji}>{item.emoji}</Text>
       </View>
-
       <Text style={[styles.title, { color: computed.cardTextColorLight }]}>
         {item.title}
       </Text>
-
       <Text
         style={[
           styles.subtitle,
@@ -210,7 +187,6 @@ const WelcomeScreen = () => {
       >
         {item.subtitle}
       </Text>
-
       <Text style={[styles.description, { color: colors.textSecondary }]}>
         {item.description}
       </Text>
@@ -247,13 +223,11 @@ const WelcomeScreen = () => {
       >
         <View style={styles.overlay} />
       </ImageBackground>
-
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
         <Text style={[styles.skipText, { color: colors.textSecondary }]}>
           Skip
         </Text>
       </TouchableOpacity>
-
       <View style={styles.content}>
         <FlatList
           ref={flatListRef}
@@ -269,18 +243,20 @@ const WelcomeScreen = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          style={{ width: '100%' }}
+          style={{ width: '100%', height: screenHeight * 0.6 }}
+          initialNumToRender={1}
+          windowSize={2}
+          removeClippedSubviews={false}
+          extraData={currentStep}
           getItemLayout={(_, index) => ({
             length: screenWidth - 40,
             offset: (screenWidth - 40) * index,
             index,
           })}
         />
-
         <View style={styles.indicatorsContainer}>
           {welcomeSteps.map((_, index) => renderIndicator(index))}
         </View>
-
         <View style={styles.progressContainer}>
           <View
             style={[styles.progressBar, { backgroundColor: colors.border }]}
@@ -299,7 +275,6 @@ const WelcomeScreen = () => {
             {currentStep + 1} of {welcomeSteps.length}
           </Text>
         </View>
-
         <View style={styles.buttonsContainer}>
           {currentStep > 0 && (
             <TouchableOpacity
@@ -318,7 +293,6 @@ const WelcomeScreen = () => {
               </Text>
             </TouchableOpacity>
           )}
-
           <TouchableOpacity
             style={[
               styles.navButton,
@@ -345,11 +319,7 @@ const WelcomeScreen = () => {
         backgroundColor="transparent"
         translucent
       />
-      {isClient ? (
-        <GestureDetector gesture={gesture}>{content}</GestureDetector>
-      ) : (
-        content
-      )}
+      <GestureDetector gesture={gesture}>{content}</GestureDetector>
     </>
   );
 };
@@ -386,7 +356,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-
   content: {
     flex: 1,
     justifyContent: 'center',
@@ -504,4 +473,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
 export default WelcomeScreen;
