@@ -81,6 +81,10 @@ interface ComputedTheme {
 
   menuShadowOpacity: number;
   menuShadowRadius: number;
+
+  backgroundImageOpacity: number;
+  // Overlay color to tint/darken the background image (components should place this over the image)
+  backgroundImageOverlay: string;
 }
 
 interface ThemeContextType {
@@ -170,6 +174,9 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     labelColor: colors.text ?? '#1f2937',
     menuShadowOpacity: 0.2,
     menuShadowRadius: 12,
+
+    backgroundImageOpacity: 1,
+    backgroundImageOverlay: 'rgba(0, 0, 0, 0.18)',
   };
 
   const DARK_COMPUTED: ComputedTheme = {
@@ -201,6 +208,9 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     labelColor: '#FFFFFF',
     menuShadowOpacity: 0.35,
     menuShadowRadius: 16,
+
+    backgroundImageOpacity: 1,
+    backgroundImageOverlay: 'rgba(0, 0, 0, 0.28)',
   };
 
   const computed: ComputedTheme = {
