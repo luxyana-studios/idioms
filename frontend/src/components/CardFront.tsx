@@ -31,7 +31,7 @@ const CardFront: React.FC<CardFrontProps> = ({
   CARD_WIDTH,
   CARD_HEIGHT,
 }) => {
-  const { colors, computed } = useTheme();
+  const { theme, colors, computed } = useTheme();
   const [showStats, setShowStats] = useState(false);
 
   const handleStatsToggle = () => {
@@ -116,13 +116,22 @@ const CardFront: React.FC<CardFrontProps> = ({
           backgroundColor: computed.softBackground,
           borderRadius: 999,
           borderWidth: 1,
-          borderColor: computed.subtleBorder,
+          borderColor:
+            item.favorite && theme === 'light'
+              ? '#B08B2F'
+              : computed.subtleBorder,
         }}
       >
         <Ionicons
           name={item.favorite ? 'star' : 'star-outline'}
           size={28}
-          color={item.favorite ? '#E8D04D' : colors.text}
+          color={
+            item.favorite
+              ? theme === 'light'
+                ? '#C9A93F'
+                : '#E8D04D'
+              : colors.text
+          }
         />
       </TouchableOpacity>
 

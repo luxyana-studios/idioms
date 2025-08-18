@@ -29,16 +29,21 @@ interface MeaningContentProps {
   textColor: string;
   alternativeDepiction: string[];
   item: CardData;
+  headerColor?: string;
+  accentColor?: string;
 }
 
 interface ExplanationContentProps {
   explanation: string;
   textColor: string;
+  headerColor?: string;
 }
 
 interface ExamplesContentProps {
   examples: string[];
   textSecondaryColor: string;
+  headerColor?: string;
+  accentColor?: string;
 }
 
 interface StepIndicatorsProps {
@@ -53,21 +58,24 @@ const MeaningContent = ({
   textColor,
   alternativeDepiction,
   item,
+  headerColor,
 }: MeaningContentProps) => {
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
 
   const { theme, colors, computed } = useTheme();
 
+  const resolvedHeaderColor = headerColor ?? computed.headerColor;
+
   return (
     <View style={styles.meaningContentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="bulb-outline" size={22} color={computed.headerColor} />
+        <Ionicons name="bulb-outline" size={22} color={resolvedHeaderColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: computed.headerColor,
+              color: resolvedHeaderColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -190,18 +198,21 @@ const MeaningContent = ({
 const ExplanationContent = ({
   explanation,
   textColor,
+  headerColor,
 }: ExplanationContentProps) => {
   const { theme, colors, computed } = useTheme();
+
+  const resolvedHeaderColor = headerColor ?? computed.headerColor;
 
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="book-outline" size={22} color={computed.headerColor} />
+        <Ionicons name="book-outline" size={22} color={resolvedHeaderColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: computed.headerColor,
+              color: resolvedHeaderColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -232,11 +243,16 @@ const ExplanationContent = ({
 const ExamplesContent = ({
   examples,
   textSecondaryColor,
+  headerColor,
+  accentColor,
 }: ExamplesContentProps) => {
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
   const { theme, colors, computed } = useTheme();
+
+  const resolvedHeaderColor = headerColor ?? computed.headerColor;
+  const resolvedAccent = accentColor ?? computed.accent;
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
@@ -247,12 +263,12 @@ const ExamplesContent = ({
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="list-outline" size={22} color={computed.headerColor} />
+        <Ionicons name="list-outline" size={22} color={resolvedHeaderColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: computed.headerColor,
+              color: resolvedHeaderColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -331,13 +347,13 @@ const ExamplesContent = ({
                 <Ionicons
                   name="add-circle-outline"
                   size={20}
-                  color={computed.accent}
+                  color={resolvedAccent}
                 />
                 <Text
                   style={[
                     styles.showMoreText,
                     {
-                      color: computed.accent,
+                      color: resolvedAccent,
                       textShadowColor: computed.textShadowColor,
                     },
                   ]}
@@ -347,7 +363,7 @@ const ExamplesContent = ({
                 <Ionicons
                   name="chevron-down"
                   size={16}
-                  color={computed.accent}
+                  color={resolvedAccent}
                 />
               </View>
             </TouchableOpacity>
@@ -369,6 +385,10 @@ export const CardBack = ({
   const { theme, colors, computed } = useTheme();
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
+  const lightBrown = '#8B6B58';
+  const headingColor = theme === 'light' ? lightBrown : computed.headerColor;
+  const accentColor = theme === 'light' ? lightBrown : computed.accent;
+  const navIconColor = theme === 'light' ? lightBrown : colors.textSecondary;
 
   const handleNextPress = () => {
     if (currentStep === 'meaning') {
@@ -395,6 +415,7 @@ export const CardBack = ({
             textColor={computed.cardTextColor}
             alternativeDepiction={item.alternative_depiction}
             item={item}
+            headerColor={headingColor}
           />
         );
       case 'explanation':
@@ -402,6 +423,7 @@ export const CardBack = ({
           <ExplanationContent
             explanation={item.explanation}
             textColor={computed.cardTextColor}
+            headerColor={headingColor}
           />
         );
       case 'examples':
@@ -409,6 +431,8 @@ export const CardBack = ({
           <ExamplesContent
             examples={item.examples}
             textSecondaryColor={computed.cardTextSecondaryColor}
+            headerColor={headingColor}
+            accentColor={accentColor}
           />
         );
       default:
@@ -465,7 +489,7 @@ export const CardBack = ({
         {steps.map((step) => {
           const isActive = currentStep === step;
           const baseDotBg = computed.stepDotBackground;
-          const activeBg = computed.accent;
+          const activeBg = theme === 'light' ? accentColor : computed.accent;
           return (
             <View
               key={step}
@@ -497,11 +521,7 @@ export const CardBack = ({
           ]}
           activeOpacity={0.7}
         >
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={colors.textSecondary}
-          />
+          <Ionicons name="chevron-forward" size={24} color={navIconColor} />
         </TouchableOpacity>
       )}
 
@@ -517,11 +537,7 @@ export const CardBack = ({
           ]}
           activeOpacity={0.7}
         >
-          <Ionicons
-            name="chevron-back"
-            size={24}
-            color={colors.textSecondary}
-          />
+          <Ionicons name="chevron-back" size={24} color={navIconColor} />
         </TouchableOpacity>
       )}
     </Animated.View>
