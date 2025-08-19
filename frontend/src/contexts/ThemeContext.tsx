@@ -83,7 +83,6 @@ interface ComputedTheme {
   menuShadowRadius: number;
 
   backgroundImageOpacity: number;
-  // Overlay color to tint/darken the background image (components should place this over the image)
   backgroundImageOverlay: string;
 }
 
