@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useMemo, useState, useEffect } from 'react';
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +23,8 @@ interface CardFrontProps {
   CARD_HEIGHT: number;
 }
 
+const DARK_FAVORITE_COLOR = '#E8D04D';
+
 const CardFront: React.FC<CardFrontProps> = ({
   item,
   frontAnimatedStyle,
@@ -33,6 +35,11 @@ const CardFront: React.FC<CardFrontProps> = ({
 }) => {
   const { theme, colors, computed } = useTheme();
   const [showStats, setShowStats] = useState(false);
+  const [isFavorite, setIsFavorite] = useState<boolean>(item.favorite);
+
+  useEffect(() => {
+    setIsFavorite(item.favorite);
+  }, [item.favorite]);
 
   const handleStatsToggle = () => {
     setShowStats(!showStats);
@@ -107,7 +114,10 @@ const CardFront: React.FC<CardFrontProps> = ({
       </View>
 
       <TouchableOpacity
-        onPress={handleFavoritePress}
+        onPress={(e) => {
+          setIsFavorite((prev) => !prev);
+          handleFavoritePress(e);
+        }}
         style={{
           position: 'absolute',
           bottom: CARD_HEIGHT * 0.05,
@@ -116,20 +126,17 @@ const CardFront: React.FC<CardFrontProps> = ({
           backgroundColor: computed.softBackground,
           borderRadius: 999,
           borderWidth: 1,
-          borderColor:
-            item.favorite && theme === 'light'
-              ? '#B08B2F'
-              : computed.subtleBorder,
+          borderColor: computed.subtleBorder,
         }}
       >
         <Ionicons
-          name={item.favorite ? 'star' : 'star-outline'}
+          name={isFavorite ? 'star' : 'star-outline'}
           size={28}
           color={
-            item.favorite
+            isFavorite
               ? theme === 'light'
-                ? '#C9A93F'
-                : '#E8D04D'
+                ? computed.headerColor
+                : DARK_FAVORITE_COLOR
               : colors.text
           }
         />

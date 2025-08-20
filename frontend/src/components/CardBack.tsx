@@ -29,21 +29,16 @@ interface MeaningContentProps {
   textColor: string;
   alternativeDepiction: string[];
   item: CardData;
-  headerColor?: string;
-  accentColor?: string;
 }
 
 interface ExplanationContentProps {
   explanation: string;
   textColor: string;
-  headerColor?: string;
 }
 
 interface ExamplesContentProps {
   examples: string[];
   textSecondaryColor: string;
-  headerColor?: string;
-  accentColor?: string;
 }
 
 interface StepIndicatorsProps {
@@ -51,21 +46,18 @@ interface StepIndicatorsProps {
   steps: ContentStep[];
 }
 
-const PRIMARY_ACCENT_COLOR = '#AEEA00';
-
 const MeaningContent = ({
   meaning,
   textColor,
   alternativeDepiction,
   item,
-  headerColor,
 }: MeaningContentProps) => {
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
 
   const { theme, colors, computed } = useTheme();
 
-  const resolvedHeaderColor = headerColor ?? computed.headerColor;
+  const resolvedHeaderColor = computed.headerColor;
 
   return (
     <View style={styles.meaningContentContainer}>
@@ -142,18 +134,18 @@ const MeaningContent = ({
                       <View
                         key={idx}
                         style={{
-                          backgroundColor: computed.softBackground,
+                          backgroundColor: resolvedHeaderColor + '18',
                           borderRadius: 12,
                           paddingHorizontal: 10,
                           paddingVertical: 4,
                           margin: 2,
                           borderWidth: 1,
-                          borderColor: computed.subtleBorder,
+                          borderColor: resolvedHeaderColor,
                         }}
                       >
                         <Text
                           style={{
-                            color: colors.textSecondary,
+                            color: resolvedHeaderColor,
                             fontWeight: '700',
                             fontSize: 13,
                           }}
@@ -198,11 +190,10 @@ const MeaningContent = ({
 const ExplanationContent = ({
   explanation,
   textColor,
-  headerColor,
 }: ExplanationContentProps) => {
   const { theme, colors, computed } = useTheme();
 
-  const resolvedHeaderColor = headerColor ?? computed.headerColor;
+  const resolvedHeaderColor = computed.headerColor;
 
   return (
     <View style={styles.contentContainer}>
@@ -243,16 +234,14 @@ const ExplanationContent = ({
 const ExamplesContent = ({
   examples,
   textSecondaryColor,
-  headerColor,
-  accentColor,
 }: ExamplesContentProps) => {
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
   const { theme, colors, computed } = useTheme();
 
-  const resolvedHeaderColor = headerColor ?? computed.headerColor;
-  const resolvedAccent = accentColor ?? computed.accent;
+  const resolvedHeaderColor = computed.headerColor;
+  const resolvedAccent = computed.accent;
 
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
@@ -385,10 +374,10 @@ export const CardBack = ({
   const { theme, colors, computed } = useTheme();
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
-  const lightBrown = '#8B6B58';
-  const headingColor = theme === 'light' ? lightBrown : computed.headerColor;
-  const accentColor = theme === 'light' ? lightBrown : computed.accent;
-  const navIconColor = theme === 'light' ? lightBrown : colors.textSecondary;
+
+  const headingColor = computed.headerColor;
+  const accentColor = computed.accent;
+  const navIconColor = computed.headerColor;
 
   const handleNextPress = () => {
     if (currentStep === 'meaning') {
@@ -415,7 +404,6 @@ export const CardBack = ({
             textColor={computed.cardTextColor}
             alternativeDepiction={item.alternative_depiction}
             item={item}
-            headerColor={headingColor}
           />
         );
       case 'explanation':
@@ -423,7 +411,6 @@ export const CardBack = ({
           <ExplanationContent
             explanation={item.explanation}
             textColor={computed.cardTextColor}
-            headerColor={headingColor}
           />
         );
       case 'examples':
@@ -431,8 +418,6 @@ export const CardBack = ({
           <ExamplesContent
             examples={item.examples}
             textSecondaryColor={computed.cardTextSecondaryColor}
-            headerColor={headingColor}
-            accentColor={accentColor}
           />
         );
       default:
@@ -489,7 +474,7 @@ export const CardBack = ({
         {steps.map((step) => {
           const isActive = currentStep === step;
           const baseDotBg = computed.stepDotBackground;
-          const activeBg = theme === 'light' ? accentColor : computed.accent;
+          const activeBg = computed.accent;
           return (
             <View
               key={step}
@@ -659,7 +644,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   activeDot: {
-    backgroundColor: PRIMARY_ACCENT_COLOR,
     width: 10,
     height: 10,
     borderRadius: 5,
@@ -701,17 +685,6 @@ const styles = StyleSheet.create({
   showMoreContent: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  showMoreTextEnhanced: {
-    color: PRIMARY_ACCENT_COLOR,
-    fontWeight: '800',
-    fontSize: 15,
-    marginLeft: 8,
-    marginRight: 6,
-    letterSpacing: 0.3,
-    textShadowColor: '#00000033',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
   meaningContent: {
     width: '100%',

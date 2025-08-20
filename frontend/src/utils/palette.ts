@@ -103,17 +103,17 @@ export function buildDarkPatch(preset: PalettePreset): ThemeColorsPatch {
   const dominant = preset.dominant;
   const accent = preset.accent ?? mixHex(dominant, '#000000' as Hex, 0.2);
   const background =
-    preset.background ?? mixHex(dominant, '#000000' as Hex, 0.85);
-  const surface = mixHex(background, '#000000' as Hex, 0.1);
+    preset.background ?? mixHex(dominant, '#000000' as Hex, 0.68);
+  const surface = mixHex(background, '#000000' as Hex, 0.08);
   const text = preset.textDark ?? bestTextOn(background);
   const textSecondary = mixHex(
     text,
     (text === '#ffffff' ? '#000000' : '#ffffff') as Hex,
     0.7,
   );
-  const border = mixHex(text, background, 0.85);
-  const cardBackground = mixHex(surface, '#1f2937' as Hex, 0.3);
-  const cardBackBackground = mixHex(cardBackground, '#111827' as Hex, 0.3);
+  const border = mixHex(text, background, 0.72);
+  const cardBackground = mixHex(surface, '#1f2937' as Hex, 0.2);
+  const cardBackBackground = mixHex(cardBackground, '#111827' as Hex, 0.18);
   const searchBackground = 'rgba(31,41,55,0.9)';
   const shadowColor = '#000';
 

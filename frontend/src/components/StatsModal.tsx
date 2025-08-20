@@ -24,7 +24,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
   if (!isVisible) return null;
 
   const { theme, colors, computed } = useTheme();
-  const primary = theme === 'light' ? '#8B6B58' : computed.accent;
+  const primary = theme === 'light' ? computed.headerColor : computed.accent;
   const labelColor = computed.labelColor;
   const modalBg = theme === 'dark' ? colors.background : computed.menuBg;
   const border = computed.subtleBorder;
