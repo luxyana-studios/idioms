@@ -1,11 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface HeroSectionProps {
   colors: any;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ colors }) => {
+  const { theme, computed } = useTheme();
+
   return (
     <View className="mb-8 items-center">
       <Text
@@ -15,7 +18,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ colors }) => {
         Welcome to Idioms
       </Text>
       <Text
-        style={{ color: colors.textSecondary }}
+        style={{
+          color: computed.cardTextColor,
+        }}
         className="text-lg text-center mb-4"
       >
         Master the art of idiomatic expressions

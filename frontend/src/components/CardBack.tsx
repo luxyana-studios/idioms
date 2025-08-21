@@ -46,8 +46,6 @@ interface StepIndicatorsProps {
   steps: ContentStep[];
 }
 
-const PRIMARY_ACCENT_COLOR = '#AEEA00';
-
 const MeaningContent = ({
   meaning,
   textColor,
@@ -59,15 +57,17 @@ const MeaningContent = ({
 
   const { theme, colors, computed } = useTheme();
 
+  const resolvedHeaderColor = computed.headerColor;
+
   return (
     <View style={styles.meaningContentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="bulb-outline" size={22} color={computed.headerColor} />
+        <Ionicons name="bulb-outline" size={22} color={resolvedHeaderColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: computed.headerColor,
+              color: resolvedHeaderColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -134,18 +134,18 @@ const MeaningContent = ({
                       <View
                         key={idx}
                         style={{
-                          backgroundColor: computed.softBackground,
+                          backgroundColor: resolvedHeaderColor + '18',
                           borderRadius: 12,
                           paddingHorizontal: 10,
                           paddingVertical: 4,
                           margin: 2,
                           borderWidth: 1,
-                          borderColor: computed.subtleBorder,
+                          borderColor: resolvedHeaderColor,
                         }}
                       >
                         <Text
                           style={{
-                            color: colors.textSecondary,
+                            color: resolvedHeaderColor,
                             fontWeight: '700',
                             fontSize: 13,
                           }}
@@ -193,15 +193,17 @@ const ExplanationContent = ({
 }: ExplanationContentProps) => {
   const { theme, colors, computed } = useTheme();
 
+  const resolvedHeaderColor = computed.headerColor;
+
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="book-outline" size={22} color={computed.headerColor} />
+        <Ionicons name="book-outline" size={22} color={resolvedHeaderColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: computed.headerColor,
+              color: resolvedHeaderColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -238,6 +240,9 @@ const ExamplesContent = ({
 
   const { theme, colors, computed } = useTheme();
 
+  const resolvedHeaderColor = computed.headerColor;
+  const resolvedAccent = computed.accent;
+
   const handleShowMoreExamples = () => {
     setShowAllExamples(true);
   };
@@ -247,12 +252,12 @@ const ExamplesContent = ({
   return (
     <View style={styles.contentContainer}>
       <View style={styles.titleSection}>
-        <Ionicons name="list-outline" size={22} color={computed.headerColor} />
+        <Ionicons name="list-outline" size={22} color={resolvedHeaderColor} />
         <Text
           style={[
             styles.stepTitle,
             {
-              color: computed.headerColor,
+              color: resolvedHeaderColor,
               textShadowColor: computed.textShadowColor,
               textShadowOffset: computed.textShadowOffset,
               textShadowRadius: computed.textShadowRadius,
@@ -331,13 +336,13 @@ const ExamplesContent = ({
                 <Ionicons
                   name="add-circle-outline"
                   size={20}
-                  color={computed.accent}
+                  color={resolvedAccent}
                 />
                 <Text
                   style={[
                     styles.showMoreText,
                     {
-                      color: computed.accent,
+                      color: resolvedAccent,
                       textShadowColor: computed.textShadowColor,
                     },
                   ]}
@@ -347,7 +352,7 @@ const ExamplesContent = ({
                 <Ionicons
                   name="chevron-down"
                   size={16}
-                  color={computed.accent}
+                  color={resolvedAccent}
                 />
               </View>
             </TouchableOpacity>
@@ -369,6 +374,10 @@ export const CardBack = ({
   const { theme, colors, computed } = useTheme();
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
+
+  const headingColor = computed.headerColor;
+  const accentColor = computed.accent;
+  const navIconColor = computed.headerColor;
 
   const handleNextPress = () => {
     if (currentStep === 'meaning') {
@@ -497,11 +506,7 @@ export const CardBack = ({
           ]}
           activeOpacity={0.7}
         >
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={colors.textSecondary}
-          />
+          <Ionicons name="chevron-forward" size={24} color={navIconColor} />
         </TouchableOpacity>
       )}
 
@@ -517,11 +522,7 @@ export const CardBack = ({
           ]}
           activeOpacity={0.7}
         >
-          <Ionicons
-            name="chevron-back"
-            size={24}
-            color={colors.textSecondary}
-          />
+          <Ionicons name="chevron-back" size={24} color={navIconColor} />
         </TouchableOpacity>
       )}
     </Animated.View>
@@ -643,7 +644,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   activeDot: {
-    backgroundColor: PRIMARY_ACCENT_COLOR,
     width: 10,
     height: 10,
     borderRadius: 5,
@@ -685,17 +685,6 @@ const styles = StyleSheet.create({
   showMoreContent: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  showMoreTextEnhanced: {
-    color: PRIMARY_ACCENT_COLOR,
-    fontWeight: '800',
-    fontSize: 15,
-    marginLeft: 8,
-    marginRight: 6,
-    letterSpacing: 0.3,
-    textShadowColor: '#00000033',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
   meaningContent: {
     width: '100%',

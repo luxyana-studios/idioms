@@ -15,7 +15,7 @@ const pandaBackground = require('../../assets/background/fondo-panda.webp');
 const apiUrl = Constants.expoConfig?.extra?.API_URL ?? 'API URL not found';
 
 const HomeScreen = () => {
-  const { colors, setPalette, theme, setPreset } = useTheme();
+  const { colors, setPalette, theme, setPreset, computed } = useTheme();
 
   // Navigation function with type assertion
   const navigateTo = (route: string) => {
@@ -38,8 +38,8 @@ const HomeScreen = () => {
     },
     {
       title: 'View Favorites',
-      description: 'See your saved idioms',
-      icon: 'star' as const,
+      description: 'Browse your favorite idioms',
+      icon: 'star-outline' as const,
       route: '/(drawer)/favorites',
     },
     {
@@ -76,6 +76,20 @@ const HomeScreen = () => {
           width: '100%',
           height: '100%',
           zIndex: 0,
+          opacity: computed.backgroundImageOpacity,
+        }}
+      />
+
+      <View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: computed.backgroundImageOverlay,
+          zIndex: 1,
         }}
       />
 
@@ -86,7 +100,7 @@ const HomeScreen = () => {
           position: 'absolute',
           top: screenHeight / 2 - 255 + Math.round(screenHeight * 0.09),
           left: screenWidth / 2 - 255,
-          zIndex: 1,
+          zIndex: 2,
           opacity: 0.7,
         }}
       />
@@ -94,7 +108,7 @@ const HomeScreen = () => {
       <View
         className="flex-1 px-6"
         style={{
-          zIndex: 2,
+          zIndex: 3,
           paddingTop: 16,
           marginTop: 96,
         }}

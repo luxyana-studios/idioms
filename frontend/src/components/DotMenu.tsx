@@ -35,6 +35,8 @@ const DotMenu: React.FC<DotMenuProps> = ({
 
   const { theme, colors, computed } = useTheme();
 
+  const menuBackground = theme === 'dark' ? colors.background : computed.menuBg;
+
   const showSuccessNotification = (message: string) => {
     setNotificationMessage(message);
     setShowNotification(true);
@@ -193,7 +195,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
 
           <View
             style={{
-              backgroundColor: computed.menuBg,
+              backgroundColor: menuBackground,
               borderRadius: 16,
               padding: 16,
               minWidth: 200,
@@ -279,7 +281,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             style={{
-              backgroundColor: computed.menuBg,
+              backgroundColor: menuBackground,
               borderRadius: 16,
               padding: 20,
               minWidth: 200,
@@ -368,7 +370,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
             top: CARD_HEIGHT * 0.12,
             left: CARD_WIDTH * 0.15,
             right: CARD_WIDTH * 0.15,
-            backgroundColor: computed.menuBg,
+            backgroundColor: menuBackground,
             borderRadius: 12,
             padding: 12,
             borderWidth: 1,

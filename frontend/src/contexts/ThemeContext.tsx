@@ -20,6 +20,8 @@ export interface ThemeColors {
   cardBackBackground: string;
   searchBackground: string;
   shadowColor: string;
+  cardHeading?: string;
+  cardAccent?: string;
 }
 
 const defaultLight: ThemeColors = {
@@ -34,6 +36,8 @@ const defaultLight: ThemeColors = {
   cardBackBackground: '#f1f5f9',
   searchBackground: 'rgba(248, 250, 252, 0.95)',
   shadowColor: '#64748b',
+  cardHeading: '#8B6B58',
+  cardAccent: '#8B6B58',
 };
 
 const defaultDark: ThemeColors = {
@@ -48,6 +52,8 @@ const defaultDark: ThemeColors = {
   cardBackBackground: '#1c1a2d',
   searchBackground: 'rgba(31, 41, 55, 0.9)',
   shadowColor: '#000',
+  cardHeading: '#E8D04D',
+  cardAccent: '#E8D04D',
 };
 
 interface ComputedTheme {
@@ -81,6 +87,9 @@ interface ComputedTheme {
 
   menuShadowOpacity: number;
   menuShadowRadius: number;
+
+  backgroundImageOpacity: number;
+  backgroundImageOverlay: string;
 }
 
 interface ThemeContextType {
@@ -142,8 +151,8 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   );
 
   const LIGHT_COMPUTED: ComputedTheme = {
-    accent: colors.primary || '#2563eb',
-    headerColor: colors.primary || '#2563eb',
+    accent: colors.cardAccent ?? colors.primary ?? '#2563eb',
+    headerColor: colors.cardHeading ?? colors.primary ?? '#2563eb',
     softBackground: (colors.text ?? '#111111') + '0F',
     subtleBorder: (colors.border ?? '#cbd5e1') + '80',
     iconTint: colors.primary || '#2563eb',
@@ -170,11 +179,14 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     labelColor: colors.text ?? '#1f2937',
     menuShadowOpacity: 0.2,
     menuShadowRadius: 12,
+
+    backgroundImageOpacity: 1,
+    backgroundImageOverlay: 'rgba(0, 0, 0, 0.18)',
   };
 
   const DARK_COMPUTED: ComputedTheme = {
-    accent: colors.primary || '#AEEA00',
-    headerColor: colors.primary || '#AEEA00',
+    accent: colors.cardAccent ?? colors.primary ?? '#E8D04D',
+    headerColor: colors.cardHeading ?? colors.primary ?? '#E8D04D',
     softBackground: (colors.surface ?? '#000000') + '33',
     subtleBorder: (colors.text ?? '#ffffff') + '30',
     iconTint: colors.text ?? '#ffffff',
@@ -201,6 +213,9 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     labelColor: '#FFFFFF',
     menuShadowOpacity: 0.35,
     menuShadowRadius: 16,
+
+    backgroundImageOpacity: 1,
+    backgroundImageOverlay: 'rgba(0, 0, 0, 0.28)',
   };
 
   const computed: ComputedTheme = {

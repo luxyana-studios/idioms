@@ -32,7 +32,7 @@ const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({
         </Text>
       </View>
 
-      <View style={{ zIndex: 1, marginTop: 180 }}>
+      <View style={{ zIndex: 1, marginTop: 200 }}>
         {rows.map((row, rowIdx) => (
           <View key={rowIdx} className="flex-row justify-between mb-4 px-2">
             {row.map((action, colIdx) => (
