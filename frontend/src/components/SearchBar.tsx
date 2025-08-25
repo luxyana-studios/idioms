@@ -8,6 +8,7 @@ interface SearchBarProps {
   onChangeText: (text: string) => void;
   onFocus?: () => void;
   onClear?: () => void;
+  onBlur?: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -15,6 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onChangeText,
   onFocus,
   onClear,
+  onBlur,
 }) => {
   const { colors } = useTheme();
 
@@ -37,6 +39,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         className="flex-1 ml-2 text-base"
         returnKeyType="search"
         onFocus={onFocus}
+        onBlur={onBlur}
       />
       {value.length > 0 && onClear && (
         <TouchableOpacity onPress={onClear} className="ml-2">

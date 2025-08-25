@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Animated, Dimensions } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import CardList from '../../src/components/CardList';
@@ -30,19 +30,23 @@ const SearchScreen = () => {
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
-  const headerAnim = React.useRef(new Animated.Value(1)).current;
+  const headerAnim = useRef(new Animated.Value(1)).current;
+  const focusLockRef = useRef(false);
+  const [optionsRendered, setOptionsRendered] = useState(true);
+  const [searchBarHeight, setSearchBarHeight] = useState<number>(64);
+  const [optionsHeight, setOptionsHeight] = useState<number>(0);
+
+  const computePadding = () => {
+    if (showHeader) {
+      return Math.round(searchBarHeight + optionsHeight + 12);
+    }
+    return Math.round(searchBarHeight + 8);
+  };
 
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedInput(searchInput), 300);
     return () => clearTimeout(handler);
   }, [searchInput]);
-
-  useEffect(() => {
-    // eslint-disable-next-line no-empty
-    if (params.autoFocus === 'true') {
-      // Intentionally left blank for future autofocus logic
-    }
-  }, [params.autoFocus]);
 
   useEffect(() => {
     const shouldShow = isSearchFocused || searchInput.length > 0;
@@ -80,6 +84,31 @@ const SearchScreen = () => {
 
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
+    focusLockRef.current = true;
+    setTimeout(() => (focusLockRef.current = false), 350);
+
+    if (!showHeader) {
+      setOptionsRendered(true);
+      setShowHeader(true);
+      Animated.timing(headerAnim, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+    if (!showHeader) {
+      setOptionsRendered(true);
+      setShowHeader(true);
+      Animated.timing(headerAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
   const handleCategoryPress = useCallback((category: string) => {
@@ -108,30 +137,25 @@ const SearchScreen = () => {
     setSelectedCategories((prev) => prev.filter((cat) => cat !== category));
   };
 
-  const getContentPadding = () => {
-    let topPadding = 80;
-    if (showAdvancedOptions) {
-      topPadding += 50;
-    } else if (searchSort || selectedCategories.length > 0) {
-      topPadding += 15;
-    }
-    return topPadding;
-  };
-
   const handleScroll = useCallback(
     (event: any) => {
+      if (isSearchFocused || focusLockRef.current) return;
+
       const y = event.nativeEvent.contentOffset.y;
       if (y > SCROLL_HEADER_HIDE_THRESHOLD) {
         if (showHeader) {
-          setShowHeader(false);
           Animated.timing(headerAnim, {
             toValue: 0,
             duration: 250,
             useNativeDriver: true,
-          }).start();
+          }).start(() => {
+            setShowHeader(false);
+            setOptionsRendered(false);
+          });
         }
       } else {
         if (!showHeader) {
+          setOptionsRendered(true);
           setShowHeader(true);
           Animated.timing(headerAnim, {
             toValue: 1,
@@ -141,12 +165,12 @@ const SearchScreen = () => {
         }
       }
     },
-    [showHeader, headerAnim],
+    [showHeader, headerAnim, isSearchFocused],
   );
 
   return (
     <View style={{ backgroundColor: colors.background }} className="flex-1">
-      <Animated.View
+      <View
         style={{
           backgroundColor: colors.background,
           position: 'absolute',
@@ -158,51 +182,63 @@ const SearchScreen = () => {
           paddingRight: 16,
           paddingTop: 0,
           paddingBottom: 12,
-          opacity: headerAnim,
-          transform: [
-            {
-              translateY: headerAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-80, 0],
-              }),
-            },
-          ],
         }}
       >
-        <SearchBar
-          value={searchInput}
-          onChangeText={setSearchInput}
-          onFocus={handleSearchFocus}
-          onClear={handleClear}
-        />
+        <View onLayout={(e) => setSearchBarHeight(e.nativeEvent.layout.height)}>
+          <SearchBar
+            value={searchInput}
+            onChangeText={setSearchInput}
+            onFocus={handleSearchFocus}
+            onClear={handleClear}
+            onBlur={handleSearchBlur}
+          />
+        </View>
 
-        {!showAdvancedOptions &&
-          (searchSort || selectedCategories.length > 0) && (
-            <ActiveFilterChips
-              searchSort={searchSort}
-              selectedCategories={selectedCategories}
-              onRemoveSort={removeSort}
-              onRemoveCategory={removeCategory}
-            />
-          )}
+        {optionsRendered && (
+          <Animated.View
+            onLayout={(e) => setOptionsHeight(e.nativeEvent.layout.height)}
+            style={{
+              opacity: headerAnim,
+              transform: [
+                {
+                  translateY: headerAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-80, 0],
+                  }),
+                },
+              ],
+              marginTop: 8,
+            }}
+          >
+            {!showAdvancedOptions &&
+              (searchSort || selectedCategories.length > 0) && (
+                <ActiveFilterChips
+                  searchSort={searchSort}
+                  selectedCategories={selectedCategories}
+                  onRemoveSort={removeSort}
+                  onRemoveCategory={removeCategory}
+                />
+              )}
 
-        {!showAdvancedOptions && (
-          <View>
-            <SortButtons
-              searchSort={searchSort}
-              onSortPress={handleSortPress}
-            />
-            <View style={{ marginTop: -8 }}>
-              <CategoryChips
-                selectedCategories={selectedCategories}
-                onCategoryPress={handleCategoryPress}
-              />
-            </View>
-          </View>
+            {!showAdvancedOptions && (
+              <View>
+                <SortButtons
+                  searchSort={searchSort}
+                  onSortPress={handleSortPress}
+                />
+                <View style={{ marginTop: -8 }}>
+                  <CategoryChips
+                    selectedCategories={selectedCategories}
+                    onCategoryPress={handleCategoryPress}
+                  />
+                </View>
+              </View>
+            )}
+          </Animated.View>
         )}
-      </Animated.View>
+      </View>
 
-      <View style={{ paddingTop: getContentPadding() }} className="flex-1">
+      <View style={{ flex: 1 }}>
         <CardList
           cards={cards}
           isLoading={isLoading}
@@ -221,6 +257,7 @@ const SearchScreen = () => {
           }
           onScroll={handleScroll}
           scrollEventThrottle={16}
+          contentTopPadding={computePadding()}
         />
       </View>
     </View>
