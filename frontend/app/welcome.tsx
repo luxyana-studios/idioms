@@ -52,9 +52,9 @@ const welcomeSteps: WelcomeStep[] = [
   },
   {
     title: 'Easy Navigation',
-    subtitle: 'Swipe or tap to navigate',
+    subtitle: 'Swipe to navigate',
     description:
-      'Use intuitive gestures - swipe between cards or tap buttons to explore the app seamlessly',
+      'Use intuitive gestures - swipe between cards and tap buttons to explore the app seamlessly',
     emoji: '👆',
   },
   {
