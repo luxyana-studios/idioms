@@ -23,6 +23,9 @@ interface CardListProps {
   onVotePress: (id: string, voteType: 'upvote' | 'downvote') => Promise<void>;
   emptyText: string;
   emptySubtext: string;
+  onScroll?: (event: any) => void;
+  scrollEventThrottle?: number;
+  contentTopPadding?: number;
 }
 
 const ITEM_HEIGHT = CARD_DIMENSIONS.ITEM_HEIGHT;
@@ -49,6 +52,9 @@ const CardList = forwardRef<FlatList<CardData>, CardListProps>(
       onVotePress,
       emptyText,
       emptySubtext,
+      onScroll,
+      scrollEventThrottle,
+      contentTopPadding,
     },
     ref,
   ) => {
@@ -112,10 +118,12 @@ const CardList = forwardRef<FlatList<CardData>, CardListProps>(
           keyExtractor={useCallback((item: CardData) => item.id, [])}
           contentContainerStyle={{
             alignItems: 'center',
-            paddingVertical: 20,
+            paddingTop: contentTopPadding ?? 20,
+            paddingBottom: 20,
             paddingHorizontal: 16,
           }}
-          scrollEventThrottle={16}
+          scrollEventThrottle={scrollEventThrottle ?? 16}
+          onScroll={onScroll}
           renderItem={useCallback(
             ({ item, index }: { item: CardData; index: number }) => (
               <Card
