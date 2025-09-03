@@ -6,8 +6,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { addNotificationResponseReceivedListener } from 'expo-notifications';
 import { useEffect } from 'react';
+import { useRegisterUser } from '../src/hooks/useRegisterUser';
 
 export default function RootLayout() {
+  useRegisterUser();
+
   useEffect(() => {
     const subscription = addNotificationResponseReceivedListener((response) => {
       console.log('Notification tapped:', response);

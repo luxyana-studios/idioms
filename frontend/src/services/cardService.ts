@@ -1,5 +1,6 @@
 import { CardData } from '../types/card';
 import Constants from 'expo-constants';
+import { apiFetch } from './apiClient';
 
 export const CARDS_PER_PAGE = 20;
 const IDIOMS_BACKEND_URL = Constants.expoConfig?.extra?.API_URL;
@@ -48,12 +49,7 @@ export const fetchCards = async (
     url.searchParams.append('sort', sort);
   }
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      Accept: 'application/json',
-      'ngrok-skip-browser-warning': 'idioms',
-    },
-  });
+  const response = await apiFetch(url.toString(), {});
 
   if (!response.ok) return handleApiError(response);
 
@@ -80,12 +76,7 @@ export const fetchShuffledCards = async (
     (seed || Math.floor(Math.random() * 1000000)).toString(),
   );
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      Accept: 'application/json',
-      'ngrok-skip-browser-warning': 'idioms',
-    },
-  });
+  const response = await apiFetch(url.toString(), {});
 
   if (!response.ok) return handleApiError(response);
 
@@ -106,12 +97,7 @@ export const fetchFavoriteCards = async (
   url.searchParams.append('page', page.toString());
   url.searchParams.append('limit', limit.toString());
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      Accept: 'application/json',
-      'ngrok-skip-browser-warning': 'idioms',
-    },
-  });
+  const response = await apiFetch(url.toString(), {});
 
   if (!response.ok) return handleApiError(response);
 
@@ -130,13 +116,9 @@ export const updateIdiom = async (
 ): Promise<CardData> => {
   const url = new URL(`${API_ROUTES.IDIOMS}${idiomId}`, IDIOMS_BACKEND_URL);
 
-  const response = await fetch(url.toString(), {
+  const response = await apiFetch(url.toString(), {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'ngrok-skip-browser-warning': 'idioms',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ favorite }),
   });
 
@@ -162,13 +144,9 @@ export const updateIdiomVote = async (
     IDIOMS_BACKEND_URL,
   );
 
-  const response = await fetch(url.toString(), {
+  const response = await apiFetch(url.toString(), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'ngrok-skip-browser-warning': 'idioms',
-    },
+    headers: { 'Content-Type': 'application/json' },
   });
 
   if (!response.ok) return handleApiError(response);
@@ -182,13 +160,7 @@ export const updateIdiomVote = async (
  */
 export const fetchCategories = async (): Promise<string[]> => {
   const url = new URL(`${API_ROUTES.IDIOMS}categories`, IDIOMS_BACKEND_URL);
-
-  const response = await fetch(url.toString(), {
-    headers: {
-      Accept: 'application/json',
-      'ngrok-skip-browser-warning': 'idioms',
-    },
-  });
+  const response = await apiFetch(url.toString(), {});
 
   if (!response.ok) return handleApiError(response);
 
