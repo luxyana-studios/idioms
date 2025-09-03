@@ -1,6 +1,7 @@
 import Constants from 'expo-constants';
 import { setItem, STORAGE_KEYS, getItem } from './storage';
 import { apiFetch } from './apiClient';
+import { v4 as uuidv4 } from 'uuid';
 
 const IDIOMS_BACKEND_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -13,14 +14,7 @@ const handleApiError = async (response: Response) => {
   throw new Error(`Server error ${response.status}: ${text.slice(0, 200)}`);
 };
 
-// minimal uuidv4 generator to avoid extra deps
-const generateUUID = (): string => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
+const generateUUID = (): string => uuidv4();
 
 const getOrCreateInstallationId = async (): Promise<string> => {
   const existing = await getItem(STORAGE_KEYS.INSTALLATION_ID);
@@ -30,6 +24,18 @@ const getOrCreateInstallationId = async (): Promise<string> => {
   await setItem(STORAGE_KEYS.INSTALLATION_ID, id);
   return id;
 };
+
+// Backend response shape for user registration. Exported so other services can reuse it later.
+export interface RegisterUserResponse {
+  api_key?: string | null;
+  user?: {
+    api_key?: string | null;
+    // allow extra fields the backend may return
+    [key: string]: unknown;
+  } | null;
+  // allow top-level extra fields as well
+  [key: string]: unknown;
+}
 
 export const registerOrGetApiKey = async (): Promise<string | null> => {
   const saved = await getItem(STORAGE_KEYS.API_KEY);
@@ -53,10 +59,15 @@ export const registerOrGetApiKey = async (): Promise<string | null> => {
 
   if (!response.ok) return handleApiError(response);
 
-  const data = await response.json();
+  const data = (await response.json()) as RegisterUserResponse;
 
-  // backend returns the created user object with api_key
-  const apiKey = data?.api_key ?? data?.user?.api_key ?? null;
+  // backend returns the created user object with api_key — prefer top-level, then user.api_key
+  const apiKey: string | null =
+    typeof data?.api_key === 'string' && data.api_key
+      ? data.api_key
+      : typeof data?.user?.api_key === 'string' && data.user?.api_key
+        ? data.user.api_key
+        : null;
 
   if (apiKey) {
     await setItem(STORAGE_KEYS.API_KEY, apiKey);
@@ -66,6 +77,5 @@ export const registerOrGetApiKey = async (): Promise<string | null> => {
   return null;
 };
 
-export const getSavedApiKey = async (): Promise<string | null> => {
-  return getItem(STORAGE_KEYS.API_KEY);
-};
+// Note: `getSavedApiKey` was inlined into the hook. If other modules need direct access
+// to the stored API key in the future, re-export a getter here that calls `getItem`.
