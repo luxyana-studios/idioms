@@ -25,16 +25,12 @@ const getOrCreateInstallationId = async (): Promise<string> => {
   return id;
 };
 
-// Backend response shape for user registration. Exported so other services can reuse it later.
 export interface RegisterUserResponse {
-  api_key?: string | null;
-  user?: {
-    api_key?: string | null;
-    // allow extra fields the backend may return
-    [key: string]: unknown;
-  } | null;
-  // allow top-level extra fields as well
-  [key: string]: unknown;
+  id: string;
+  installation_id: string;
+  api_key: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export const registerOrGetApiKey = async (): Promise<string | null> => {
@@ -61,21 +57,10 @@ export const registerOrGetApiKey = async (): Promise<string | null> => {
 
   const data = (await response.json()) as RegisterUserResponse;
 
-  // backend returns the created user object with api_key — prefer top-level, then user.api_key
-  const apiKey: string | null =
-    typeof data?.api_key === 'string' && data.api_key
-      ? data.api_key
-      : typeof data?.user?.api_key === 'string' && data.user?.api_key
-        ? data.user.api_key
-        : null;
-
-  if (apiKey) {
-    await setItem(STORAGE_KEYS.API_KEY, apiKey);
-    return apiKey;
+  if (data && typeof data.api_key === 'string' && data.api_key) {
+    await setItem(STORAGE_KEYS.API_KEY, data.api_key);
+    return data.api_key;
   }
 
   return null;
 };
-
-// Note: `getSavedApiKey` was inlined into the hook. If other modules need direct access
-// to the stored API key in the future, re-export a getter here that calls `getItem`.

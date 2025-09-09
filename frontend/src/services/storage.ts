@@ -70,6 +70,8 @@ if (isWeb && typeof globalThis.localStorage !== 'undefined') {
   };
 }
 
+export const storageBackend = backend;
+
 export const setItem = async (key: string, value: string): Promise<void> => {
   try {
     return backend.setItem(key, value);
