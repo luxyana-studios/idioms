@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app import database
+from app.middleware import APIKeyMiddleware
 from app.routers import idioms, users
 
 SessionDep = Annotated[Session, Depends(database.get_session)]
@@ -20,6 +21,8 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(idioms.router)
 app.include_router(users.router)
+
+app.add_middleware(APIKeyMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

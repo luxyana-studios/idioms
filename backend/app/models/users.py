@@ -15,7 +15,7 @@ class UserModel(Base):
     __tablename__ = "users"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, index=True)
-    api_key = Column(String, default=uuid4)
+    api_key = Column(String, default=uuid4, unique=True, index=True)
     installation_id = Column(String)
 
     created_at = Column(TIMESTAMP, server_default=func.now())
