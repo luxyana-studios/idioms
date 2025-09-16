@@ -7,10 +7,13 @@ from sqlalchemy import text as sql_text
 from sqlalchemy.orm import Session
 
 from app import database
+from app.middleware import get_current_user
 from app.models.idioms import IdiomModel
+from app.models.users import UserModel
 from app.schemas.idioms import IdiomCreate, IdiomSchema, IdiomUpdate
 
 SessionDep = Annotated[Session, Depends(database.get_session)]
+CurrentUser = Annotated[UserModel, Depends(get_current_user)]
 
 router = APIRouter(prefix="/idioms", tags=["idioms"])
 
