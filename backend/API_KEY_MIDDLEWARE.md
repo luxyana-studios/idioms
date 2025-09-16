@@ -11,11 +11,7 @@ This middleware verifies the presence of an API key in requests and validates it
 
 ## Headers Supported
 
-The middleware accepts API keys in any of these headers:
-
-- `apiKey`
-- `api-key`
-- `x-api-key`
+The middleware accepts API keys in the `x-api-key` header.
 
 ## Exempt Paths
 
@@ -49,23 +45,17 @@ The frontend automatically:
 
 ## Error Responses
 
-### Missing API Key (401)
+### Unauthorized (401)
+
+For security reasons, all authentication failures return the same generic response:
 
 ```json
 {
-  "detail": "API key is required. Please provide 'apiKey', 'api-key', or 'x-api-key' header.",
-  "error_code": "MISSING_API_KEY"
+  "detail": "Unauthorized"
 }
 ```
 
-### Invalid API Key (401)
-
-```json
-{
-  "detail": "Invalid API key. Please check your credentials.",
-  "error_code": "INVALID_API_KEY"
-}
-```
+This applies to both missing and invalid API keys to avoid revealing authentication method details to potential attackers.
 
 ## Testing
 

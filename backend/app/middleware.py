@@ -33,22 +33,12 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
         if any(request.url.path.startswith(path) for path in self.exempt_paths):
             return await call_next(request)
 
-        api_key = (
-            request.headers.get("apiKey")
-            or request.headers.get("api-key")
-            or request.headers.get("x-api-key")
-        )
+        api_key = request.headers.get("x-api-key")
 
         if not api_key:
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                content={
-                    "detail": (
-                        "API key is required. Please provide 'apiKey', "
-                        "'api-key', or 'x-api-key' header."
-                    ),
-                    "error_code": "MISSING_API_KEY",
-                },
+                content={"detail": "Unauthorized"},
             )
 
         with self.session_factory() as db:
@@ -57,10 +47,7 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
             if not user:
                 return JSONResponse(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    content={
-                        "detail": "Invalid API key. Please check your credentials.",
-                        "error_code": "INVALID_API_KEY",
-                    },
+                    content={"detail": "Unauthorized"},
                 )
 
         request.state.user = user
