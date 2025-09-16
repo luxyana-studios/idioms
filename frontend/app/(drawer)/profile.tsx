@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import FeedbackModal from '../../src/components/FeedbackModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { MotiView } from 'moti';
+import { getCurrentUser } from '../../src/services/userService';
+import { getItem } from '../../src/services/storage';
+import { STORAGE_KEYS } from '../../src/services/storage';
 
 const Profile = () => {
   const { theme, colors, toggleTheme } = useTheme();
@@ -22,6 +25,31 @@ const Profile = () => {
     description: '',
     email: '',
   });
+
+  const [userInfo, setUserInfo] = useState<any | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [installationId, setInstallationId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        const [currentUser, storedApiKey, storedInstallationId] =
+          await Promise.all([
+            getCurrentUser(),
+            getItem(STORAGE_KEYS.API_KEY),
+            getItem(STORAGE_KEYS.INSTALLATION_ID),
+          ]);
+
+        setUserInfo(currentUser);
+        setApiKey(storedApiKey);
+        setInstallationId(storedInstallationId);
+      } catch (error) {
+        console.error('Error loading user info:', error);
+      }
+    };
+
+    loadUserInfo();
+  }, []);
 
   const showSuccessNotification = (message: string) => {
     setNotificationMessage(message);
