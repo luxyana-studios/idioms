@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { registerOrGetApiKey } from '../services/userService';
 
-export const useRegisterUser = () => {
+interface UseRegisterUserReturn {
+  isAuthenticating: boolean;
+  isAuthenticated: boolean;
+  authError: string | null;
+  retry: () => void;
+}
+
+export const useRegisterUser = (): UseRegisterUserReturn => {
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);

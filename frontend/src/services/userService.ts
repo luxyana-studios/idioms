@@ -2,6 +2,19 @@ import Constants from 'expo-constants';
 import { getItem, setItem, removeItem } from './storage';
 import { STORAGE_KEYS } from './storage';
 
+const generateInstallationId = () => {
+  return `idioms-${Date.now()}-${Math.random().toString(36).slice(2, 14)}`;
+};
+
+const getOrCreateInstallationId = async (): Promise<string> => {
+  let installationId = await getItem(STORAGE_KEYS.INSTALLATION_ID);
+  if (!installationId) {
+    installationId = generateInstallationId();
+    await setItem(STORAGE_KEYS.INSTALLATION_ID, installationId);
+  }
+  return installationId;
+};
+
 const BACKEND_URL = Constants.expoConfig?.extra?.API_URL;
 
 export const registerOrGetApiKey = async (): Promise<string | null> => {
@@ -11,6 +24,8 @@ export const registerOrGetApiKey = async (): Promise<string | null> => {
   }
 
   try {
+    const installationId = await getOrCreateInstallationId();
+
     const response = await fetch(`${BACKEND_URL}/users/register`, {
       method: 'POST',
       headers: {
@@ -18,7 +33,9 @@ export const registerOrGetApiKey = async (): Promise<string | null> => {
         Accept: 'application/json',
         'ngrok-skip-browser-warning': 'idioms',
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        installation_id: installationId,
+      }),
     });
 
     if (!response.ok) return null;
@@ -28,33 +45,6 @@ export const registerOrGetApiKey = async (): Promise<string | null> => {
 
     await setItem(STORAGE_KEYS.API_KEY, apiKey);
     return apiKey;
-  } catch {
-    return null;
-  }
-};
-
-export const getCurrentUser = async () => {
-  const apiKey = await getItem(STORAGE_KEYS.API_KEY);
-  if (!apiKey) return null;
-
-  try {
-    const response = await fetch(`${BACKEND_URL}/users/me`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'ngrok-skip-browser-warning': 'idioms',
-        'x-api-key': apiKey,
-      },
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        await removeItem(STORAGE_KEYS.API_KEY);
-      }
-      return null;
-    }
-
-    return response.json();
   } catch {
     return null;
   }

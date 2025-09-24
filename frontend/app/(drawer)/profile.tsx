@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
 
 const Profile = () => {
-  const { theme, colors, toggleTheme } = useTheme();
+  const { theme, colors, themeDescription, toggleTheme } = useTheme();
 
   const sendProblemReport = async () => {
     try {
@@ -139,12 +139,12 @@ const Profile = () => {
           </Text>
 
           <SettingItem
-            title="Theme"
-            description={`Current: ${theme === 'light' ? 'Light' : 'Dark'}`}
+            title="Appearance"
+            description={themeDescription}
             onPress={toggleTheme}
             rightComponent={
               <Ionicons
-                name={theme === 'light' ? 'sunny' : 'moon'}
+                name={theme === 'light' ? 'sunny-outline' : 'moon-outline'}
                 size={24}
                 color={colors.textSecondary}
               />
