@@ -19,6 +19,7 @@ const BACKEND_URL = Constants.expoConfig?.extra?.API_URL;
 
 export const registerOrGetApiKey = async (): Promise<string | null> => {
   const existingApiKey = await getItem(STORAGE_KEYS.API_KEY);
+
   if (existingApiKey) {
     return existingApiKey;
   }
@@ -38,10 +39,12 @@ export const registerOrGetApiKey = async (): Promise<string | null> => {
       }),
     });
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return null;
+    }
 
     const data = await response.json();
-    const apiKey = data.user.api_key;
+    const apiKey = data.api_key;
 
     await setItem(STORAGE_KEYS.API_KEY, apiKey);
     return apiKey;
