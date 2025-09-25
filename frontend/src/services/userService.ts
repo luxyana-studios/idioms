@@ -3,7 +3,7 @@ import { getItem, setItem, removeItem } from './storage';
 import { STORAGE_KEYS } from './storage';
 
 const generateInstallationId = () => {
-  return `idioms-${Date.now()}-${Math.random().toString(36).slice(2, 14)}`;
+  return crypto.randomUUID();
 };
 
 const getOrCreateInstallationId = async (): Promise<string> => {
