@@ -6,8 +6,8 @@ from pydantic import BaseModel, ConfigDict
 
 class UserSchema(BaseModel):
     id: UUID
-    installation_id: str
-    api_key: str
+    installation_id: str | None
+    api_key: str | None
 
     created_at: datetime
     updated_at: datetime

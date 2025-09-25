@@ -11,6 +11,7 @@ from app.schemas.users import UserCreate, UserSchema
 SessionDep = Annotated[Session, Depends(database.get_session)]
 CurrentUser = Annotated[UserModel, Depends(get_current_user)]
 
+
 router = APIRouter(prefix="/users", tags=["users"])
 
 
@@ -22,6 +23,11 @@ async def register_user(db: SessionDep, user: UserCreate) -> UserSchema:
     db.refresh(user_model)
 
     return user_model
+
+
+@router.get("/", response_model=list[UserSchema])
+async def get_users(db: SessionDep) -> list[UserSchema]:
+    return db.query(UserModel).all()
 
 
 @router.get("/me", response_model=UserSchema)
