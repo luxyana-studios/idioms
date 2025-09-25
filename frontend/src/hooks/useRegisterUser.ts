@@ -1,12 +1,41 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { registerOrGetApiKey } from '../services/userService';
 
-export const useRegisterUser = () => {
+interface UseRegisterUserReturn {
+  isAuthenticating: boolean;
+  isAuthenticated: boolean;
+  authError: string | null;
+  retry: () => void;
+}
+
+export const useRegisterUser = (): UseRegisterUserReturn => {
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const authenticate = async () => {
+    const apiKey = await registerOrGetApiKey();
+
+    if (apiKey) {
+      setIsAuthenticated(true);
+      setAuthError(null);
+    } else {
+      setIsAuthenticated(false);
+      setAuthError('Failed to authenticate');
+    }
+
+    setIsAuthenticating(false);
+  };
+
   useEffect(() => {
-    // registerOrGetApiKey already checks storage and returns early if an API key exists,
-    // so we can call it unconditionally here and keep the hook simple.
-    (async () => {
-      await registerOrGetApiKey();
-    })();
+    authenticate();
   }, []);
+
+  const retry = () => {
+    setIsAuthenticating(true);
+    setAuthError(null);
+    authenticate();
+  };
+
+  return { isAuthenticating, isAuthenticated, authError, retry };
 };

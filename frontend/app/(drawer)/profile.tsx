@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,200 +7,186 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import FeedbackModal from '../../src/components/FeedbackModal';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
-import { MotiView } from 'moti';
 
 const Profile = () => {
-  const { theme, colors, toggleTheme } = useTheme();
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbackForm, setFeedbackForm] = useState({
-    subject: '',
-    description: '',
-    email: '',
-  });
+  const { theme, colors, themeDescription, toggleTheme } = useTheme();
 
-  const showSuccessNotification = (message: string) => {
-    setNotificationMessage(message);
-    setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 3000);
-  };
+  const sendProblemReport = async () => {
+    try {
+      // TODO: Replace with actual email sending when backend is ready
+      // const deviceInfo = {
+      //   platform: Platform.OS,
+      //   appVersion: '1.0.0',
+      //   timestamp: new Date().toISOString(),
+      // };
 
-  const handleFeedbackPress = useCallback(() => {
-    setShowFeedbackModal(true);
-  }, []);
+      // await apiFetch('/api/send-problem-report', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     subject: 'Problem Report from Idioms App',
+      //     message: `User reported a problem with the app.\n\nDevice Info:\n- Platform: ${deviceInfo.platform}\n- App Version: ${deviceInfo.appVersion}\n- Time: ${deviceInfo.timestamp}`,
+      //     userEmail: 'user-report@idioms-app.com', // or get from user if available
+      //   }),
+      // });
 
-  const handleSendFeedback = useCallback(() => {
-    if (!feedbackForm.subject.trim() || !feedbackForm.description.trim()) {
+      // For now, show success message
+      console.log('Problem report sent:', {
+        platform: Platform.OS,
+        appVersion: '1.0.0',
+        timestamp: new Date().toISOString(),
+      });
+
       Alert.alert(
-        'Required Fields',
-        'Please complete the subject and description.',
+        'Report Sent!',
+        'Thank you for reporting the issue. Our support team will review it and work on a solution.',
         [{ text: 'OK' }],
       );
-      return;
+    } catch (error) {
+      Alert.alert(
+        'Cannot Send Report',
+        'Please try again later or contact us directly at support@idioms-app.com',
+        [{ text: 'OK' }],
+      );
     }
-    setShowFeedbackModal(false);
-    setFeedbackForm({
-      subject: '',
-      description: '',
-      email: '',
-    });
-    showSuccessNotification('Feedback sent! Thank you.');
-  }, [feedbackForm, showSuccessNotification]);
+  };
 
-  const handleSubjectChange = useCallback((text: string) => {
-    setFeedbackForm((prev) => ({ ...prev, subject: text }));
-  }, []);
-
-  const handleDescriptionChange = useCallback((text: string) => {
-    setFeedbackForm((prev) => ({ ...prev, description: text }));
-  }, []);
-
-  const handleEmailChange = useCallback((text: string) => {
-    setFeedbackForm((prev) => ({ ...prev, email: text }));
-  }, []);
-
-  const resetFeedbackForm = useCallback(() => {
-    setFeedbackForm({
-      subject: '',
-      description: '',
-      email: '',
-    });
-    setShowFeedbackModal(false);
-  }, []);
+  const handleReportProblem = () => {
+    Alert.alert(
+      'Report a Problem',
+      "This will send a problem report to our support team. We'll investigate and work on fixing any issues.",
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Send Report',
+          onPress: sendProblemReport,
+        },
+      ],
+    );
+  };
 
   const SettingItem = ({
     title,
     description,
     onPress,
     rightComponent,
+    last = false,
   }: {
     title: string;
-    description: string;
+    description?: string;
     onPress?: () => void;
     rightComponent?: React.ReactNode;
+    last?: boolean;
   }) => (
     <TouchableOpacity
       onPress={onPress}
       style={{
         backgroundColor: colors.surface,
-        borderColor: colors.border,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
+        borderBottomWidth: last ? 0 : 1,
+        borderBottomColor: colors.border,
       }}
-      className="p-4 mb-3 rounded-2xl border shadow-sm"
       activeOpacity={0.7}
     >
       <View className="flex-row items-center justify-between">
         <View className="flex-1">
           <Text
             style={{ color: colors.text }}
-            className="text-lg font-semibold mb-1"
+            className="text-base font-medium"
           >
             {title}
           </Text>
-          <Text style={{ color: colors.textSecondary }} className="text-sm">
-            {description}
-          </Text>
+          {description && (
+            <Text
+              style={{ color: colors.textSecondary }}
+              className="text-sm mt-1"
+            >
+              {description}
+            </Text>
+          )}
         </View>
-        {rightComponent && <View className="ml-4">{rightComponent}</View>}
+        {rightComponent && <View className="ml-3">{rightComponent}</View>}
       </View>
     </TouchableOpacity>
   );
 
-  const ThemeSelector = () => (
-    <View className="flex-row items-center">
-      <TouchableOpacity
-        onPress={toggleTheme}
-        style={{
-          backgroundColor: theme === 'light' ? colors.text : 'transparent',
-          borderColor: colors.border,
-        }}
-        className="p-2 rounded-lg border mr-2"
-        activeOpacity={0.7}
-      >
-        <Ionicons
-          name="sunny"
-          size={20}
-          color={theme === 'light' ? colors.background : colors.textSecondary}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={toggleTheme}
-        style={{
-          backgroundColor: theme === 'dark' ? colors.text : 'transparent',
-          borderColor: colors.border,
-        }}
-        className="p-2 rounded-lg border"
-        activeOpacity={0.7}
-      >
-        <Ionicons
-          name="moon"
-          size={20}
-          color={theme === 'dark' ? colors.background : colors.textSecondary}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-
   return (
-    <View style={{ backgroundColor: colors.background }} className="flex-1">
-      <ScrollView className="flex-1 px-6 pt-12">
-        <Text
-          style={{ color: colors.text }}
-          className="text-3xl font-bold mb-8"
-        >
-          Settings
-        </Text>
-
-        <View className="mb-6">
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View className="flex-1">
+        <View className="px-5 pt-8 pb-6">
           <Text
             style={{ color: colors.text }}
-            className="text-xl font-semibold mb-4"
+            className="text-3xl font-bold mb-2"
+          >
+            Profile
+          </Text>
+          <Text style={{ color: colors.textSecondary }} className="text-base">
+            Customize your app experience
+          </Text>
+        </View>
+
+        <View className="mx-5 mb-6 rounded-xl overflow-hidden">
+          <Text
+            style={{ color: colors.text }}
+            className="text-xl font-semibold mb-4 px-1"
           >
             Appearance
           </Text>
 
           <SettingItem
-            title="Theme"
-            description={`Current theme: ${theme === 'light' ? 'Light' : 'Dark'}`}
-            rightComponent={<ThemeSelector />}
-          />
-        </View>
-
-        <View className="mb-6">
-          <Text
-            style={{ color: colors.text }}
-            className="text-xl font-semibold mb-4"
-          >
-            Feedback
-          </Text>
-          <SettingItem
-            title="Send Feedback"
-            description="Let us know your thoughts or report an issue."
-            onPress={handleFeedbackPress}
+            title="Appearance"
+            description={themeDescription}
+            onPress={toggleTheme}
             rightComponent={
               <Ionicons
-                name="chatbox-ellipses-outline"
+                name={theme === 'light' ? 'sunny-outline' : 'moon-outline'}
                 size={24}
                 color={colors.textSecondary}
               />
             }
+            last
           />
         </View>
 
-        <View className="mb-6">
+        <View className="mx-5 mb-6 rounded-xl overflow-hidden">
           <Text
             style={{ color: colors.text }}
-            className="text-xl font-semibold mb-4"
+            className="text-xl font-semibold mb-4 px-1"
+          >
+            Support
+          </Text>
+
+          <SettingItem
+            title="Report a Problem"
+            description="Send feedback about issues or bugs"
+            onPress={handleReportProblem}
+            rightComponent={
+              <Ionicons
+                name="mail-outline"
+                size={24}
+                color={colors.textSecondary}
+              />
+            }
+            last
+          />
+        </View>
+
+        <View className="mx-5 mb-6 rounded-xl overflow-hidden">
+          <Text
+            style={{ color: colors.text }}
+            className="text-xl font-semibold mb-4 px-1"
           >
             About
           </Text>
 
           <SettingItem
             title="App Version"
-            description="Idioms Learning App v1.0.0"
+            description="1.0.0"
             rightComponent={
               <Ionicons
                 name="information-circle-outline"
@@ -208,69 +194,11 @@ const Profile = () => {
                 color={colors.textSecondary}
               />
             }
+            last
           />
         </View>
-      </ScrollView>
-
-      {showNotification && (
-        <MotiView
-          from={{ opacity: 0, translateY: -20, scale: 0.9 }}
-          animate={{ opacity: 1, translateY: 0, scale: 1 }}
-          exit={{ opacity: 0, translateY: -20, scale: 0.9 }}
-          transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-          style={{
-            position: 'absolute',
-            top: 100,
-            left: 20,
-            right: 20,
-            backgroundColor: colors.surface,
-            borderRadius: 16,
-            padding: 20,
-            borderWidth: 1,
-            borderColor: colors.border,
-            zIndex: 10001,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            elevation: 12,
-            alignItems: 'center',
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons
-              name="checkmark-circle"
-              size={24}
-              color="#4ADE80"
-              style={{ marginRight: 12 }}
-            />
-            <Text
-              style={{
-                color: colors.text,
-                fontSize: 16,
-                fontWeight: '500',
-                textAlign: 'center',
-                flex: 1,
-              }}
-            >
-              {notificationMessage}
-            </Text>
-          </View>
-        </MotiView>
-      )}
-
-      <FeedbackModal
-        visible={showFeedbackModal}
-        onClose={resetFeedbackForm}
-        feedbackForm={feedbackForm}
-        onSubjectChange={handleSubjectChange}
-        onDescriptionChange={handleDescriptionChange}
-        onEmailChange={handleEmailChange}
-        onSendFeedback={handleSendFeedback}
-        colors={colors}
-        theme={theme}
-      />
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 

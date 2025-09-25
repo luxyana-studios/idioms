@@ -96,6 +96,7 @@ interface ThemeContextType {
   theme: Theme;
   colors: ThemeColors;
   computed: ComputedTheme;
+  themeDescription: string;
   toggleTheme: () => void;
   setPalette: (
     palette: Partial<ThemeColors>,
@@ -230,9 +231,19 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         : DARK_COMPUTED.cardTextSecondaryColorDark,
   };
 
+  const themeDescription = `Current: ${theme === 'light' ? 'Light' : 'Dark'}`;
+
   return (
     <ThemeContext.Provider
-      value={{ theme, colors, computed, toggleTheme, setPalette, setPreset }}
+      value={{
+        theme,
+        colors,
+        computed,
+        themeDescription,
+        toggleTheme,
+        setPalette,
+        setPreset,
+      }}
     >
       {children}
     </ThemeContext.Provider>

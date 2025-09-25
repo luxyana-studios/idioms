@@ -39,26 +39,16 @@ export const fetchCards = async (
   sort?: string,
   category?: string,
 ): Promise<CardData[]> => {
-  const url = new URL(API_ROUTES.IDIOMS, IDIOMS_BACKEND_URL);
-  url.searchParams.append('page', page.toString());
-  url.searchParams.append('limit', limit.toString());
+  const params = new URLSearchParams();
+  params.append('page', page.toString());
+  params.append('limit', limit.toString());
+  if (search) params.append('text', search.trim());
+  if (category) params.append('category', category.trim());
+  if (sort) params.append('sort', sort);
 
-  if (search) {
-    url.searchParams.append('text', search.trim());
-  }
-
-  if (category) {
-    url.searchParams.append('category', category.trim());
-  }
-
-  if (sort) {
-    url.searchParams.append('sort', sort);
-  }
-
-  const response = await apiFetch(url.toString(), { headers: EXTRA_HEADERS });
-
+  const path = `/${API_ROUTES.IDIOMS}?${params.toString()}`;
+  const response = await apiFetch(path, { headers: EXTRA_HEADERS });
   if (!response.ok) return handleApiError(response);
-
   return await response.json();
 };
 
@@ -74,18 +64,16 @@ export const fetchShuffledCards = async (
   limit: number = CARDS_PER_PAGE,
   seed?: number,
 ): Promise<CardData[]> => {
-  const url = new URL(`${API_ROUTES.IDIOMS}random`, IDIOMS_BACKEND_URL);
-  url.searchParams.append('page', page.toString());
-  url.searchParams.append('limit', limit.toString());
-  url.searchParams.append(
+  const params = new URLSearchParams();
+  params.append('page', page.toString());
+  params.append('limit', limit.toString());
+  params.append(
     'seed',
     (seed || Math.floor(Math.random() * 1000000)).toString(),
   );
-
-  const response = await apiFetch(url.toString(), { headers: EXTRA_HEADERS });
-
+  const path = `/${API_ROUTES.IDIOMS}random?${params.toString()}`;
+  const response = await apiFetch(path, { headers: EXTRA_HEADERS });
   if (!response.ok) return handleApiError(response);
-
   return await response.json();
 };
 
@@ -99,14 +87,12 @@ export const fetchFavoriteCards = async (
   page: number,
   limit: number = CARDS_PER_PAGE,
 ): Promise<CardData[]> => {
-  const url = new URL(`${API_ROUTES.IDIOMS}favorites`, IDIOMS_BACKEND_URL);
-  url.searchParams.append('page', page.toString());
-  url.searchParams.append('limit', limit.toString());
-
-  const response = await apiFetch(url.toString(), { headers: EXTRA_HEADERS });
-
+  const params = new URLSearchParams();
+  params.append('page', page.toString());
+  params.append('limit', limit.toString());
+  const path = `/${API_ROUTES.IDIOMS}favorites?${params.toString()}`;
+  const response = await apiFetch(path, { headers: EXTRA_HEADERS });
   if (!response.ok) return handleApiError(response);
-
   return await response.json();
 };
 
@@ -120,16 +106,13 @@ export const updateIdiom = async (
   idiomId: string,
   favorite: boolean,
 ): Promise<CardData> => {
-  const url = new URL(`${API_ROUTES.IDIOMS}${idiomId}`, IDIOMS_BACKEND_URL);
-
-  const response = await apiFetch(url.toString(), {
+  const path = `/${API_ROUTES.IDIOMS}${idiomId}`;
+  const response = await apiFetch(path, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...EXTRA_HEADERS },
     body: JSON.stringify({ favorite }),
   });
-
   if (!response.ok) return handleApiError(response);
-
   return await response.json();
 };
 
@@ -145,18 +128,12 @@ export const updateIdiomVote = async (
   voteType: 'upvote' | 'downvote',
 ): Promise<CardData> => {
   const endpoint = voteType === 'upvote' ? 'upvote' : 'downvote';
-  const url = new URL(
-    `${API_ROUTES.IDIOMS}${idiomId}/${endpoint}`,
-    IDIOMS_BACKEND_URL,
-  );
-
-  const response = await apiFetch(url.toString(), {
+  const path = `/${API_ROUTES.IDIOMS}${idiomId}/${endpoint}`;
+  const response = await apiFetch(path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...EXTRA_HEADERS },
   });
-
   if (!response.ok) return handleApiError(response);
-
   return await response.json();
 };
 
@@ -165,10 +142,8 @@ export const updateIdiomVote = async (
  * @returns Promise<string[]> - Array of category names
  */
 export const fetchCategories = async (): Promise<string[]> => {
-  const url = new URL(`${API_ROUTES.IDIOMS}categories`, IDIOMS_BACKEND_URL);
-  const response = await apiFetch(url.toString(), { headers: EXTRA_HEADERS });
-
+  const path = `/${API_ROUTES.IDIOMS}categories`;
+  const response = await apiFetch(path, { headers: EXTRA_HEADERS });
   if (!response.ok) return handleApiError(response);
-
   return await response.json();
 };
