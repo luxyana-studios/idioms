@@ -68,25 +68,22 @@ function bestTextOn(bg: Hex): Hex {
 
 export function buildLightPatch(preset: PalettePreset): ThemeColorsPatch {
   const dominant = preset.dominant;
-  const accent = preset.accent ?? mixHex(dominant, '#ffffff' as Hex, 0.3);
+  // Organic Flow: sage green as primary, terracotta as accent
+  const accent = preset.accent ?? mixHex(dominant, '#D4A574' as Hex, 0.5);
   const background =
-    preset.background ?? mixHex(dominant, '#ffffff' as Hex, 0.85);
-  const surface = mixHex(background, '#ffffff' as Hex, 0.1);
-  const text = preset.textLight ?? bestTextOn(background);
-  const textSecondary = mixHex(
-    text,
-    (text === '#ffffff' ? '#000000' : '#ffffff') as Hex,
-    0.5,
-  );
-  const border = mixHex(text, background, 0.85);
-  const cardBackground = surface;
-  const cardBackBackground = mixHex(surface, '#ffffff' as Hex, 0.06);
-  const searchBackground = 'rgba(250,247,242,0.9)';
-  const shadowColor = '#9B9388';
+    preset.background ?? mixHex(dominant, '#FAF7F2' as Hex, 0.92);
+  const surface = mixHex(background, '#F0EBE3' as Hex, 0.4);
+  const text = preset.textLight ?? ('#2D2A26' as Hex);
+  const textSecondary = '#7A8B6E' as Hex; // Earth moss
+  const border = mixHex(dominant, '#E5DDD3' as Hex, 0.6);
+  const cardBackground = mixHex(surface, '#FDFCFA' as Hex, 0.7);
+  const cardBackBackground = mixHex(surface, '#F5F1EB' as Hex, 0.5);
+  const searchBackground = 'rgba(250,247,242,0.95)';
+  const shadowColor = mixHex(dominant, '#8B9B7E' as Hex, 0.5);
 
   return {
-    primary: accent,
-    secondary: mixHex(accent, '#d1d5db' as Hex, 0.5),
+    primary: dominant, // Sage green dominant
+    secondary: accent, // Terracotta accent
     background,
     surface,
     text,
@@ -101,25 +98,24 @@ export function buildLightPatch(preset: PalettePreset): ThemeColorsPatch {
 
 export function buildDarkPatch(preset: PalettePreset): ThemeColorsPatch {
   const dominant = preset.dominant;
-  const accent = preset.accent ?? mixHex(dominant, '#000000' as Hex, 0.2);
+  // Organic Flow: lighter sage for dark mode with terracotta accent
+  const lightSage = mixHex(dominant, '#ffffff' as Hex, 0.2);
+  const accent =
+    preset.accent ?? mixHex('#D4A574' as Hex, '#ffffff' as Hex, 0.15);
   const background =
-    preset.background ?? mixHex(dominant, '#000000' as Hex, 0.68);
-  const surface = mixHex(background, '#000000' as Hex, 0.08);
-  const text = preset.textDark ?? bestTextOn(background);
-  const textSecondary = mixHex(
-    text,
-    (text === '#ffffff' ? '#000000' : '#ffffff') as Hex,
-    0.7,
-  );
-  const border = mixHex(text, background, 0.72);
-  const cardBackground = mixHex(surface, '#3D3835' as Hex, 0.2);
-  const cardBackBackground = mixHex(cardBackground, '#2D2A26' as Hex, 0.18);
-  const searchBackground = 'rgba(45,42,38,0.9)';
-  const shadowColor = '#1E1B18';
+    preset.background ?? mixHex(dominant, '#1E2420' as Hex, 0.85);
+  const surface = mixHex(background, '#2A302B' as Hex, 0.5);
+  const text = preset.textDark ?? ('#FAF7F2' as Hex);
+  const textSecondary = '#C4D4BE' as Hex; // Light sage
+  const border = mixHex(dominant, '#3D4A3F' as Hex, 0.5);
+  const cardBackground = mixHex(surface, '#2D3530' as Hex, 0.6);
+  const cardBackBackground = mixHex(cardBackground, '#252B27' as Hex, 0.5);
+  const searchBackground = 'rgba(30,36,32,0.95)';
+  const shadowColor = '#0F1210';
 
   return {
-    primary: accent,
-    secondary: mixHex(accent, '#3D3835' as Hex, 0.5),
+    primary: lightSage, // Lighter sage for dark
+    secondary: accent, // Terracotta accent
     background,
     surface,
     text,

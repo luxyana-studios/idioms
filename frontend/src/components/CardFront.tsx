@@ -45,48 +45,71 @@ const CardFront: React.FC<CardFrontProps> = ({
     setShowStats(!showStats);
   };
 
-  // memoize static container style without backgroundColor
+  // Organic Flow: larger border radius, softer shadows
   const containerStyle = useMemo<ViewStyle>(
     () => ({
       width: CARD_WIDTH,
       height: CARD_HEIGHT,
-      borderRadius: 20,
-      padding: 24,
+      borderRadius: 36, // Organic larger curves
+      padding: 28,
       justifyContent: 'center',
       alignItems: 'center',
       position: 'absolute' as const,
-      shadowColor: colors.shadowColor,
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.4,
-      shadowRadius: 10,
-      elevation: 12,
-      borderWidth: 0.8,
-      borderColor: 'rgba(255,255,255,0.2)',
+      shadowColor: theme === 'light' ? '#8B9B7E' : '#0F1210', // Sage-tinted shadow
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: 0.2, // Softer shadow
+      shadowRadius: 24, // Larger blur for organic feel
+      elevation: 10,
+      borderWidth: 1,
+      borderColor:
+        theme === 'light'
+          ? 'rgba(167, 196, 160, 0.25)' // Sage border
+          : 'rgba(184, 212, 176, 0.15)',
       overflow: 'hidden',
     }),
-    [CARD_WIDTH, CARD_HEIGHT, colors.shadowColor],
+    [CARD_WIDTH, CARD_HEIGHT, theme],
   );
 
   return (
     <Animated.View style={[containerStyle, frontAnimatedStyle]}>
+      {/* Organic Flow gradient: cream → sage → terracotta blend */}
       <LinearGradient
-        colors={[
-          colors.cardBackground ?? '#e7f2e1',
-          colors.secondary ?? colors.surface ?? '#cfe0c5',
-          colors.surface ?? '#dbe7d4',
-        ]}
-        locations={[0, 0.55, 1]}
-        start={{ x: 0.08, y: 0 }}
-        end={{ x: 0.92, y: 1 }}
-        style={[StyleSheet.absoluteFill, { borderRadius: 20 }]}
+        colors={
+          theme === 'light'
+            ? [
+                'rgba(167, 196, 160, 0.08)', // Soft sage tint
+                colors.cardBackground ?? '#FDFCFA',
+                'rgba(212, 165, 116, 0.06)', // Subtle terracotta warmth
+              ]
+            : [
+                'rgba(184, 212, 176, 0.1)', // Dark sage tint
+                colors.cardBackground ?? '#2D3530',
+                'rgba(229, 184, 148, 0.08)', // Dark terracotta warmth
+              ]
+        }
+        locations={[0, 0.5, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
       />
+      {/* Subtle organic overlay for depth */}
       <LinearGradient
-        colors={[
-          (colors.text ?? '#000000') + '12',
-          'transparent',
-          (colors.text ?? '#000000') + '1F',
-        ]}
-        locations={[0, 0.3, 1]}
+        colors={
+          theme === 'light'
+            ? [
+                'rgba(167, 196, 160, 0.05)',
+                'transparent',
+                'rgba(212, 165, 116, 0.04)',
+              ]
+            : [
+                'rgba(184, 212, 176, 0.06)',
+                'transparent',
+                'rgba(229, 184, 148, 0.05)',
+              ]
+        }
+        locations={[0, 0.4, 1]}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
 
@@ -113,6 +136,7 @@ const CardFront: React.FC<CardFrontProps> = ({
         <SmileyDisplay smileys={item.depiction} />
       </View>
 
+      {/* Organic pill-shaped favorite button */}
       <TouchableOpacity
         onPress={(e) => {
           setIsFavorite((prev) => !prev);
@@ -122,11 +146,17 @@ const CardFront: React.FC<CardFrontProps> = ({
           position: 'absolute',
           bottom: CARD_HEIGHT * 0.05,
           right: CARD_WIDTH * 0.05,
-          padding: 10,
-          backgroundColor: computed.softBackground,
-          borderRadius: 999,
+          padding: 12,
+          backgroundColor:
+            theme === 'light'
+              ? 'rgba(167, 196, 160, 0.15)'
+              : 'rgba(184, 212, 176, 0.12)',
+          borderRadius: 24, // Organic pill shape
           borderWidth: 1,
-          borderColor: computed.subtleBorder,
+          borderColor:
+            theme === 'light'
+              ? 'rgba(167, 196, 160, 0.3)'
+              : 'rgba(184, 212, 176, 0.2)',
         }}
       >
         <Ionicons

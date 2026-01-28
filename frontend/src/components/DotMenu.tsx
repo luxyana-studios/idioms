@@ -135,26 +135,45 @@ const DotMenu: React.FC<DotMenuProps> = ({
     },
   ];
 
+  // Organic Flow colors
+  const organicTriggerBg =
+    theme === 'light'
+      ? 'rgba(167, 196, 160, 0.2)' // Sage tint
+      : 'rgba(184, 212, 176, 0.15)';
+  const organicTriggerBorder =
+    theme === 'light'
+      ? 'rgba(167, 196, 160, 0.35)'
+      : 'rgba(184, 212, 176, 0.25)';
+  const organicMenuBg =
+    theme === 'light'
+      ? 'rgba(253, 252, 250, 0.98)' // Warm white
+      : 'rgba(42, 48, 43, 0.98)'; // Dark sage
+
   return (
     <>
+      {/* Organic blob-like menu trigger */}
       <TouchableOpacity
         onPress={handleMenuPress}
         style={{
           position: 'absolute',
           top: CARD_HEIGHT * 0.05,
           right: CARD_WIDTH * 0.05,
-          padding: 10,
-          backgroundColor: computed.triggerBg,
-          borderRadius: 999,
+          padding: 11,
+          backgroundColor: organicTriggerBg,
+          // Organic blob shape
+          borderTopLeftRadius: 18,
+          borderTopRightRadius: 22,
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 16,
           borderWidth: 1,
-          borderColor: computed.triggerBorder,
+          borderColor: organicTriggerBorder,
           zIndex: 1000,
         }}
       >
         <Ionicons
           name="ellipsis-vertical"
-          size={24}
-          color={computed.triggerIconColor}
+          size={22}
+          color={theme === 'light' ? '#A7C4A0' : '#B8D4B0'}
           style={{
             textShadowColor: computed.triggerIconShadowColor,
             textShadowOffset: { width: 0, height: 1 },
@@ -163,6 +182,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
         />
       </TouchableOpacity>
 
+      {/* Organic Flow popup menu */}
       {isMenuVisible && (
         <View
           style={{
@@ -171,8 +191,11 @@ const DotMenu: React.FC<DotMenuProps> = ({
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: computed.overlayBg,
-            borderRadius: 20,
+            backgroundColor:
+              theme === 'light'
+                ? 'rgba(167, 196, 160, 0.15)' // Sage overlay
+                : 'rgba(30, 36, 32, 0.5)',
+            borderRadius: 36, // Match card radius
             justifyContent: 'flex-start',
             alignItems: 'flex-end',
             paddingTop: CARD_HEIGHT * 0.12,
@@ -187,7 +210,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
               left: 0,
               right: 0,
               bottom: 0,
-              borderRadius: 20,
+              borderRadius: 36,
             }}
             activeOpacity={1}
             onPress={() => setIsMenuVisible(false)}
@@ -195,18 +218,21 @@ const DotMenu: React.FC<DotMenuProps> = ({
 
           <View
             style={{
-              backgroundColor: menuBackground,
-              borderRadius: 16,
-              padding: 16,
+              backgroundColor: organicMenuBg,
+              borderRadius: 24, // Organic larger radius
+              padding: 18,
               minWidth: 200,
               maxWidth: 260,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: computed.menuShadowOpacity,
-              shadowRadius: computed.menuShadowRadius,
+              shadowColor: theme === 'light' ? '#8B9B7E' : '#0F1210',
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.15,
+              shadowRadius: 20,
               elevation: 20,
               borderWidth: 1,
-              borderColor: computed.menuBorder,
+              borderColor:
+                theme === 'light'
+                  ? 'rgba(167, 196, 160, 0.25)'
+                  : 'rgba(184, 212, 176, 0.15)',
               zIndex: 10000,
             }}
           >
@@ -218,22 +244,26 @@ const DotMenu: React.FC<DotMenuProps> = ({
                   flexDirection: 'row',
                   alignItems: 'center',
                   paddingVertical: 14,
-                  paddingHorizontal: 12,
-                  borderBottomWidth: index < menuOptions.length - 1 ? 1 : 0,
-                  borderBottomColor: computed.divider,
+                  paddingHorizontal: 14,
+                  marginBottom: index < menuOptions.length - 1 ? 4 : 0,
+                  borderRadius: 16, // Organic item radius
+                  backgroundColor:
+                    theme === 'light'
+                      ? 'rgba(167, 196, 160, 0.08)'
+                      : 'rgba(184, 212, 176, 0.05)',
                 }}
                 activeOpacity={0.7}
               >
                 <Ionicons
                   name={option.icon}
-                  size={22}
-                  color={computed.iconColor}
-                  style={{ marginRight: 16 }}
+                  size={20}
+                  color={theme === 'light' ? '#A7C4A0' : '#B8D4B0'}
+                  style={{ marginRight: 14 }}
                 />
                 <Text
                   style={{
                     color: computed.labelColor,
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: '500',
                     flex: 1,
                   }}
@@ -246,6 +276,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
         </View>
       )}
 
+      {/* Organic Flow report menu */}
       {showReportMenu && (
         <View
           style={{
@@ -254,8 +285,11 @@ const DotMenu: React.FC<DotMenuProps> = ({
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: computed.overlayBg,
-            borderRadius: 20,
+            backgroundColor:
+              theme === 'light'
+                ? 'rgba(167, 196, 160, 0.15)'
+                : 'rgba(30, 36, 32, 0.5)',
+            borderRadius: 36,
             justifyContent: 'flex-start',
             alignItems: 'flex-end',
             paddingTop: CARD_HEIGHT * 0.18,
@@ -270,7 +304,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
               left: 0,
               right: 0,
               bottom: 0,
-              borderRadius: 20,
+              borderRadius: 36,
             }}
             activeOpacity={1}
             onPress={() => setShowReportMenu(false)}
@@ -281,18 +315,21 @@ const DotMenu: React.FC<DotMenuProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             style={{
-              backgroundColor: menuBackground,
-              borderRadius: 16,
+              backgroundColor: organicMenuBg,
+              borderRadius: 24,
               padding: 20,
               minWidth: 200,
               maxWidth: 240,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 8 },
-              shadowOpacity: computed.menuShadowOpacity,
-              shadowRadius: computed.menuShadowRadius,
+              shadowColor: theme === 'light' ? '#8B9B7E' : '#0F1210',
+              shadowOffset: { width: 0, height: 10 },
+              shadowOpacity: 0.15,
+              shadowRadius: 20,
               elevation: 20,
               borderWidth: 1,
-              borderColor: computed.menuBorder,
+              borderColor:
+                theme === 'light'
+                  ? 'rgba(167, 196, 160, 0.25)'
+                  : 'rgba(184, 212, 176, 0.15)',
             }}
           >
             <View
@@ -359,6 +396,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
         </View>
       )}
 
+      {/* Organic Flow notification toast */}
       {showNotification && (
         <MotiView
           from={{ opacity: 0, translateY: -20 }}
@@ -370,23 +408,26 @@ const DotMenu: React.FC<DotMenuProps> = ({
             top: CARD_HEIGHT * 0.12,
             left: CARD_WIDTH * 0.15,
             right: CARD_WIDTH * 0.15,
-            backgroundColor: menuBackground,
-            borderRadius: 12,
-            padding: 12,
+            backgroundColor: organicMenuBg,
+            borderRadius: 20, // Organic pill
+            padding: 14,
             borderWidth: 1,
-            borderColor: computed.menuBorder,
+            borderColor:
+              theme === 'light'
+                ? 'rgba(167, 196, 160, 0.3)'
+                : 'rgba(184, 212, 176, 0.2)',
             zIndex: 10001,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
+            shadowColor: theme === 'light' ? '#8B9B7E' : '#0F1210',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
             elevation: 8,
             alignItems: 'center',
           }}
         >
           <Text
             style={{
-              color: computed.labelColor,
+              color: theme === 'light' ? '#5A6B55' : '#C4D4BE',
               fontSize: 14,
               fontWeight: '600',
               textAlign: 'center',

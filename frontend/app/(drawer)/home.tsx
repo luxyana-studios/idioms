@@ -1,21 +1,31 @@
 import React from 'react';
-import { View, Dimensions, Text, ImageBackground } from 'react-native';
+import { View, Dimensions, ImageBackground } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { router } from 'expo-router';
 import HeroSection from '../../src/components/HeroSection';
 import QuickActionsGrid from '../../src/components/QuickActionsGrid';
 import ModernPandaAnimation from '../../src/components/ModernPandaAnimation';
-import Constants from 'expo-constants';
+import OrganicBackground from '../../src/components/OrganicBackground';
+import { useMascotFloating } from '../../src/hooks/useFloatingAnimation';
+import { useBreathingAnimation } from '../../src/hooks/useBreathingAnimation';
 import type { PalettePreset } from '../../src/utils/palette';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const pandaBackground = require('../../assets/background/fondo-panda.webp');
 
-const apiUrl = Constants.expoConfig?.extra?.API_URL ?? 'API URL not found';
-
 const HomeScreen = () => {
-  const { colors, setPalette, theme, setPreset, computed } = useTheme();
+  const { colors, theme, setPreset, computed } = useTheme();
+
+  // Organic Flow animations for the panda mascot
+  const mascotFloatStyle = useMascotFloating(true);
+  const mascotBreathStyle = useBreathingAnimation({
+    minScale: 1.0,
+    maxScale: 1.012,
+    duration: 5000,
+    enabled: true,
+  });
 
   // Navigation function with type assertion
   const navigateTo = (route: string) => {
@@ -50,9 +60,10 @@ const HomeScreen = () => {
     },
   ];
 
+  // Organic Flow preset: Sage green dominant
   const preset: PalettePreset = {
-    dominant: '#8B7355',
-    accent: '#D4A574',
+    dominant: '#A7C4A0', // Sage green
+    accent: '#D4A574', // Terracotta
     background: undefined,
     textLight: '#2D2A26',
     textDark: '#FAF7F2',
@@ -63,7 +74,8 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <View style={{ backgroundColor: colors.background }} className="flex-1">
+    <OrganicBackground variant="home" showBlobs>
+      {/* Panda background image with organic overlay */}
       <ImageBackground
         source={pandaBackground}
         resizeMode="cover"
@@ -76,10 +88,11 @@ const HomeScreen = () => {
           width: '100%',
           height: '100%',
           zIndex: 0,
-          opacity: computed.backgroundImageOpacity,
+          opacity: computed.backgroundImageOpacity * 0.85,
         }}
       />
 
+      {/* Organic Flow overlay - sage-tinted for cohesion */}
       <View
         pointerEvents="none"
         style={{
@@ -88,23 +101,32 @@ const HomeScreen = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: computed.backgroundImageOverlay,
+          backgroundColor:
+            theme === 'light'
+              ? 'rgba(167, 196, 160, 0.15)' // Light sage overlay
+              : 'rgba(30, 36, 32, 0.4)', // Forest overlay
           zIndex: 1,
         }}
       />
 
-      <ModernPandaAnimation
-        width={510}
-        height={510}
-        style={{
-          position: 'absolute',
-          top: screenHeight / 2 - 255 + Math.round(screenHeight * 0.09),
-          left: screenWidth / 2 - 255,
-          zIndex: 2,
-          opacity: 0.7,
-        }}
-      />
+      {/* Panda mascot with breathing and floating animations */}
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            top: screenHeight / 2 - 255 + Math.round(screenHeight * 0.09),
+            left: screenWidth / 2 - 255,
+            zIndex: 2,
+            opacity: 0.75,
+          },
+          mascotFloatStyle,
+          mascotBreathStyle,
+        ]}
+      >
+        <ModernPandaAnimation width={510} height={510} />
+      </Animated.View>
 
+      {/* Main content */}
       <View
         className="flex-1 px-6"
         style={{
@@ -120,7 +142,7 @@ const HomeScreen = () => {
           navigateTo={navigateTo}
         />
       </View>
-    </View>
+    </OrganicBackground>
   );
 };
 
