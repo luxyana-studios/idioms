@@ -9,6 +9,7 @@ import {
   ImageBackground,
   FlatList,
   StatusBar,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../src/contexts/ThemeContext';
@@ -82,18 +83,18 @@ const WelcomeScreen = () => {
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 1000,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 800,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         tension: 50,
         friction: 7,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     ]).start();
   }, []);
@@ -126,7 +127,7 @@ const WelcomeScreen = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start(() => {
       router.replace('/(drawer)/home');
     });

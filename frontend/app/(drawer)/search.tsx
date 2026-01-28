@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Animated, Dimensions } from 'react-native';
+import { View, Animated, Dimensions, Platform } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import CardList from '../../src/components/CardList';
 import { ActiveFilterChips } from '../../src/components/ActiveFilterChips';
@@ -93,7 +93,7 @@ const SearchScreen = () => {
       Animated.timing(headerAnim, {
         toValue: 1,
         duration: 250,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }).start();
     }
   };
@@ -106,7 +106,7 @@ const SearchScreen = () => {
       Animated.timing(headerAnim, {
         toValue: 1,
         duration: 200,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }).start();
     }
   };
@@ -147,7 +147,7 @@ const SearchScreen = () => {
           Animated.timing(headerAnim, {
             toValue: 0,
             duration: 250,
-            useNativeDriver: true,
+            useNativeDriver: Platform.OS !== 'web',
           }).start(() => {
             setShowHeader(false);
             setOptionsRendered(false);
@@ -160,7 +160,7 @@ const SearchScreen = () => {
           Animated.timing(headerAnim, {
             toValue: 1,
             duration: 250,
-            useNativeDriver: true,
+            useNativeDriver: Platform.OS !== 'web',
           }).start();
         }
       }

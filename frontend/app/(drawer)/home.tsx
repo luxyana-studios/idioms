@@ -51,11 +51,11 @@ const HomeScreen = () => {
   ];
 
   const preset: PalettePreset = {
-    dominant: '#6fae4a',
-    accent: '#e6d36b',
+    dominant: '#8B7355',
+    accent: '#D4A574',
     background: undefined,
-    textLight: '#1a1a1a',
-    textDark: '#ffffff',
+    textLight: '#2D2A26',
+    textDark: '#FAF7F2',
   };
 
   React.useEffect(() => {

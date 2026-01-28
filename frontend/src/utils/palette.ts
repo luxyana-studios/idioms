@@ -81,8 +81,8 @@ export function buildLightPatch(preset: PalettePreset): ThemeColorsPatch {
   const border = mixHex(text, background, 0.85);
   const cardBackground = surface;
   const cardBackBackground = mixHex(surface, '#ffffff' as Hex, 0.06);
-  const searchBackground = 'rgba(255,255,255,0.9)';
-  const shadowColor = '#64748b';
+  const searchBackground = 'rgba(250,247,242,0.9)';
+  const shadowColor = '#9B9388';
 
   return {
     primary: accent,
@@ -112,14 +112,14 @@ export function buildDarkPatch(preset: PalettePreset): ThemeColorsPatch {
     0.7,
   );
   const border = mixHex(text, background, 0.72);
-  const cardBackground = mixHex(surface, '#1f2937' as Hex, 0.2);
-  const cardBackBackground = mixHex(cardBackground, '#111827' as Hex, 0.18);
-  const searchBackground = 'rgba(31,41,55,0.9)';
-  const shadowColor = '#000';
+  const cardBackground = mixHex(surface, '#3D3835' as Hex, 0.2);
+  const cardBackBackground = mixHex(cardBackground, '#2D2A26' as Hex, 0.18);
+  const searchBackground = 'rgba(45,42,38,0.9)';
+  const shadowColor = '#1E1B18';
 
   return {
     primary: accent,
-    secondary: mixHex(accent, '#374151' as Hex, 0.5),
+    secondary: mixHex(accent, '#3D3835' as Hex, 0.5),
     background,
     surface,
     text,

@@ -23,7 +23,7 @@ interface CardFrontProps {
   CARD_HEIGHT: number;
 }
 
-const DARK_FAVORITE_COLOR = '#E8D04D';
+const DARK_FAVORITE_COLOR = '#D4A574';
 
 const CardFront: React.FC<CardFrontProps> = ({
   item,

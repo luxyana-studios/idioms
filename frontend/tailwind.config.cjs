@@ -6,18 +6,25 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#030014',
-        secundary: '#151312',
+        primary: '#8B7355',
+        secondary: '#A7C4A0',
+        accent: '#D4A574',
+        muted: '#E8E2D9',
         light: {
-          100: '#D6C6FF',
-          200: '#A8B5DB',
-          300: '#9CA4AB',
+          100: '#FAF7F2',
+          200: '#E8E2D9',
+          300: '#E5DDD3',
         },
         dark: {
-          100: '#221f3d',
-          200: '#0f0d23',
+          100: '#2D2A26',
+          200: '#1E1B18',
         },
-        accent: '#AB8BFF',
+        earth: {
+          sand: '#E5DDD3',
+          moss: '#7A8B6E',
+          clay: '#C4956A',
+          stone: '#9B9388',
+        },
       },
     },
   },
