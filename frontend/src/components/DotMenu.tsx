@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Text, TouchableOpacity, View, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { MotiView } from 'moti';
+import AnimatedView from './AnimatedView';
 import { CardData } from '../types/card';
 import { setStringAsync } from 'expo-clipboard';
 import { useTheme } from '../contexts/ThemeContext';
@@ -33,9 +33,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
 
-  const { theme, colors, computed } = useTheme();
-
-  const menuBackground = theme === 'dark' ? colors.background : computed.menuBg;
+  const { theme, computed } = useTheme();
 
   const showSuccessNotification = (message: string) => {
     setNotificationMessage(message);
@@ -310,7 +308,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
             onPress={() => setShowReportMenu(false)}
           />
 
-          <MotiView
+          <AnimatedView
             from={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
@@ -392,16 +390,15 @@ const DotMenu: React.FC<DotMenuProps> = ({
                 </Text>
               </TouchableOpacity>
             ))}
-          </MotiView>
+          </AnimatedView>
         </View>
       )}
 
       {/* Organic Flow notification toast */}
       {showNotification && (
-        <MotiView
+        <AnimatedView
           from={{ opacity: 0, translateY: -20 }}
           animate={{ opacity: 1, translateY: 0 }}
-          exit={{ opacity: 0, translateY: -20 }}
           transition={{ type: 'timing', duration: 200 }}
           style={{
             position: 'absolute',
@@ -435,7 +432,7 @@ const DotMenu: React.FC<DotMenuProps> = ({
           >
             {notificationMessage}
           </Text>
-        </MotiView>
+        </AnimatedView>
       )}
     </>
   );

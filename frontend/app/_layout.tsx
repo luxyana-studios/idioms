@@ -4,8 +4,8 @@ import ThemeProvider from '../src/contexts/ThemeContext';
 import QueryProvider from '../src/contexts/QueryProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { addNotificationResponseReceivedListener } from 'expo-notifications';
 import { useEffect, useCallback } from 'react';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { useRegisterUser } from '../src/hooks/useRegisterUser';
 import { View, ActivityIndicator } from 'react-native';
 import {
@@ -49,15 +49,37 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   useEffect(() => {
-    const subscription = addNotificationResponseReceivedListener((response) => {
-      console.log('Notification tapped:', response);
-      const idiomId = response.notification.request.content.data?.idiomId;
-      console.log('idiomId from notification:', idiomId);
-      if (typeof idiomId === 'string' && idiomId.length > 0) {
-        router.push(`/(drawer)/shuffle?idiomId=${encodeURIComponent(idiomId)}`);
-      }
-    });
-    return () => subscription.remove();
+    // Skip notifications entirely in Expo Go — push notifications were
+    // removed from Expo Go in SDK 53 and the module throws on import.
+    const isExpoGo =
+      Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+    if (isExpoGo) return;
+
+    let removed = false;
+    let subscription: { remove(): void } | undefined;
+
+    import('expo-notifications')
+      .then((Notifications) => {
+        if (removed) return;
+        subscription = Notifications.addNotificationResponseReceivedListener(
+          (response) => {
+            const idiomId = response.notification.request.content.data?.idiomId;
+            if (typeof idiomId === 'string' && idiomId.length > 0) {
+              router.push(
+                `/(drawer)/shuffle?idiomId=${encodeURIComponent(idiomId)}`,
+              );
+            }
+          },
+        );
+      })
+      .catch(() => {
+        // expo-notifications not available
+      });
+
+    return () => {
+      removed = true;
+      subscription?.remove();
+    };
   }, []);
 
   if (!fontsLoaded) {

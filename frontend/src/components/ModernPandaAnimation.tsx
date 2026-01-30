@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { VideoView, useVideoPlayer } from 'expo-video';
-import { MotiView } from 'moti';
+import AnimatedView from './AnimatedView';
 
 interface ModernPandaAnimationProps {
   width?: number;
@@ -24,7 +24,7 @@ const ModernPandaAnimation: React.FC<ModernPandaAnimationProps> = ({
   );
 
   return (
-    <MotiView
+    <AnimatedView
       from={{
         opacity: 0,
         scale: 0.8,
@@ -51,7 +51,7 @@ const ModernPandaAnimation: React.FC<ModernPandaAnimationProps> = ({
         pointerEvents="none"
         nativeControls={false}
       />
-    </MotiView>
+    </AnimatedView>
   );
 };
 

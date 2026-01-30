@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import { useTheme } from '../contexts/ThemeContext';
 import SmileyDisplay from './SmileyDisplay';
-import { MotiView } from 'moti';
+import AnimatedView from './AnimatedView';
 import { ContentStep } from '../hooks/useCardFlip';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -41,11 +41,6 @@ interface ExamplesContentProps {
   textSecondaryColor: string;
 }
 
-interface StepIndicatorsProps {
-  currentStep: ContentStep;
-  steps: ContentStep[];
-}
-
 const MeaningContent = ({
   meaning,
   textColor,
@@ -55,7 +50,7 @@ const MeaningContent = ({
   const [showEmojis, setShowEmojis] = useState(false);
   const [showIndicators, setShowIndicators] = useState(false);
 
-  const { theme, colors, computed } = useTheme();
+  const { computed } = useTheme();
 
   const resolvedHeaderColor = computed.headerColor;
 
@@ -79,7 +74,7 @@ const MeaningContent = ({
       </View>
 
       <View style={styles.meaningContent}>
-        <MotiView
+        <AnimatedView
           from={{ opacity: 0, scale: 0.85, translateY: 24 }}
           animate={{ opacity: 1, scale: 1, translateY: 0 }}
           transition={{
@@ -96,11 +91,11 @@ const MeaningContent = ({
           <Text style={[styles.cleanText, { color: textColor }]}>
             {meaning}
           </Text>
-        </MotiView>
+        </AnimatedView>
 
         <View style={styles.emojiContainer}>
           {showEmojis ? (
-            <MotiView
+            <AnimatedView
               from={{ opacity: 0, scale: 0.85, translateY: 16 }}
               animate={{ opacity: 1, scale: 1, translateY: 0 }}
               transition={{
@@ -156,13 +151,13 @@ const MeaningContent = ({
                     ))}
                 </View>
               </>
-            </MotiView>
+            </AnimatedView>
           ) : null}
         </View>
       </View>
 
       {showIndicators && (
-        <MotiView
+        <AnimatedView
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{
@@ -181,7 +176,7 @@ const MeaningContent = ({
               alignItems: 'flex-start',
             }}
           ></View>
-        </MotiView>
+        </AnimatedView>
       )}
     </View>
   );
@@ -191,7 +186,7 @@ const ExplanationContent = ({
   explanation,
   textColor,
 }: ExplanationContentProps) => {
-  const { theme, colors, computed } = useTheme();
+  const { computed } = useTheme();
 
   const resolvedHeaderColor = computed.headerColor;
 
@@ -214,7 +209,7 @@ const ExplanationContent = ({
         </Text>
       </View>
 
-      <MotiView
+      <AnimatedView
         from={{ opacity: 0, scale: 0.95, translateY: 30 }}
         animate={{ opacity: 1, scale: 1, translateY: 0 }}
         transition={{
@@ -226,7 +221,7 @@ const ExplanationContent = ({
         <Text style={[styles.cleanText, { color: textColor }]}>
           {explanation}
         </Text>
-      </MotiView>
+      </AnimatedView>
     </View>
   );
 };
@@ -238,7 +233,7 @@ const ExamplesContent = ({
   const [showAllExamples, setShowAllExamples] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
-  const { theme, colors, computed } = useTheme();
+  const { computed } = useTheme();
 
   const resolvedHeaderColor = computed.headerColor;
   const resolvedAccent = computed.accent;
@@ -270,7 +265,7 @@ const ExamplesContent = ({
 
       <View style={{ width: '100%' }}>
         {examplesToShow.map((example, idx) => (
-          <MotiView
+          <AnimatedView
             key={idx}
             from={{ opacity: 0, scale: 0.95, translateY: 24 }}
             animate={{ opacity: 1, scale: 1, translateY: 0 }}
@@ -306,11 +301,11 @@ const ExamplesContent = ({
             >
               {idx + 1}. {example}
             </Text>
-          </MotiView>
+          </AnimatedView>
         ))}
 
         {showButton && examples.length > 1 && !showAllExamples && (
-          <MotiView
+          <AnimatedView
             from={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
@@ -356,7 +351,7 @@ const ExamplesContent = ({
                 />
               </View>
             </TouchableOpacity>
-          </MotiView>
+          </AnimatedView>
         )}
       </View>
     </View>
@@ -375,8 +370,6 @@ export const CardBack = ({
 
   const steps: ContentStep[] = ['meaning', 'explanation', 'examples'];
 
-  const headingColor = computed.headerColor;
-  const accentColor = computed.accent;
   const navIconColor = computed.headerColor;
 
   const handleNextPress = () => {
