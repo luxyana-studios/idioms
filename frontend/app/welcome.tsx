@@ -6,10 +6,11 @@ import {
   Dimensions,
   Animated,
   TouchableOpacity,
-  ImageBackground,
   FlatList,
   StatusBar,
+  Platform,
 } from 'react-native';
+import ReanimatedView from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../src/contexts/ThemeContext';
 import {
@@ -17,7 +18,9 @@ import {
   GestureDetector,
   Directions,
 } from 'react-native-gesture-handler';
-import pandaBackground from '../assets/background/fondo-panda.webp';
+import OrganicBackground from '../src/components/OrganicBackground';
+import { useEmojiFloating } from '../src/hooks/useFloatingAnimation';
+import { useEmojiBreathing } from '../src/hooks/useBreathingAnimation';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -68,32 +71,36 @@ const welcomeSteps: WelcomeStep[] = [
 
 const WelcomeScreen = () => {
   const router = useRouter();
-  const { colors, computed } = useTheme();
-  const subtitleColor = computed.cardTextSecondaryColorLight;
-  const nextButtonBg = subtitleColor;
+  const { colors, computed, theme } = useTheme();
+  // Organic Flow: sage green for primary actions
+  const nextButtonBg = theme === 'light' ? '#A7C4A0' : '#B8D4B0';
   const [currentStep, setCurrentStep] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
-  const flatListRef = useRef<any>(null);
+  const flatListRef = useRef<FlatList>(null);
+
+  // Organic Flow animations for emoji
+  const emojiFloatStyle = useEmojiFloating(true);
+  const emojiBreathStyle = useEmojiBreathing(true);
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 1000,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 800,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         tension: 50,
         friction: 7,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     ]).start();
   }, []);
@@ -126,7 +133,7 @@ const WelcomeScreen = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start(() => {
       router.replace('/(drawer)/home');
     });
@@ -150,13 +157,7 @@ const WelcomeScreen = () => {
 
   const gesture = Gesture.Exclusive(rightGesture, leftGesture);
 
-  const renderStep = ({
-    item,
-    index,
-  }: {
-    item: WelcomeStep;
-    index: number;
-  }) => (
+  const renderStep = ({ item }: { item: WelcomeStep }) => (
     <Animated.View
       style={[
         styles.stepContainer,
@@ -166,23 +167,34 @@ const WelcomeScreen = () => {
         },
       ]}
     >
-      <View
+      {/* Organic blob-shaped emoji container with floating animation */}
+      <ReanimatedView.View
         style={[
           styles.emojiContainer,
           {
-            backgroundColor: computed.accent + '22',
+            backgroundColor:
+              theme === 'light'
+                ? 'rgba(167, 196, 160, 0.2)' // Sage tint
+                : 'rgba(184, 212, 176, 0.15)',
+            borderColor:
+              theme === 'light'
+                ? 'rgba(167, 196, 160, 0.3)'
+                : 'rgba(184, 212, 176, 0.2)',
+            borderWidth: 1,
           },
+          emojiFloatStyle,
+          emojiBreathStyle,
         ]}
       >
         <Text style={styles.emoji}>{item.emoji}</Text>
-      </View>
+      </ReanimatedView.View>
       <Text style={[styles.title, { color: computed.cardTextColorLight }]}>
         {item.title}
       </Text>
       <Text
         style={[
           styles.subtitle,
-          { color: computed.cardTextSecondaryColorLight },
+          { color: theme === 'light' ? '#7A8B6E' : '#C4D4BE' }, // Organic moss color
         ]}
       >
         {item.subtitle}
@@ -193,6 +205,7 @@ const WelcomeScreen = () => {
     </Animated.View>
   );
 
+  // Organic blob-like step indicators
   const renderIndicator = (index: number) => (
     <Animated.View
       key={index}
@@ -201,12 +214,18 @@ const WelcomeScreen = () => {
         {
           backgroundColor:
             index === currentStep
-              ? computed.iconColor
-              : computed.stepDotBackground,
-          width: index === currentStep ? 32 : 12,
+              ? theme === 'light'
+                ? '#A7C4A0' // Sage green active
+                : '#B8D4B0'
+              : theme === 'light'
+                ? 'rgba(167, 196, 160, 0.3)' // Sage tint inactive
+                : 'rgba(184, 212, 176, 0.25)',
+          width: index === currentStep ? 28 : 10,
+          height: index === currentStep ? 10 : 10,
+          borderRadius: index === currentStep ? 12 : 10, // Organic pill when active
           transform: [
             {
-              scale: index === currentStep ? 1.2 : 1,
+              scale: index === currentStep ? 1.1 : 1,
             },
           ],
         },
@@ -215,16 +234,29 @@ const WelcomeScreen = () => {
   );
 
   const content = (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ImageBackground
-        source={pandaBackground}
-        resizeMode="cover"
-        style={styles.background}
+    <OrganicBackground variant="welcome" showBlobs>
+      {/* Skip button with organic styling */}
+      <TouchableOpacity
+        style={[
+          styles.skipButton,
+          {
+            backgroundColor:
+              theme === 'light'
+                ? 'rgba(167, 196, 160, 0.15)'
+                : 'rgba(184, 212, 176, 0.12)',
+            borderRadius: 20,
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+          },
+        ]}
+        onPress={handleSkip}
       >
-        <View style={styles.overlay} />
-      </ImageBackground>
-      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-        <Text style={[styles.skipText, { color: colors.textSecondary }]}>
+        <Text
+          style={[
+            styles.skipText,
+            { color: theme === 'light' ? '#7A8B6E' : '#C4D4BE' },
+          ]}
+        >
           Skip
         </Text>
       </TouchableOpacity>
@@ -257,24 +289,41 @@ const WelcomeScreen = () => {
         <View style={styles.indicatorsContainer}>
           {welcomeSteps.map((_, index) => renderIndicator(index))}
         </View>
+        {/* Organic progress bar with rounded ends */}
         <View style={styles.progressContainer}>
           <View
-            style={[styles.progressBar, { backgroundColor: colors.border }]}
+            style={[
+              styles.progressBar,
+              {
+                backgroundColor:
+                  theme === 'light'
+                    ? 'rgba(167, 196, 160, 0.2)'
+                    : 'rgba(184, 212, 176, 0.15)',
+                borderRadius: 6, // Organic rounded ends
+              },
+            ]}
           >
             <Animated.View
               style={[
                 styles.progressFill,
                 {
-                  backgroundColor: colors.primary,
+                  backgroundColor: nextButtonBg,
                   width: `${((currentStep + 1) / welcomeSteps.length) * 100}%`,
+                  borderRadius: 6, // Match parent radius
                 },
               ]}
             />
           </View>
-          <Text style={[styles.progressText, { color: colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.progressText,
+              { color: theme === 'light' ? '#7A8B6E' : '#C4D4BE' },
+            ]}
+          >
             {currentStep + 1} of {welcomeSteps.length}
           </Text>
         </View>
+        {/* Organic styled navigation buttons */}
         <View style={styles.buttonsContainer}>
           {currentStep > 0 && (
             <TouchableOpacity
@@ -282,13 +331,25 @@ const WelcomeScreen = () => {
                 styles.navButton,
                 styles.prevButton,
                 {
-                  borderColor: colors.border,
-                  backgroundColor: 'transparent',
+                  borderColor:
+                    theme === 'light'
+                      ? 'rgba(167, 196, 160, 0.4)'
+                      : 'rgba(184, 212, 176, 0.3)',
+                  backgroundColor:
+                    theme === 'light'
+                      ? 'rgba(167, 196, 160, 0.1)'
+                      : 'rgba(184, 212, 176, 0.08)',
+                  borderRadius: 24, // Organic pill
                 },
               ]}
               onPress={handlePrev}
             >
-              <Text style={[styles.prevButtonText, { color: colors.text }]}>
+              <Text
+                style={[
+                  styles.prevButtonText,
+                  { color: theme === 'light' ? '#5A6B55' : '#C4D4BE' },
+                ]}
+              >
                 Previous
               </Text>
             </TouchableOpacity>
@@ -297,19 +358,24 @@ const WelcomeScreen = () => {
             style={[
               styles.navButton,
               styles.nextButton,
-              { backgroundColor: nextButtonBg },
+              {
+                backgroundColor: nextButtonBg,
+                borderRadius: 24, // Organic pill
+                shadowColor:
+                  theme === 'light' ? '#8B9B7E' : 'rgba(184, 212, 176, 0.3)',
+              },
             ]}
             onPress={handleNext}
           >
-            <Text style={[styles.nextButtonText, { color: '#fff' }]}>
+            <Text style={[styles.nextButtonText, { color: '#FDFCFA' }]}>
               {currentStep === welcomeSteps.length - 1
-                ? 'Get Started! 🎉'
-                : 'Next →'}
+                ? 'Get Started!'
+                : 'Next'}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </OrganicBackground>
   );
 
   return (
@@ -327,23 +393,6 @@ const WelcomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  background: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   skipButton: {
     position: 'absolute',
@@ -371,10 +420,13 @@ const styles = StyleSheet.create({
     minHeight: 260,
   },
   emojiContainer: {
-    marginBottom: 20,
-    padding: 15,
-    borderRadius: 50,
-    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+    marginBottom: 24,
+    padding: 18,
+    // Organic blob-like shape
+    borderTopLeftRadius: 55,
+    borderTopRightRadius: 45,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 52,
   },
   emoji: {
     fontSize: 48,
@@ -414,9 +466,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   indicator: {
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 6,
+    height: 10,
+    borderRadius: 10, // Organic blob-like
+    marginHorizontal: 5,
     alignSelf: 'center',
   },
   progressContainer: {
@@ -446,23 +498,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   navButton: {
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    borderRadius: 24, // Organic pill
+    paddingVertical: 16,
+    paddingHorizontal: 28,
     minWidth: 120,
     alignItems: 'center',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12, // Softer shadow
+    elevation: 5,
   },
   prevButton: {
     backgroundColor: 'transparent',
-    borderWidth: 2,
+    borderWidth: 1.5,
   },
   nextButton: {
     flex: 1,
-    marginLeft: 15,
+    marginLeft: 16,
   },
   prevButtonText: {
     fontSize: 16,

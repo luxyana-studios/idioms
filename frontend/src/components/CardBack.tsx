@@ -432,39 +432,56 @@ export const CardBack = ({
         {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
-          shadowColor: colors.shadowColor,
+          shadowColor: theme === 'light' ? '#8B9B7E' : '#0F1210',
+          borderWidth: 1,
+          borderColor:
+            theme === 'light'
+              ? 'rgba(167, 196, 160, 0.25)'
+              : 'rgba(184, 212, 176, 0.15)',
         },
         backAnimatedStyle,
       ]}
     >
+      {/* Organic Flow gradient for card back */}
       <LinearGradient
-        colors={[
-          colors.cardBackBackground ??
-            colors.cardBackground ??
-            (theme === 'light' ? '#eef5ea' : '#1f2a1f'),
-          colors.surface ?? (theme === 'light' ? '#e3ece0' : '#111611'),
-          colors.secondary ??
-            colors.surface ??
-            (theme === 'light' ? '#d6e3d2' : '#172017'),
-        ]}
-        locations={[0, 0.55, 1]}
-        start={{ x: 0.12, y: 0.05 }}
-        end={{ x: 0.88, y: 0.95 }}
+        colors={
+          theme === 'light'
+            ? [
+                'rgba(212, 165, 116, 0.06)', // Subtle terracotta tint
+                colors.cardBackBackground ?? '#F5F1EB',
+                'rgba(167, 196, 160, 0.08)', // Soft sage
+              ]
+            : [
+                'rgba(229, 184, 148, 0.08)', // Dark terracotta
+                colors.cardBackBackground ?? '#252B27',
+                'rgba(184, 212, 176, 0.1)', // Dark sage
+              ]
+        }
+        locations={[0, 0.5, 1]}
+        start={{ x: 1, y: 0 }}
+        end={{ x: 0, y: 1 }}
         style={{
           position: 'absolute',
           left: 0,
           right: 0,
           top: 0,
           bottom: 0,
-          borderRadius: 20,
+          borderRadius: 36,
         }}
       />
+      {/* Subtle organic overlay */}
       <View
         style={{
           position: 'absolute',
-          inset: 0,
-          borderRadius: 20,
-          backgroundColor: computed.softBackground,
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          borderRadius: 36,
+          backgroundColor:
+            theme === 'light'
+              ? 'rgba(167, 196, 160, 0.04)'
+              : 'rgba(184, 212, 176, 0.03)',
         }}
       />
 
@@ -537,15 +554,15 @@ export default MemoizedCardBack;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    borderRadius: 20,
-    padding: 24,
+    borderRadius: 36, // Organic larger curves
+    padding: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowColor: '#8B9B7E', // Sage-tinted shadow
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.2, // Softer shadow
+    shadowRadius: 24, // Larger blur for organic feel
+    elevation: 10,
     overflow: 'hidden',
     position: 'absolute',
   },
@@ -589,40 +606,40 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     position: 'absolute',
-    bottom: 20,
-    right: 24,
+    bottom: 22,
+    right: 26,
     zIndex: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 25,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    backgroundColor: 'rgba(167, 196, 160, 0.15)', // Sage tint
+    borderRadius: 22, // Organic pill
+    paddingVertical: 14,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    borderColor: 'rgba(167, 196, 160, 0.3)',
+    shadowColor: '#8B9B7E',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
     elevation: 3,
   },
   backButton: {
     position: 'absolute',
-    bottom: 20,
-    left: 24,
+    bottom: 22,
+    left: 26,
     zIndex: 3,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 25,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    backgroundColor: 'rgba(167, 196, 160, 0.15)', // Sage tint
+    borderRadius: 22, // Organic pill
+    paddingVertical: 14,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    borderColor: 'rgba(167, 196, 160, 0.3)',
+    shadowColor: '#8B9B7E',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
     elevation: 3,
   },
   stepIndicators: {
@@ -637,22 +654,22 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.35)',
-    marginHorizontal: 4,
-  },
-  activeDot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 2,
-    borderWidth: 1,
-    borderColor: '#00000014',
+    borderRadius: 10, // Organic blob-like
+    backgroundColor: 'rgba(167, 196, 160, 0.3)', // Sage tint
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    width: 14,
+    height: 14,
+    borderRadius: 14, // Organic blob
+    shadowColor: '#8B9B7E',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    borderWidth: 1.5,
+    borderColor: 'rgba(167, 196, 160, 0.4)',
   },
   mainText: {
     fontSize: 20,
@@ -671,15 +688,17 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   showMoreButton: {
-    marginTop: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 25,
+    marginTop: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 22, // Organic pill shape
     borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    borderColor: 'rgba(167, 196, 160, 0.3)',
+    backgroundColor: 'rgba(167, 196, 160, 0.1)',
+    shadowColor: '#8B9B7E',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
     elevation: 3,
   },
   showMoreContent: {

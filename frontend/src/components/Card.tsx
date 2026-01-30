@@ -182,7 +182,7 @@ const CardComponent = ({
             height: CARD_HEIGHT,
             justifyContent: 'center',
             alignItems: 'center',
-            borderRadius: 20,
+            borderRadius: 36, // Organic larger curves
             overflow: 'hidden',
           }}
         >

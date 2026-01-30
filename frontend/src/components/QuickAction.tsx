@@ -11,6 +11,10 @@ interface QuickActionProps {
   compact?: boolean;
 }
 
+/**
+ * Quick action button with Organic Flow styling.
+ * Features: soft shadows, organic rounded corners, sage green accents.
+ */
 const QuickAction: React.FC<QuickActionProps> = ({
   title,
   description,
@@ -18,53 +22,81 @@ const QuickAction: React.FC<QuickActionProps> = ({
   onPress,
   compact = false,
 }) => {
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
+
+  // Organic Flow color scheme
+  const iconBgColor =
+    theme === 'light'
+      ? 'rgba(167, 196, 160, 0.18)' // Sage tint
+      : 'rgba(184, 212, 176, 0.12)';
+  const iconColor = theme === 'light' ? '#A7C4A0' : '#B8D4B0';
+  const borderColor =
+    theme === 'light'
+      ? 'rgba(167, 196, 160, 0.25)'
+      : 'rgba(184, 212, 176, 0.15)';
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={
-        compact
-          ? 'flex-col items-center p-3 rounded-xl'
-          : 'flex-row items-center p-4 mb-3 rounded-xl'
-      }
+      activeOpacity={0.8}
       style={{
-        backgroundColor: compact ? colors.surface + '90' : colors.surface,
+        flexDirection: compact ? 'column' : 'row',
+        alignItems: 'center',
+        padding: compact ? 14 : 18,
+        marginBottom: compact ? 0 : 12,
+        borderRadius: 24, // Organic larger radius
+        backgroundColor:
+          theme === 'light'
+            ? 'rgba(253, 252, 250, 0.9)' // Warm white
+            : 'rgba(45, 53, 48, 0.85)', // Dark forest
         borderWidth: 1,
-        borderColor: colors.border + '70',
-        minHeight: compact ? 135 : undefined,
+        borderColor: borderColor,
+        minHeight: compact ? 140 : undefined,
+        // Soft organic shadow
+        shadowColor: theme === 'light' ? '#8B9B7E' : '#0F1210',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        elevation: 3,
       }}
     >
+      {/* Organic blob-like icon container */}
       <View
-        className={
-          compact
-            ? 'w-12 h-12 rounded-full items-center justify-center mb-2'
-            : 'w-12 h-12 rounded-full items-center justify-center mr-4'
-        }
         style={{
-          backgroundColor: compact
-            ? colors.primary + '15'
-            : colors.primary + '20',
+          width: compact ? 52 : 48,
+          height: compact ? 52 : 48,
+          // Organic blob shape
+          borderTopLeftRadius: 22,
+          borderTopRightRadius: 26,
+          borderBottomLeftRadius: 24,
+          borderBottomRightRadius: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: compact ? 10 : 0,
+          marginRight: compact ? 0 : 16,
+          backgroundColor: iconBgColor,
         }}
       >
-        <Ionicons name={icon} size={compact ? 24 : 24} color={colors.primary} />
+        <Ionicons name={icon} size={compact ? 26 : 24} color={iconColor} />
       </View>
-      <View className={compact ? 'flex-1 items-center' : 'flex-1'}>
+      <View style={{ flex: 1, alignItems: compact ? 'center' : 'flex-start' }}>
         <Text
-          style={{ color: colors.text }}
-          className={
-            compact
-              ? 'text-base font-semibold mb-1 text-center'
-              : 'text-lg font-semibold mb-1'
-          }
+          style={{
+            color: colors.text,
+            fontSize: compact ? 15 : 17,
+            fontWeight: '600',
+            marginBottom: 4,
+            textAlign: compact ? 'center' : 'left',
+          }}
         >
           {title}
         </Text>
         <Text
           style={{
-            color: (colors.text ?? '#1f2937') + 'BF',
+            color: theme === 'light' ? '#7A8B6E' : '#C4D4BE', // Earth moss
+            fontSize: compact ? 13 : 14,
+            textAlign: compact ? 'center' : 'left',
           }}
-          className={compact ? 'text-sm text-center' : 'text-sm'}
           numberOfLines={compact ? 2 : undefined}
         >
           {description}
@@ -74,7 +106,7 @@ const QuickAction: React.FC<QuickActionProps> = ({
         <Ionicons
           name="chevron-forward"
           size={20}
-          color={colors.textSecondary}
+          color={theme === 'light' ? '#A7C4A0' : '#B8D4B0'}
         />
       )}
     </TouchableOpacity>
