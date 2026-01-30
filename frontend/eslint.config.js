@@ -9,7 +9,7 @@ export default [
     ignores: ['node_modules', 'dist'],
   },
   {
-    files: ['*.ts', '*.tsx'],
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -23,6 +23,13 @@ export default [
       '@typescript-eslint': tseslint,
     },
     rules: {
+      // TypeScript compiler handles these; disable base rules for TS files
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       'prettier/prettier': [
         'error',
         {
@@ -36,7 +43,7 @@ export default [
     },
   },
   {
-    files: ['*.js'],
+    files: ['**/*.js'],
     languageOptions: {
       parserOptions: {
         ecmaVersion: 'latest',
