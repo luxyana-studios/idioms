@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { MotiView } from 'moti';
+import AnimatedView from './AnimatedView';
 import { Ionicons } from '@expo/vector-icons';
 import { CardData } from '../types/card';
 import IdiomStats from './IndicatorsDisplay';
@@ -25,16 +25,14 @@ const StatsModal: React.FC<StatsModalProps> = ({
 
   const { theme, colors, computed } = useTheme();
   const primary = theme === 'light' ? computed.headerColor : computed.accent;
-  const labelColor = computed.labelColor;
   const modalBg = theme === 'dark' ? colors.background : computed.menuBg;
   const border = computed.subtleBorder;
   const divider = computed.subtleBorder;
 
   return (
-    <MotiView
+    <AnimatedView
       from={{ opacity: 0, translateY: -12, scale: 0.96 }}
       animate={{ opacity: 1, translateY: 0, scale: 1 }}
-      exit={{ opacity: 0, translateY: -12, scale: 0.96 }}
       transition={{ type: 'timing', duration: 250 }}
       style={{
         position: 'absolute',
@@ -85,7 +83,7 @@ const StatsModal: React.FC<StatsModalProps> = ({
       </View>
 
       <IdiomStats item={item} />
-    </MotiView>
+    </AnimatedView>
   );
 };
 
