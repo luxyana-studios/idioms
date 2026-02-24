@@ -20,7 +20,7 @@
     "production": {
       "autoIncrement": true,
       "env": {
-        "API_URL": "https://f38362b96333.ngrok-free.app"
+        "API_URL": "https://YOUR_PRODUCTION_DOMAIN"
       }
     }
   },

@@ -20,6 +20,7 @@ export const apiFetch = async (
   const response = await fetch(`${BACKEND_URL}${path}`, {
     ...options,
     headers,
+    signal: options.signal ?? AbortSignal.timeout(15000),
   });
 
   if (response.status === 401) {

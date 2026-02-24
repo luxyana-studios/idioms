@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app import database
 from app.middleware import get_current_user
 from app.models.users import UserModel
-from app.schemas.users import UserCreate, UserSchema
+from app.schemas.users import UserCreate, UserPublicSchema, UserSchema
 
 SessionDep = Annotated[Session, Depends(database.get_session)]
 CurrentUser = Annotated[UserModel, Depends(get_current_user)]
@@ -24,6 +24,6 @@ async def register_user(db: SessionDep, user: UserCreate) -> UserSchema:
     return user_model
 
 
-@router.get("/me", response_model=UserSchema)
-async def get_current_user_info(current_user: CurrentUser) -> UserSchema:
+@router.get("/me", response_model=UserPublicSchema)
+async def get_current_user_info(current_user: CurrentUser) -> UserPublicSchema:
     return current_user

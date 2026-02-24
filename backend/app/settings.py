@@ -11,6 +11,8 @@ class AppSettings(BaseSettings):
     db_password: str
     db_name: str
     db_port: str
+    allowed_origins: list[str] = ["http://localhost:8081"]
+    debug_mode: bool = False
 
 
 app_settings = AppSettings()

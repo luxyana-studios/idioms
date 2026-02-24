@@ -22,9 +22,6 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self.exempt_paths = exempt_paths or [
             "/",
-            "/docs",
-            "/openapi.json",
-            "/redoc",
             "/users/register",
         ]
         self.session_factory = sessionmaker(bind=engine)
