@@ -33,11 +33,13 @@ async def get_categories(db: SessionDep) -> list[str]:
 @router.get("/", response_model=list[IdiomSchema])
 async def get_idioms(
     db: SessionDep,
-    page: int = 1,
-    limit: Annotated[int, Query(le=50)] = 50,
-    text: Annotated[str, Query()] = "",
-    category: Annotated[str | None, Query()] = None,
-    sort: Annotated[str | None, Query()] = None,
+    page: Annotated[int, Query(ge=1)] = 1,
+    limit: Annotated[int, Query(ge=1, le=50)] = 50,
+    text: Annotated[str, Query(max_length=200)] = "",
+    category: Annotated[str | None, Query(max_length=500)] = None,
+    sort: Annotated[
+        str | None, Query(pattern=r"^-?(frequency|imagery)$")
+    ] = None,
 ) -> list[IdiomSchema]:
     text = text.strip()
     offset = (page - 1) * limit
@@ -73,8 +75,8 @@ async def get_idioms(
 @router.get("/random", response_model=list[IdiomSchema])
 async def get_random_idioms(
     db: SessionDep,
-    page: int = 1,
-    limit: Annotated[int, Query(le=50)] = 50,
+    page: Annotated[int, Query(ge=1)] = 1,
+    limit: Annotated[int, Query(ge=1, le=50)] = 50,
     seed: Annotated[int | None, Query()] = None,
 ) -> list[IdiomSchema]:
     offset = (page - 1) * limit
@@ -93,8 +95,8 @@ async def get_random_idioms(
 @router.get("/favorites", response_model=list[IdiomSchema])
 async def get_favorite_idioms(
     db: SessionDep,
-    page: int = 1,
-    limit: Annotated[int, Query(le=50)] = 50,
+    page: Annotated[int, Query(ge=1)] = 1,
+    limit: Annotated[int, Query(ge=1, le=50)] = 50,
 ) -> list[IdiomSchema]:
     offset = (page - 1) * limit
 
@@ -110,7 +112,9 @@ async def get_favorite_idioms(
 
 
 @router.post("/", status_code=201)
-async def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
+async def post_idioms(
+    db: SessionDep, current_user: CurrentUser, payload: list[IdiomCreate]
+) -> None:
     idioms = [IdiomModel(**idiom.model_dump()) for idiom in payload]
     db.add_all(idioms)
     db.commit()

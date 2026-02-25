@@ -15,8 +15,10 @@ def test_middleware_allows_exempt_paths(test_server):
     response = test_server.get("/")
     assert response.status_code == 200
 
+
+def test_middleware_blocks_docs_paths(test_server):
     response = test_server.get("/docs")
-    assert response.status_code == 200
+    assert response.status_code == 401
 
 
 def test_user_registration_does_not_require_api_key(test_server):
