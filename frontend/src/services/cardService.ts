@@ -15,9 +15,8 @@ const API_ROUTES = {
   IDIOMS: 'idioms/',
 } as const;
 
-const handleApiError = async (response: Response) => {
+const handleApiError = async (response: Response): Promise<never> => {
   const errorText = await response.text();
-  console.error(`HTTP Error ${response.status}:`, errorText);
   throw new Error(
     `Server error: ${response.status} - ${errorText.slice(0, 100)}`,
   );

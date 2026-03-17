@@ -79,7 +79,8 @@ async def get_random_idioms(
 ) -> list[IdiomSchema]:
     offset = (page - 1) * limit
     if seed is not None:
-        db.execute(sql_text(f"SELECT setseed({seed % 1000 / 1000.0})"))
+        seed_value = (seed % 1000) / 1000.0
+        db.execute(sql_text("SELECT setseed(:seed)"), {"seed": seed_value})
     return [
         IdiomSchema.model_validate(idiom)
         for idiom in db.query(IdiomModel)
@@ -110,14 +111,16 @@ async def get_favorite_idioms(
 
 
 @router.post("/", status_code=201)
-async def post_idioms(db: SessionDep, payload: list[IdiomCreate]) -> None:
+async def post_idioms(
+    db: SessionDep, _user: CurrentUser, payload: list[IdiomCreate]
+) -> None:
     idioms = [IdiomModel(**idiom.model_dump()) for idiom in payload]
     db.add_all(idioms)
     db.commit()
 
 
 @router.post("/{id}/upvote", response_model=IdiomSchema)
-async def upvote_idiom(db: SessionDep, id: UUID) -> IdiomSchema:
+async def upvote_idiom(db: SessionDep, _user: CurrentUser, id: UUID) -> IdiomSchema:
     idiom = db.query(IdiomModel).filter(IdiomModel.id == id).first()
     if not idiom:
         raise HTTPException(status_code=404, detail="Idiom not found")
@@ -129,7 +132,7 @@ async def upvote_idiom(db: SessionDep, id: UUID) -> IdiomSchema:
 
 
 @router.post("/{id}/downvote", response_model=IdiomSchema)
-async def downvote_idiom(db: SessionDep, id: UUID) -> IdiomSchema:
+async def downvote_idiom(db: SessionDep, _user: CurrentUser, id: UUID) -> IdiomSchema:
     idiom = db.query(IdiomModel).filter(IdiomModel.id == id).first()
     if not idiom:
         raise HTTPException(status_code=404, detail="Idiom not found")
@@ -141,7 +144,9 @@ async def downvote_idiom(db: SessionDep, id: UUID) -> IdiomSchema:
 
 
 @router.patch("/{id}", response_model=IdiomSchema)
-async def update_idiom(db: SessionDep, id: UUID, payload: IdiomUpdate) -> IdiomSchema:
+async def update_idiom(
+    db: SessionDep, _user: CurrentUser, id: UUID, payload: IdiomUpdate
+) -> IdiomSchema:
     idiom = db.query(IdiomModel).filter(IdiomModel.id == id).first()
     if not idiom:
         raise HTTPException(status_code=404, detail="Idiom not found")

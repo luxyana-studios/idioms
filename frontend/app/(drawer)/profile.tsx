@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/contexts/ThemeContext';
@@ -30,13 +29,6 @@ const Profile = () => {
       //     userEmail: 'user-report@idioms-app.com', // or get from user if available
       //   }),
       // });
-
-      // For now, show success message
-      console.log('Problem report sent:', {
-        platform: Platform.OS,
-        appVersion: '1.0.0',
-        timestamp: new Date().toISOString(),
-      });
 
       Alert.alert(
         'Report Sent!',
