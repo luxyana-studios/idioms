@@ -88,7 +88,11 @@
   },
   "overrides": {
     "minimatch": "^10.2.1",
-    "@tootallnate/once": "3.0.1"
+    "@tootallnate/once": "3.0.1",
+    "@xmldom/xmldom": "^0.9.9",
+    "lodash": "^4.17.24",
+    "node-forge": "^1.4.0",
+    "picomatch": "^4.0.4"
   },
   "private": true
 }
